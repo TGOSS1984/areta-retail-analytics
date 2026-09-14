@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "areta-retail-analytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e1ade70d-aaaa-47a3-8140-2cb07dc8e6ef"
+  }
+}

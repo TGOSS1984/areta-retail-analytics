@@ -1,0 +1,129 @@
+table dim_product
+	lineageTag: 9ab41c85-5320-4669-b92f-78dfe6969733
+
+	column sku
+		dataType: string
+		lineageTag: 3d733dbe-c893-413c-aac4-8abb0984ef1e
+		summarizeBy: none
+		sourceColumn: sku
+
+		annotation SummarizationSetBy = Automatic
+
+	column style_code
+		dataType: string
+		lineageTag: dbb1e786-fa51-49b4-b236-ea4c0c4e1894
+		summarizeBy: none
+		sourceColumn: style_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column style_name
+		dataType: string
+		lineageTag: 6da7d781-848f-4135-88db-44dadc9e9970
+		summarizeBy: none
+		sourceColumn: style_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_code
+		dataType: string
+		lineageTag: 21f24e73-c51f-4c19-b6ba-f0e2ce344237
+		summarizeBy: none
+		sourceColumn: brand_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_name
+		dataType: string
+		lineageTag: 3dbf5c49-9bed-4434-834c-fe7533519076
+		summarizeBy: none
+		sourceColumn: brand_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_tier
+		dataType: string
+		lineageTag: df84e33e-f24f-445e-a28a-7d4f77e04f55
+		summarizeBy: none
+		sourceColumn: brand_tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column division
+		dataType: string
+		lineageTag: 5650d3cb-35c0-40e1-a0bb-c74f23ca752b
+		summarizeBy: none
+		sourceColumn: division
+
+		annotation SummarizationSetBy = Automatic
+
+	column major_product_group
+		dataType: string
+		lineageTag: 7b91be8e-725e-41d4-bb66-3981de453483
+		summarizeBy: none
+		sourceColumn: major_product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_group
+		dataType: string
+		lineageTag: c808fc9c-be0e-4894-82f3-ca3ca0bcd7f1
+		summarizeBy: none
+		sourceColumn: product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: a2924a83-92c9-4434-a47e-87dc5927d74f
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column colour
+		dataType: string
+		lineageTag: 4150383d-bdd1-4aa9-87a3-83443de2bb57
+		summarizeBy: none
+		sourceColumn: colour
+
+		annotation SummarizationSetBy = Automatic
+
+	column size
+		dataType: string
+		lineageTag: 790871be-7a48-4eec-be08-e7b6fd21ddd6
+		summarizeBy: none
+		sourceColumn: size
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_price_gbp
+		dataType: double
+		lineageTag: b4299c2e-146d-465e-9e2f-ff3aba304655
+		summarizeBy: none
+		sourceColumn: base_price_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cost_price_gbp
+		dataType: double
+		lineageTag: 34d72acf-fc70-4966-80e0-e29eac796fa3
+		summarizeBy: none
+		sourceColumn: cost_price_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_product.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

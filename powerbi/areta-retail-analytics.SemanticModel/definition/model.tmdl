@@ -1,0 +1,26 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-GB
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+annotation PBI_QueryOrder = ["dim_date","dim_product","dim_currency","dim_promo","fact_sales","fact_footfall","fact_targets","fact_stock_snapshot"]
+
+ref table dim_date
+ref table dim_product
+ref table dim_currency
+ref table dim_promo
+ref table fact_sales
+ref table fact_footfall
+ref table fact_targets
+ref table fact_stock_snapshot
+
+ref cultureInfo en-GB
+

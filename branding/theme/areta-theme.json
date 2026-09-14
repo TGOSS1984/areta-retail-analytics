@@ -1,0 +1,28 @@
+{
+  "name": "Areta Mountain Systems",
+  "dataColors": [
+    "#1F7486",
+    "#D0AA62",
+    "#4A5B63",
+    "#003744",
+    "#8D9AA1",
+    "#2E7D32",
+    "#0288D1",
+    "#F9A825"
+  ],
+  "background": "#F7F6F3",
+  "foreground": "#0F1A1E",
+  "tableAccent": "#1F7486",
+  "good": "#2E7D32",
+  "bad": "#D32F2F",
+  "neutral": "#F9A825",
+  "maximum": "#003744",
+  "center": "#8D9AA1",
+  "minimum": "#E8E1D6",
+  "textClasses": {
+    "callout": { "fontSize": 32, "color": "#003744" },
+    "title": { "fontSize": 14, "fontFace": "Segoe UI Semibold", "color": "#0F1A1E" },
+    "header": { "fontSize": 12, "color": "#2F3A40" },
+    "label": { "fontSize": 10, "color": "#5B6A72" }
+  }
+}

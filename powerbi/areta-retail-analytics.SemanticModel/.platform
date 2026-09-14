@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "areta-retail-analytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "63473c5d-6103-4973-bb2a-137a4900264a"
+  }
+}

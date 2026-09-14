@@ -10,7 +10,7 @@ markets:
     name: United Kingdom
     currency: GBP
     is_home_market: true
-    store_weight: 0.42
+    store_weight: 0.40
     channel_mix: { retail: 0.55, concession: 0.45 }
     price_index: 1.00
 
@@ -18,7 +18,7 @@ markets:
     name: Germany
     currency: EUR
     is_home_market: false
-    store_weight: 0.16
+    store_weight: 0.15
     channel_mix: { retail: 0.70, concession: 0.30 }
     price_index: 1.05
 
@@ -77,3 +77,19 @@ markets:
     store_weight: 0.02
     channel_mix: { retail: 0.50, concession: 0.50 }
     price_index: 1.10
+
+  - code: LV
+    name: Latvia
+    currency: EUR
+    is_home_market: false
+    store_weight: 0.015
+    channel_mix: { retail: 0.40, concession: 0.60 }
+    price_index: 0.75
+
+  - code: LT
+    name: Lithuania
+    currency: EUR
+    is_home_market: false
+    store_weight: 0.015
+    channel_mix: { retail: 0.40, concession: 0.60 }
+    price_index: 0.74

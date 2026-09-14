@@ -48,6 +48,8 @@ CITIES = {
     "CZ": ["Prague", "Brno", "Ostrava"],
     "SK": ["Bratislava", "Kosice"],
     "FR": ["Paris", "Lyon", "Marseille", "Toulouse"],
+    "LV": ["Riga", "Daugavpils", "Liepaja"],
+    "LT": ["Vilnius", "Kaunas", "Klaipeda"],
 }
 
 # Fictional concession partners — generic retail-park / garden-centre /

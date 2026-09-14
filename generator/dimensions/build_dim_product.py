@@ -44,6 +44,7 @@ RANDOM_SEED = 7
 # feels right for the project.
 STYLES_PER_COMBO = (1, 3)   # distinct styles per brand/division/gender/product group
 COLOURS_PER_STYLE = (2, 3)
+COST_RATIO_RANGE = (0.28, 0.38)  # cost as a share of base price — i.e. ~62-72% gross margin, set per style not per colour/size
 
 PLACE_NAMES = [
     "Glencoe", "Snowdon", "Ben Nevis", "Skiddaw", "Helvellyn", "Cairngorm",
@@ -159,6 +160,7 @@ def build() -> pd.DataFrame:
                             style_name = f"{place} {product_group}"
                             lo, hi = BASE_PRICE_GBP.get(product_group, (20, 50))
                             base_price = round(rng.uniform(lo, hi) * brand["price_index"], 2)
+                            cost_price = round(base_price * rng.uniform(*COST_RATIO_RANGE), 2)
 
                             n_colours = rng.randint(*COLOURS_PER_STYLE)
                             colours = rng.sample(COLOURS, k=n_colours)
@@ -181,6 +183,7 @@ def build() -> pd.DataFrame:
                                             "colour": colour,
                                             "size": size,
                                             "base_price_gbp": base_price,
+                                            "cost_price_gbp": cost_price,
                                         }
                                     )
                             style_seq += 1

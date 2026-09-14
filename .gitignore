@@ -23,3 +23,9 @@ Thumbs.db
 *.pbix
 ~$*.pbix
 .pbi/cache/
+
+# Generated data — regenerate via generator/, don't bloat the repo.
+# data/warehouse and data/exports stay tracked; they're the actual
+# deliverable the report and web app read from.
+data/raw/
+data/staging/

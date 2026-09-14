@@ -89,6 +89,17 @@ def build() -> pd.DataFrame:
         retail_week_number = min(retail_week_number, WEEKS_PER_RETAIL_YEAR)
         retail_period_number, retail_quarter = period_lookup[retail_week_number]
 
+        # retail_year is a straight sequential label (START_DATE.year + index),
+        # NOT retail_year_start.year — a 364-day retail year doesn't line up
+        # with a 365/366-day calendar year, and I originally used
+        # retail_year_start.year here. In a leap year that drifts just far
+        # enough that two different 364-day blocks both start with a
+        # calendar date in the same year, so they'd get the SAME retail_year
+        # label and silently collide in anything that groups by it — caught
+        # this because fact_stock_snapshot came out with 156 weeks instead
+        # of the expected 208.
+        retail_year = START_DATE.year + retail_year_index
+
         rows.append(
             {
                 "date_key": int(d.strftime("%Y%m%d")),
@@ -102,7 +113,7 @@ def build() -> pd.DataFrame:
                 "calendar_quarter": (d.month - 1) // 3 + 1,
                 "calendar_year": d.year,
                 "season": SEASON_BY_MONTH[d.month],
-                "retail_year": retail_year_start.year,
+                "retail_year": retail_year,
                 "retail_week_number": retail_week_number,
                 "retail_period_number": retail_period_number,
                 "retail_quarter": retail_quarter,

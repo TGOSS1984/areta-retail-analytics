@@ -85,7 +85,9 @@ def build() -> pd.DataFrame:
     )
 
     merged["target_net_sales_gbp"] = np.round(np.maximum(target, 0), 2)
-    return merged[["store_id", "retail_year", "retail_period_number", "target_net_sales_gbp", "actual_net_sales_gbp"]]
+    # single-column key matching dim_date[period_key] — see that script for why
+    merged["period_key"] = merged["retail_year"] * 100 + merged["retail_period_number"]
+    return merged[["store_id", "retail_year", "retail_period_number", "period_key", "target_net_sales_gbp", "actual_net_sales_gbp"]]
 
 
 def main() -> None:

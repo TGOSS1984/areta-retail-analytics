@@ -117,6 +117,10 @@ def build() -> pd.DataFrame:
                 "retail_week_number": retail_week_number,
                 "retail_period_number": retail_period_number,
                 "retail_quarter": retail_quarter,
+                # single-column key for relating to fact_targets, which is
+                # at (store, retail_year, retail_period) grain — Power BI
+                # relationships need one column, not a composite of two
+                "period_key": retail_year * 100 + retail_period_number,
                 "is_retail_year_start": d == retail_year_start,
                 "is_new_years_day": d.month == 1 and d.day == 1,
                 "is_christmas_day": d.month == 12 and d.day == 25,

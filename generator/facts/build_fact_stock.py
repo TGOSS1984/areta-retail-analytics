@@ -100,10 +100,10 @@ def weekly_sales(dim_product: pd.DataFrame, dim_date: pd.DataFrame) -> pd.DataFr
     sales = sales[~sales["is_return"]]
     sales = sales.merge(dim_product[["sku", "style_code", "colour"]], on="sku", how="left")
     sales = sales.merge(
-        dim_date[["full_date", "retail_year", "retail_week_number"]],
+        dim_date[["full_date", "business_year", "business_week_number"]],
         left_on="date", right_on="full_date", how="left",
     )
-    sales["week_key"] = sales["retail_year"] * 100 + sales["retail_week_number"]
+    sales["week_key"] = sales["business_year"] * 100 + sales["business_week_number"]
 
     return (
         sales.groupby(["store_id", "style_code", "colour", "week_key"])["quantity"]
@@ -115,14 +115,14 @@ def weekly_sales(dim_product: pd.DataFrame, dim_date: pd.DataFrame) -> pd.DataFr
 
 def week_ending_dates(dim_date: pd.DataFrame) -> pd.DataFrame:
     weeks = (
-        dim_date.groupby(["retail_year", "retail_week_number"])["full_date"]
+        dim_date.groupby(["business_year", "business_week_number"])["full_date"]
         .max()
         .rename("week_ending_date")
         .reset_index()
-        .sort_values(["retail_year", "retail_week_number"])
+        .sort_values(["business_year", "business_week_number"])
         .reset_index(drop=True)
     )
-    weeks["week_key"] = weeks["retail_year"] * 100 + weeks["retail_week_number"]
+    weeks["week_key"] = weeks["business_year"] * 100 + weeks["business_week_number"]
     weeks["week_idx"] = np.arange(len(weeks))
     return weeks
 

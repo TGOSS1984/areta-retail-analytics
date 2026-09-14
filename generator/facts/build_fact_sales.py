@@ -27,7 +27,11 @@ ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}
 CHANNEL_DEMAND_MULT = {"Retail": 1.0, "Concession": 0.7}
 HOME_MARKET_MULT = 1.15
 
-WEEKDAY_MULT = {1: 1.0, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.15, 6: 1.5, 7: 1.25}
+WEEKDAY_MULT = {1: 1.25, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.15, 7: 1.5}
+# keyed to dim_date's new Sunday=1..Saturday=7 numbering (was Monday=1..
+# Sunday=7 before the calendar rebuild) — same real pattern as before
+# (weekday baseline, Friday a bit up, Saturday busiest, Sunday moderate),
+# just remapped to the new day numbers rather than changed
 
 SEASON_PROFILE = {
     "Outerwear": {"peak_month": 11, "amplitude": 0.55},

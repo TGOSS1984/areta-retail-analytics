@@ -1,18 +1,26 @@
 """
 dim_date builder.
 
-I'm building this on a UK-style retail 4-4-5 calendar (12 periods a year,
-three periods per quarter, weeks grouped 4-4-5) rather than plain calendar
-months, because that's what the sales and target facts will actually report
-against later. Everything else in this project joins back to fact tables
-through date_key, so this has to exist before anything else does.
+Rebuilt to match the actual spec after an audit found the first version
+didn't: business year runs March-February here (not January-December),
+season is a 2-value SS/AW model aligned to that business year (not four
+meteorological seasons), and weeks run Sunday-Saturday (not Monday-Sunday).
+All three were explicit in the original notes and I'd defaulted to
+something else without checking back against them — see
+docs/project-plan.md for the full audit.
 
-Known simplification: I'm not modelling Easter-based bank holidays (Good
-Friday, Easter Monday, early May / spring bank holiday) because I didn't
-want to hardcode movable-feast dates I couldn't verify were right. Only the
-fixed-date holidays and the ones I can actually compute (Black Friday,
-Boxing Day, New Year's Day) are flagged. Fine to add a proper holiday
-library later if a specific visual needs the movable ones.
+Column naming: "retail_year"/"retail_week_number"/etc from the first
+version are renamed to "business_year"/"business_week_number"/etc to match
+the terminology actually used in the brief. Downstream tables that
+referenced the old names need updating to match:
+  - fact_footfall: no change needed, it only ever used full_date
+  - fact_stock_snapshot: mechanical rename, done in the same commit as this
+  - fact_targets: needs an actual restructure, not just a rename — handled
+    as its own step, broken until then
+
+Both calendar week (standard ISO week-of-year) and business week (the
+4-4-5 week-of-business-year) are included as separate columns, per the
+brief asking for both.
 
 Usage:
     python build_dim_date.py
@@ -26,29 +34,25 @@ from pathlib import Path
 import pandas as pd
 
 # --- config -----------------------------------------------------------
-# First Monday on/after 1 Jan 2023, through the last Sunday of retail
-# FY2026 — three prior full years plus the current one, enough for YoY
-# comparisons without the row count getting silly. Change these two if
-# the project's date range ever needs to move.
-START_DATE = dt.date(2023, 1, 2)
-END_DATE = dt.date(2026, 12, 27)
+# First Sunday on/after 1 March 2023 (business year start, week start),
+# through four full 52-week business years — BY2023..BY2026, where
+# BY2026 = Mar 2026-Feb 2027. Comfortably spans "to date" for a
+# September 2026 present-date cutoff with room left in BY2026.
+_FIRST_OF_MARCH_2023 = dt.date(2023, 3, 1)
+START_DATE = _FIRST_OF_MARCH_2023 + dt.timedelta(
+    days=(6 - _FIRST_OF_MARCH_2023.weekday()) % 7
+)  # first Sunday on/after 1 March 2023 — date.weekday() is Mon=0..Sun=6
+
+WEEKS_PER_BUSINESS_YEAR = 52
+N_BUSINESS_YEARS = 4
+END_DATE = START_DATE + dt.timedelta(days=N_BUSINESS_YEARS * WEEKS_PER_BUSINESS_YEAR * 7 - 1)
 
 OUTPUT_PATH = Path(__file__).resolve().parents[2] / "data" / "warehouse" / "dim_date.parquet"
 
-# 4-4-5 weeks per period, 3 periods per quarter, 4 quarters = 52 weeks/year.
-PERIOD_WEEK_PATTERN = [4, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5]
-WEEKS_PER_RETAIL_YEAR = sum(PERIOD_WEEK_PATTERN)  # 52
-
-SEASON_BY_MONTH = {
-    12: "Winter", 1: "Winter", 2: "Winter",
-    3: "Spring", 4: "Spring", 5: "Spring",
-    6: "Summer", 7: "Summer", 8: "Summer",
-    9: "Autumn", 10: "Autumn", 11: "Autumn",
-}
+PERIOD_WEEK_PATTERN = [4, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5]  # unchanged, just anchored to March now
 
 
 def _period_lookup() -> dict[int, tuple[int, int]]:
-    """retail_week_number (1-52) -> (period_number, quarter_number)."""
     lookup: dict[int, tuple[int, int]] = {}
     week = 1
     for period_idx, weeks_in_period in enumerate(PERIOD_WEEK_PATTERN, start=1):
@@ -60,7 +64,6 @@ def _period_lookup() -> dict[int, tuple[int, int]]:
 
 
 def _black_fridays(years: range) -> set[dt.date]:
-    """4th Friday of November each year — computed, not hardcoded."""
     out = set()
     for year in years:
         fridays_in_nov = [
@@ -72,6 +75,11 @@ def _black_fridays(years: range) -> set[dt.date]:
     return out
 
 
+def _season(month: int) -> str:
+    # SS = March-August, AW = September-February
+    return "SS" if 3 <= month <= 8 else "AW"
+
+
 def build() -> pd.DataFrame:
     all_dates = pd.date_range(START_DATE, END_DATE, freq="D")
     period_lookup = _period_lookup()
@@ -81,47 +89,51 @@ def build() -> pd.DataFrame:
     for ts in all_dates:
         d = ts.date()
         days_since_start = (d - START_DATE).days
-        retail_year_index = days_since_start // (WEEKS_PER_RETAIL_YEAR * 7)
-        retail_year_start = START_DATE + dt.timedelta(
-            days=retail_year_index * WEEKS_PER_RETAIL_YEAR * 7
+        business_year_index = days_since_start // (WEEKS_PER_BUSINESS_YEAR * 7)
+        business_year_start = START_DATE + dt.timedelta(
+            days=business_year_index * WEEKS_PER_BUSINESS_YEAR * 7
         )
-        retail_week_number = (d - retail_year_start).days // 7 + 1
-        retail_week_number = min(retail_week_number, WEEKS_PER_RETAIL_YEAR)
-        retail_period_number, retail_quarter = period_lookup[retail_week_number]
+        business_week_number = (d - business_year_start).days // 7 + 1
+        business_week_number = min(business_week_number, WEEKS_PER_BUSINESS_YEAR)
+        business_period_number, business_quarter = period_lookup[business_week_number]
 
-        # retail_year is a straight sequential label (START_DATE.year + index),
-        # NOT retail_year_start.year — a 364-day retail year doesn't line up
-        # with a 365/366-day calendar year, and I originally used
-        # retail_year_start.year here. In a leap year that drifts just far
-        # enough that two different 364-day blocks both start with a
-        # calendar date in the same year, so they'd get the SAME retail_year
-        # label and silently collide in anything that groups by it — caught
-        # this because fact_stock_snapshot came out with 156 weeks instead
-        # of the expected 208.
-        retail_year = START_DATE.year + retail_year_index
+        # sequential label, not business_year_start.year — same leap-year
+        # collision risk as the very first dim_date version if derived
+        # from the date directly instead
+        business_year = START_DATE.year + business_year_index
+
+        season = _season(d.month)
+        # labelled by business year, not calendar year — Jan 2024 is
+        # still "AW23", the second half of business year 2023, not the
+        # start of a new season label
+        season_label = f"{season}{business_year % 100:02d}"
+
+        # Sunday=1 .. Saturday=7 — Python's own weekday()/isoweekday()
+        # don't match what a Sunday-start retail week needs directly
+        day_of_week_num = (d.weekday() + 1) % 7 + 1
 
         rows.append(
             {
                 "date_key": int(d.strftime("%Y%m%d")),
                 "full_date": d,
                 "day_name": d.strftime("%A"),
-                "day_of_week_num": d.isoweekday(),  # 1=Mon .. 7=Sun
-                "is_weekend": d.isoweekday() >= 6,
+                "day_of_week_num": day_of_week_num,
+                "is_weekend": d.weekday() >= 5,  # Sat/Sun regardless of retail week numbering
                 "day_of_month": d.day,
                 "month_num": d.month,
                 "month_name": d.strftime("%B"),
                 "calendar_quarter": (d.month - 1) // 3 + 1,
                 "calendar_year": d.year,
-                "season": SEASON_BY_MONTH[d.month],
-                "retail_year": retail_year,
-                "retail_week_number": retail_week_number,
-                "retail_period_number": retail_period_number,
-                "retail_quarter": retail_quarter,
-                # single-column key for relating to fact_targets, which is
-                # at (store, retail_year, retail_period) grain — Power BI
-                # relationships need one column, not a composite of two
-                "period_key": retail_year * 100 + retail_period_number,
-                "is_retail_year_start": d == retail_year_start,
+                "calendar_week_number": d.isocalendar()[1],
+                "season": season,
+                "season_label": season_label,
+                "business_year": business_year,
+                "business_week_number": business_week_number,
+                "business_period_number": business_period_number,
+                "business_period_label": f"BY{business_year % 100:02d} P{business_period_number:02d}",
+                "business_quarter": business_quarter,
+                "period_key": business_year * 100 + business_period_number,
+                "is_business_year_start": d == business_year_start,
                 "is_new_years_day": d.month == 1 and d.day == 1,
                 "is_christmas_day": d.month == 12 and d.day == 25,
                 "is_boxing_day": d.month == 12 and d.day == 26,
@@ -137,6 +149,8 @@ def main() -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUTPUT_PATH, index=False)
     print(f"dim_date: {len(df):,} rows -> {OUTPUT_PATH}")
+    print(f"business years: {sorted(df['business_year'].unique())}")
+    print(f"date range: {df['full_date'].min()} -> {df['full_date'].max()}")
 
 
 if __name__ == "__main__":

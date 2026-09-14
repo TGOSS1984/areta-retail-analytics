@@ -1,0 +1,87 @@
+# Brand portfolio and product taxonomy for Areta Mountain Systems.
+# price_index multiplies against a product group's base price before market price_index is applied.
+# product_groups is shared across brands; not every brand sells into every division (see each brand's `divisions`).
+
+brands:
+  - code: ARETA
+    name: Areta
+    tier: Flagship
+    positioning: "Core all-round outdoor apparel and equipment"
+    price_index: 1.00
+    genders: [Mens, Womens, Kids, Unisex]
+    divisions: [Apparel & Other, Footwear, Camping & Equipment]
+
+  - code: KESTREL
+    name: Kestrel Ridge
+    tier: Technical
+    positioning: "Performance mountaineering and alpine technical wear"
+    price_index: 1.45
+    genders: [Mens, Womens, Unisex]
+    divisions: [Apparel & Other, Footwear]
+
+  - code: BASECAMP
+    name: Basecamp
+    tier: Value
+    positioning: "Family and value-led outdoor essentials"
+    price_index: 0.72
+    genders: [Mens, Womens, Kids, Unisex]
+    divisions: [Apparel & Other, Footwear, Camping & Equipment]
+
+  - code: ARETAPRO
+    name: Areta Pro
+    tier: Workwear
+    positioning: "Corporate and workwear outdoor clothing"
+    price_index: 0.95
+    genders: [Mens, Womens, Unisex]
+    divisions: [Apparel & Other, Footwear]
+
+# Division > major product group > product group.
+product_groups:
+  Apparel & Other:
+    Outerwear:
+      - Waterproof Shell
+      - Waterproof Insulated Jacket
+      - Softshell
+      - Baffled/Quilted
+      - Gilets & Bodywarmers
+      - Non-Waterproof Jacket
+      - 3 in 1
+    Midlayer:
+      - Fleece
+      - Softshell
+      - Knitwear, Hoodies & Sweatshirts
+      - Gilets & Bodywarmers
+      - Base Layer
+    Legwear:
+      - Trousers
+      - Shorts
+      - Overtrousers
+      - Leggings/Tights
+      - Skirts
+    Tops:
+      - T-Shirts
+      - Shirts
+      - Polo Shirts
+      - Vests
+    Accessories:
+      - Hats
+      - Gloves
+      - Scarves
+      - Socks
+      - Accessory Sets
+
+  Footwear:
+    Footwear:
+      - Boots
+      - Shoes
+      - Sandals
+      - Wellingtons
+      - Socks
+
+  Camping & Equipment:
+    Camping & Equipment:
+      - Rucksacks
+      - Tents
+      - Sleeping Bags
+      - Camping Accessories
+      - Walking Poles

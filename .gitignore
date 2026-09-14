@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Node / web
+node_modules/
+.next/
+out/
+web/.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+*.local
+
+# Power BI
+*.pbix
+~$*.pbix
+.pbi/cache/

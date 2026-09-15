@@ -3,7 +3,11 @@ dim_store builder.
 
 Reads config/markets.yml and generates the store network — one row per
 store, weighted across markets by store_weight, split into owned retail vs
-concession using each market's channel_mix.
+concession using each market's channel_mix. Also assigns store_type
+(High Street/Retail Park/Shopping Centre/Outlet for retail; the host
+format itself — Garden Centre, Department Store etc — for concessions,
+since that IS the concession's format) and a coarse region within each
+market, derived from the city already assigned.
 
 This one's a clean build straight to data/warehouse, no raw/staging pass.
 There's nothing meaningfully "messy" about a store list the way there is
@@ -52,6 +56,47 @@ CITIES = {
     "LT": ["Vilnius", "Kaunas", "Klaipeda"],
 }
 
+# Region within each market — used to tag store_type/region attributes
+# below. Coarse groupings, not administrative boundaries.
+CITY_TO_REGION = {
+    # UK
+    "London": "London", "Manchester": "North England", "Birmingham": "Midlands",
+    "Leeds": "North England", "Bristol": "South West", "Newcastle": "North England",
+    "Sheffield": "North England", "Nottingham": "Midlands", "Liverpool": "North England",
+    "York": "North England", "Cardiff": "Wales", "Edinburgh": "Scotland",
+    "Glasgow": "Scotland", "Belfast": "Northern Ireland", "Oxford": "South East",
+    "Cambridge": "South East", "Bath": "South West", "Chester": "North England",
+    # DE
+    "Berlin": "East", "Munich": "South", "Hamburg": "North", "Cologne": "West",
+    "Frankfurt": "Central", "Stuttgart": "South", "Dusseldorf": "West",
+    "Leipzig": "East", "Dresden": "East", "Nuremberg": "South",
+    # PL
+    "Warsaw": "Central", "Krakow": "South", "Gdansk": "North", "Wroclaw": "West",
+    "Poznan": "West", "Lodz": "Central", "Katowice": "South",
+    # IE
+    "Dublin": "Leinster", "Cork": "Munster", "Galway": "Connacht",
+    "Limerick": "Munster", "Waterford": "Munster", "Kilkenny": "Leinster",
+    # IT
+    "Milan": "North", "Rome": "Central", "Turin": "North", "Bologna": "North",
+    "Verona": "North", "Florence": "Central",
+    # NL
+    "Amsterdam": "West", "Rotterdam": "West", "Utrecht": "West",
+    "Eindhoven": "South", "The Hague": "West",
+    # CZ
+    "Prague": "Bohemia", "Brno": "Moravia", "Ostrava": "Moravia",
+    # SK
+    "Bratislava": "West", "Kosice": "East",
+    # FR
+    "Paris": "Ile-de-France", "Lyon": "Rhone-Alpes", "Marseille": "PACA", "Toulouse": "Occitanie",
+    # LV
+    "Riga": "Riga Region", "Daugavpils": "Latgale", "Liepaja": "Kurzeme",
+    # LT
+    "Vilnius": "Vilnius Region", "Kaunas": "Kaunas Region", "Klaipeda": "Klaipeda Region",
+}
+
+RETAIL_STORE_TYPES = ["High Street", "Retail Park", "Shopping Centre", "Outlet"]
+RETAIL_STORE_TYPE_WEIGHTS = [0.40, 0.30, 0.20, 0.10]
+
 # Fictional concession partners — generic retail-park / garden-centre /
 # department-store types, standing in for the kind of host retailer a
 # concession store would actually sit inside.
@@ -61,6 +106,22 @@ CONCESSION_PARTNERS = [
     "Greenway Garden Centre", "Ridgeway Home Store", "Anchor Point Retail",
     "Westgate Shopping Centre",
 ]
+
+# store_type for a concession is really the HOST's format, not a separate
+# random draw — a concession inside a garden centre IS a "Garden Centre"
+# store, that's the whole point of the channel
+CONCESSION_PARTNER_TYPE = {
+    "Fernbank Garden Centre": "Garden Centre",
+    "Northfield Home & Garden": "Garden Centre",
+    "Solstice Outlets": "Outlet",
+    "Harbourside Retail Park": "Retail Park",
+    "Millbrook Department Store": "Department Store",
+    "Cornerstone Outlet": "Outlet",
+    "Greenway Garden Centre": "Garden Centre",
+    "Ridgeway Home Store": "Department Store",
+    "Anchor Point Retail": "Retail Park",
+    "Westgate Shopping Centre": "Shopping Centre",
+}
 
 
 def load_markets() -> list[dict]:
@@ -85,14 +146,17 @@ def build() -> pd.DataFrame:
 
         for _ in range(retail_count):
             city = rng.choice(cities)
+            store_type = rng.choices(RETAIL_STORE_TYPES, weights=RETAIL_STORE_TYPE_WEIGHTS, k=1)[0]
             rows.append(
                 {
                     "store_id": f"ST{store_id:04d}",
                     "store_name": f"Areta {city}",
                     "channel": "Retail",
+                    "store_type": store_type,
                     "market_code": code,
                     "market_name": market["name"],
                     "city": city,
+                    "region": CITY_TO_REGION.get(city, market["name"]),
                     "currency": market["currency"],
                     "is_home_market": market["is_home_market"],
                 }
@@ -107,9 +171,11 @@ def build() -> pd.DataFrame:
                     "store_id": f"ST{store_id:04d}",
                     "store_name": f"{partner} \u2014 {city}",
                     "channel": "Concession",
+                    "store_type": CONCESSION_PARTNER_TYPE[partner],
                     "market_code": code,
                     "market_name": market["name"],
                     "city": city,
+                    "region": CITY_TO_REGION.get(city, market["name"]),
                     "currency": market["currency"],
                     "is_home_market": market["is_home_market"],
                 }

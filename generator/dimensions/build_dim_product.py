@@ -79,6 +79,48 @@ KIDS_SHOE_SIZES = ["10", "11", "12", "13", "1", "2", "3"]  # UK junior/youth
 ONE_SIZE = ["One Size"]
 GLOVES_SOCKS_SIZES = ["S/M", "M/L", "L/XL"]
 
+# size_code stays compact (what's already used in the SKU); size_description
+# is the human-readable version — separated out since they were one field
+# before. Shoe sizes are numeric strings and get "UK {n}" generated rather
+# than listed here.
+SIZE_DESCRIPTIONS = {
+    "XS": "Extra Small", "S": "Small", "M": "Medium", "L": "Large",
+    "XL": "Extra Large", "XXL": "2X Large",
+    "3-4yrs": "3-4 Years", "5-6yrs": "5-6 Years", "7-8yrs": "7-8 Years",
+    "9-10yrs": "9-10 Years", "11-12yrs": "11-12 Years", "13-14yrs": "13-14 Years",
+    "One Size": "One Size",
+    "S/M": "Small/Medium", "M/L": "Medium/Large", "L/XL": "Large/Extra Large",
+}
+
+
+def size_description_for(size_code: str) -> str:
+    if size_code in SIZE_DESCRIPTIONS:
+        return SIZE_DESCRIPTIONS[size_code]
+    return f"UK {size_code}"  # shoe sizes — numeric strings, not worth a full lookup table
+
+
+# sub-brand — a range label within a division, distinct from the brand
+# itself (brand.yml's "brand" entries are the actual commercial brands;
+# this is closer to a collection name). Apparel gets real variety since
+# that's where the real hierarchy this was modelled on showed the most
+# sub-brand spread; footwear and camping stay single-labelled, there
+# wasn't meaningful sub-brand differentiation there in the reference data.
+SUB_BRANDS_BY_DIVISION = {
+    "Apparel & Other": (["Core", "Active", "Lifestyle"], [0.60, 0.25, 0.15]),
+    "Footwear": (["Core Footwear"], [1.0]),
+    "Camping & Equipment": (["Core Equipment"], [1.0]),
+}
+
+# season_label a style belongs to — matches dim_date's SS/AW-year format
+# exactly, so the two can be joined/compared directly. Weighted toward
+# more recent seasons: a live assortment skews toward what's currently
+# ranged, not evenly across four years of history. This tags WHICH season
+# a style belongs to; it doesn't make demand for older-season styles
+# decay over time in fact_sales — that'd be a real product-lifecycle
+# simulation, a bigger change than adding the attribute itself.
+SEASON_LABELS = ["SS23", "AW23", "SS24", "AW24", "SS25", "AW25", "SS26", "AW26"]
+SEASON_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8]  # relative, normalised at sample time
+
 # (min, max) base price in GBP before the brand's price_index is applied.
 BASE_PRICE_GBP = {
     "Waterproof Shell": (70, 130),
@@ -162,6 +204,10 @@ def build() -> pd.DataFrame:
                             base_price = round(rng.uniform(lo, hi) * brand["price_index"], 2)
                             cost_price = round(base_price * rng.uniform(*COST_RATIO_RANGE), 2)
 
+                            sub_brand_options, sub_brand_weights = SUB_BRANDS_BY_DIVISION[division]
+                            sub_brand = rng.choices(sub_brand_options, weights=sub_brand_weights, k=1)[0]
+                            season_label = rng.choices(SEASON_LABELS, weights=SEASON_WEIGHTS, k=1)[0]
+
                             n_colours = rng.randint(*COLOURS_PER_STYLE)
                             colours = rng.sample(COLOURS, k=n_colours)
                             sizes = sizes_for(division, major_group, product_group, gender)
@@ -176,12 +222,16 @@ def build() -> pd.DataFrame:
                                             "brand_code": brand["code"],
                                             "brand_name": brand["name"],
                                             "brand_tier": brand["tier"],
+                                            "sub_brand": sub_brand,
                                             "division": division,
                                             "major_product_group": major_group,
                                             "product_group": product_group,
                                             "gender": gender,
+                                            "season_label": season_label,
                                             "colour": colour,
-                                            "size": size,
+                                            "colour_code": COLOUR_CODES[colour],
+                                            "size_code": size,
+                                            "size_description": size_description_for(size),
                                             "base_price_gbp": base_price,
                                             "cost_price_gbp": cost_price,
                                         }

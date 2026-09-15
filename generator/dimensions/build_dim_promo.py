@@ -59,7 +59,31 @@ def build() -> pd.DataFrame:
             "start_date": None,
             "end_date": None,
             "discount_pct": 0,
-        }
+        },
+        # Multi-buy schemes — no fixed date range or discount_pct here on
+        # purpose: unlike the %-off promos above, eligibility runs on a
+        # recurring month-window basis (see MULTIBUY_SCHEMES in
+        # facts/build_fact_sales.py, the actual source of truth for when
+        # these are active) and the effective discount varies basket to
+        # basket rather than being a fixed rate. These rows exist so
+        # fact_sales' promo_id always resolves to a real dimension row —
+        # they don't drive the promotional logic themselves.
+        {
+            "promo_id": "MULTIBUY-MB001",
+            "promo_name": "Fleece & T-Shirts 2 for GBP30",
+            "promo_type": "Multi-buy",
+            "start_date": None,
+            "end_date": None,
+            "discount_pct": None,
+        },
+        {
+            "promo_id": "MULTIBUY-MB002",
+            "promo_name": "Accessories 3 for 2",
+            "promo_type": "Multi-buy",
+            "start_date": None,
+            "end_date": None,
+            "discount_pct": None,
+        },
     ]
 
     promo_seq = 1

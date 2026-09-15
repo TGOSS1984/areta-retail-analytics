@@ -83,6 +83,48 @@ PROMO_ELIGIBLE_SHARE = 0.65
 PROMO_UPLIFT_FACTOR = 1.2
 RETURN_RATE = 0.03
 
+# --- multi-buy promos -------------------------------------------------
+# A genuinely different mechanic from the %-off promo calendar above:
+# these run as standing category pushes across defined month windows, not
+# tied to the seasonal clearance events, and only kick in when a BASKET
+# happens to contain enough qualifying items together — this is why it's
+# a separate post-processing pass over whole invoices rather than
+# something the per-line demand loop can decide on its own. Only applies
+# to lines that aren't already on a %-off promo that day; multi-buy and
+# clearance don't stack, they're two different kinds of promotional
+# activity (see the "can be considered full price sales at higher
+# margins" framing in the brief for shallower discounts vs true clearance).
+MULTIBUY_SCHEMES = [
+    {
+        "scheme_id": "MB001",
+        "product_groups": ["Fleece", "T-Shirts"],
+        "mechanic": "bundle_price",
+        "qty_required": 2,
+        "bundle_price_gbp": 30.0,
+        "months": {3, 4, 5, 9, 10, 11},  # spring and autumn category pushes
+    },
+    {
+        "scheme_id": "MB002",
+        "product_groups": ["Hats", "Gloves", "Scarves", "Socks", "Accessory Sets"],
+        "mechanic": "cheapest_free",
+        "qty_required": 3,
+        "months": {10, 11, 12},  # gifting season
+    },
+]
+
+# How often a single qualifying purchase gets a companion item added to
+# complete the multi-buy, representing a customer actually taking the
+# deal rather than two unrelated purchases coincidentally landing in the
+# same basket. Different per product group deliberately — a cheap,
+# easy add-on like a t-shirt converts to "grab a second one" far more
+# readily than a pricier fleece, and accessories need three items not two,
+# a meaningfully higher bar. Tuned by checking the actual resulting
+# category-level % after running, not derived algebraically.
+ATTACH_PROBABILITY = {
+    "MB001": {"Fleece": 0.10, "T-Shirts": 0.22},
+    "MB002": 0.09,
+}
+
 # invoice grouping — average distinct product lines per transaction.
 # Matches the basket-size assumption fact_footfall used to estimate
 # transactions with before this existed; keeping the same number means
@@ -303,6 +345,177 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
     return df
 
 
+def synthesize_multibuy_attachments(
+    df: pd.DataFrame,
+    dim_product: pd.DataFrame,
+    assortment: pd.DataFrame,
+    fx_lookup: dict,
+) -> pd.DataFrame:
+    """Adds a companion line item to some share of single-item qualifying
+    purchases, so multi-buy prevalence reflects genuine uptake — a
+    customer picking up a second item specifically because of the offer —
+    rather than only the rate at which two unrelated purchases happen to
+    coincide in the same basket by chance. That coincidental rate alone
+    came out under 1% on the first pass, nowhere near what a genuinely
+    promoted "2 for £30" actually drives in real apparel retail.
+
+    Companion lines are priced at normal full price using the same
+    formula the main simulation uses. apply_multibuy_promos, run right
+    after this, then groups and reprices the now-completed basket exactly
+    the same way it already handles organic co-occurrence — this function
+    only decides which baskets get topped up, not how they get priced.
+    """
+    df = df.merge(dim_product[["sku", "product_group"]], on="sku", how="left")
+    df["month"] = pd.DatetimeIndex(df["date"]).month
+
+    rng = np.random.default_rng(RANDOM_SEED + 20)
+    market_lookup = assortment.drop_duplicates("store_id").set_index("store_id")[["price_index", "vat_rate"]]
+
+    new_row_frames = []
+    for scheme in MULTIBUY_SCHEMES:
+        for pg in scheme["product_groups"]:
+            prob_cfg = ATTACH_PROBABILITY[scheme["scheme_id"]]
+            prob = prob_cfg[pg] if isinstance(prob_cfg, dict) else prob_cfg
+
+            candidates = df[
+                (df["product_group"] == pg)
+                & (df["month"].isin(scheme["months"]))
+                & (df["promo_id"] == "PROMO0000")
+                & (~df["is_return"])
+            ]
+            if candidates.empty:
+                continue
+
+            attach_mask = rng.random(len(candidates)) < prob
+            attaching = candidates[attach_mask]
+            if attaching.empty:
+                continue
+
+            pool = dim_product[dim_product["product_group"] == pg]
+            n_companions_needed = scheme["qty_required"] - 1
+
+            for _ in range(n_companions_needed):
+                companion_skus = pool.sample(
+                    n=len(attaching), replace=True, random_state=int(rng.integers(1_000_000_000))
+                ).reset_index(drop=True)
+                companion_rows = attaching[["date", "store_id", "invoice_id", "currency"]].reset_index(drop=True).copy()
+                companion_rows["sku"] = companion_skus["sku"].to_numpy()
+                companion_rows["base_price_gbp"] = companion_skus["base_price_gbp"].to_numpy()
+                new_row_frames.append(companion_rows)
+
+    df = df.drop(columns=["product_group", "month"])
+    if not new_row_frames:
+        return df
+
+    companions = pd.concat(new_row_frames, ignore_index=True)
+    companions = companions.merge(market_lookup, on="store_id", how="left")
+
+    fx = np.array(
+        [fx_lookup.get((c, d.year, d.month), 1.0) for c, d in zip(companions["currency"], companions["date"])]
+    )
+    companions["quantity"] = 1
+    companions["promo_id"] = "PROMO0000"
+    companions["discount_pct"] = 0
+    companions["unit_price_gbp"] = np.round(companions["base_price_gbp"] * companions["price_index"], 2)
+    companions["net_sales_gbp"] = companions["unit_price_gbp"]
+    companions["vat_gbp"] = np.round(companions["net_sales_gbp"] * companions["vat_rate"], 2)
+    companions["gross_sales_gbp"] = companions["net_sales_gbp"] + companions["vat_gbp"]
+    companions["net_sales_local"] = np.round(companions["net_sales_gbp"] * fx, 2)
+
+    margin_rng = np.random.default_rng(RANDOM_SEED + 21)
+    full_price_lo, full_price_hi = MARGIN_TIER_RANGES[0]
+    target_margin = margin_rng.uniform(full_price_lo, full_price_hi, size=len(companions))
+    companions["cost_gbp"] = np.round(companions["net_sales_gbp"] * (1 - target_margin), 2)
+    companions["is_return"] = False
+
+    companions = companions[df.columns.drop("line_number")]
+    combined = pd.concat([df, companions], ignore_index=True)
+    combined["line_number"] = combined.groupby("invoice_id").cumcount() + 1
+    return combined
+
+
+def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame) -> pd.DataFrame:
+    """Post-processing pass over completed invoices — finds baskets that
+    qualify for a multi-buy scheme and adjusts pricing on the qualifying
+    lines. Runs after the main simulation, before returns/messiness;
+    multi-buys apply to genuine purchases only.
+
+    Order matters here: implied VAT rate and FX rate are captured from
+    each row BEFORE net_sales_gbp gets overwritten, then reapplied to the
+    new value afterward — got this wrong exactly this way once already
+    on the returns logic (dividing two already-overwritten columns), so
+    doing it in the right order deliberately this time.
+    """
+    df = df.merge(dim_product[["sku", "product_group"]], on="sku", how="left")
+    df["month"] = pd.DatetimeIndex(df["date"]).month
+
+    pg_month_rows = [
+        {"product_group": pg, "month": m, "multibuy_scheme_id": scheme["scheme_id"]}
+        for scheme in MULTIBUY_SCHEMES
+        for pg in scheme["product_groups"]
+        for m in scheme["months"]
+    ]
+    pg_month_lookup = pd.DataFrame(pg_month_rows)
+
+    df = df.merge(pg_month_lookup, on=["product_group", "month"], how="left")
+    df.loc[df["promo_id"] != "PROMO0000", "multibuy_scheme_id"] = None  # %-off takes precedence
+
+    eligible = df[df["multibuy_scheme_id"].notna()].copy()
+    if eligible.empty:
+        return df.drop(columns=["product_group", "month", "multibuy_scheme_id"])
+
+    scheme_by_id = {s["scheme_id"]: s for s in MULTIBUY_SCHEMES}
+    grp_cols = ["invoice_id", "multibuy_scheme_id"]
+    eligible["group_qty"] = eligible.groupby(grp_cols)["quantity"].transform("sum")
+    eligible["group_revenue"] = eligible.groupby(grp_cols)["net_sales_gbp"].transform("sum")
+    eligible["qty_required"] = eligible["multibuy_scheme_id"].map(lambda s: scheme_by_id[s]["qty_required"])
+    eligible["mechanic"] = eligible["multibuy_scheme_id"].map(lambda s: scheme_by_id[s]["mechanic"])
+    eligible["bundle_price_gbp"] = eligible["multibuy_scheme_id"].map(
+        lambda s: scheme_by_id[s].get("bundle_price_gbp", 0.0)
+    )
+
+    eligible = eligible[eligible["group_qty"] >= eligible["qty_required"]].copy()
+    if eligible.empty:
+        return df.drop(columns=["product_group", "month", "multibuy_scheme_id"])
+
+    num_bundles = eligible["group_qty"] // eligible["qty_required"]
+    remainder_qty = eligible["group_qty"] - num_bundles * eligible["qty_required"]
+    avg_unit_price = eligible["group_revenue"] / eligible["group_qty"]
+
+    is_bundle = eligible["mechanic"] == "bundle_price"
+    new_group_revenue = np.where(
+        is_bundle,
+        num_bundles * eligible["bundle_price_gbp"] + remainder_qty * avg_unit_price,
+        eligible["group_revenue"] - num_bundles * avg_unit_price,  # cheapest_free, approximated as group average
+    )
+    new_group_revenue = np.maximum(new_group_revenue, 0.0)
+    ratio = np.where(eligible["group_revenue"] > 0, new_group_revenue / eligible["group_revenue"], 1.0)
+
+    idx = eligible.index
+    # capture implied VAT and FX rates from the ORIGINAL values before anything gets overwritten
+    vat_rate_implied = (df.loc[idx, "vat_gbp"] / df.loc[idx, "net_sales_gbp"].replace(0, np.nan)).fillna(0)
+    fx_rate_implied = (df.loc[idx, "net_sales_local"] / df.loc[idx, "net_sales_gbp"].replace(0, np.nan)).fillna(1)
+    original_full_price = df.loc[idx, "unit_price_gbp"] * df.loc[idx, "quantity"]
+
+    new_net_sales_gbp = np.round(df.loc[idx, "net_sales_gbp"].to_numpy() * ratio, 2)
+    df.loc[idx, "net_sales_gbp"] = new_net_sales_gbp
+    df.loc[idx, "promo_id"] = "MULTIBUY-" + eligible["multibuy_scheme_id"]
+
+    implied_discount = np.clip(np.round((1 - new_net_sales_gbp / original_full_price) * 100), 0, 90)
+    df.loc[idx, "discount_pct"] = implied_discount.astype(int)
+
+    margin_lo, margin_hi = _margin_bounds(df.loc[idx, "discount_pct"].to_numpy())
+    margin_rng = np.random.default_rng(RANDOM_SEED + 12)
+    target_margin = margin_rng.uniform(margin_lo, margin_hi)
+    df.loc[idx, "cost_gbp"] = np.round(new_net_sales_gbp * (1 - target_margin), 2)
+
+    df.loc[idx, "vat_gbp"] = np.round(new_net_sales_gbp * vat_rate_implied.to_numpy(), 2)
+    df.loc[idx, "gross_sales_gbp"] = df.loc[idx, "net_sales_gbp"] + df.loc[idx, "vat_gbp"]
+    df.loc[idx, "net_sales_local"] = np.round(new_net_sales_gbp * fx_rate_implied.to_numpy(), 2)
+
+    return df.drop(columns=["product_group", "month", "multibuy_scheme_id"])
+
+
 def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict) -> pd.DataFrame:
     """Single-unit returns on a sample of original sale rows, 3-21 days later.
     Each return gets its own invoice_id — a refund isn't part of the
@@ -372,6 +585,11 @@ def main() -> None:
 
     df = simulate(assortment, dim_date, promo_lookup, fx_lookup)
     print(f"simulated: {len(df):,} positive-quantity rows, {df['invoice_id'].nunique():,} invoices")
+
+    df = synthesize_multibuy_attachments(df, dim_product, assortment, fx_lookup)
+    df = apply_multibuy_promos(df, dim_product)
+    n_multibuy = (df["promo_id"].str.startswith("MULTIBUY-")).sum()
+    print(f"multi-buy adjusted: {n_multibuy:,} lines")
 
     df = add_returns(df, dim_date["full_date"].max(), fx_lookup)
     df = inject_messiness(df)

@@ -5,18 +5,21 @@ Daily footfall / transactions / conversion at (date, store) grain — dense,
 not sparse like fact_sales, since a door counter runs every day whether
 anyone buys anything or not.
 
-Reads the already-cleaned fact_sales to get each store's actual net units
-sold per day, then derives transaction count from it via a per-store-day
-"items per basket" draw. Doing it this way round — deriving transactions
-from units actually sold, rather than simulating footfall and sales as two
-unrelated random processes — is what keeps "items per transaction" and
-conversion rate landing somewhere sane instead of technically-computable
-nonsense.
+Rebuilt now that fact_sales has a real invoice_id: transactions is now
+COUNT(DISTINCT invoice_id) per store-day — an actual count, not the
+basket-size estimate the first version had to use before invoices existed.
+Footfall is still independently simulated (there's no real door-counter
+dataset to draw from), calibrated so footfall = transactions / a
+conversion rate drawn per store-day around a channel baseline.
 
-Footfall = transactions / conversion_rate, with conversion drawn per
-store-day around a channel baseline. Concessions convert lower — most of
-that footfall is there for the host store (garden centre, department
-store), not specifically for Areta.
+Conversion baseline is checked against real benchmarks, not guessed:
+multiple industry sources (Dor, TruRating, Traf-Sys) put in-store
+apparel/fashion conversion at roughly 15-25% typical, 30%+ for strong
+performers, with specialty retail formats lower, around 10-20%. Retail
+here sits centrally in the apparel band; concession sits toward the low
+end of specialty retail, reflecting that most of that footfall is there
+for the host store (garden centre, department store), not specifically
+for Areta.
 
 Depends on fact_sales already existing in data/warehouse — run this after
 clean/clean_fact_sales.py, not before.
@@ -27,7 +30,6 @@ Usage:
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -41,20 +43,10 @@ OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_footfall.parquet"
 
 RANDOM_SEED = 55
 
-BASKET_SIZE_MEAN = 1.9
-BASKET_SIZE_SHAPE = 4.0  # higher = tighter spread around the mean
-
-CONVERSION_BASELINE = {"Retail": 0.26, "Concession": 0.15}
-CONVERSION_DAILY_NOISE = 0.05
-
-
-def _store_seed(store_id: str) -> int:
-    # same hashing scheme as build_fact_sales.py's _store_seed — not used
-    # directly in this version (footfall is derived from actual units sold
-    # rather than an independent store-strength draw) but kept here since
-    # the next iteration of this file may want it for the "quiet day"
-    # baseline instead of a flat random range.
-    return int(hashlib.sha256(store_id.encode()).hexdigest(), 16) % (2**32)
+# in-store apparel conversion runs ~15-25% typical, specialty retail
+# ~10-20% — see module docstring for sources
+CONVERSION_BASELINE = {"Retail": 0.22, "Concession": 0.13}
+CONVERSION_DAILY_NOISE = 0.04
 
 
 def build() -> pd.DataFrame:
@@ -62,8 +54,16 @@ def build() -> pd.DataFrame:
     dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date"]].rename(columns={"full_date": "date"})
     sales = pd.read_parquet(FACT_SALES_PATH)
 
-    # net units per store per day — returns (negative quantity) don't
-    # generate footfall/transactions of their own, only original purchases do
+    # real invoice count per store per day — a return gets its own
+    # invoice_id (see build_fact_sales.py) but isn't a new purchase visit,
+    # so it's excluded from the conversion numerator
+    daily_transactions = (
+        sales[~sales["is_return"]]
+        .groupby(["store_id", "date"])["invoice_id"]
+        .nunique()
+        .rename("transactions")
+        .reset_index()
+    )
     daily_units = (
         sales[~sales["is_return"]]
         .groupby(["store_id", "date"])["quantity"]
@@ -74,25 +74,17 @@ def build() -> pd.DataFrame:
 
     # dense (store, date) grid — every store, every day
     grid = dim_store[["store_id", "channel"]].merge(dim_date, how="cross")
+    grid = grid.merge(daily_transactions, on=["store_id", "date"], how="left")
     grid = grid.merge(daily_units, on=["store_id", "date"], how="left")
+    grid["transactions"] = grid["transactions"].fillna(0).astype(int)
     grid["units_sold"] = grid["units_sold"].fillna(0).astype(int)
 
     rng = np.random.default_rng(RANDOM_SEED)
     n = len(grid)
 
-    basket_size = rng.gamma(BASKET_SIZE_SHAPE, BASKET_SIZE_MEAN / BASKET_SIZE_SHAPE, size=n)
-    basket_size = np.clip(basket_size, 1.0, None)
-
-    transactions = np.where(
-        grid["units_sold"] > 0,
-        np.maximum(1, np.round(grid["units_sold"] / basket_size)),
-        0,
-    ).astype(int)
-    grid["transactions"] = transactions
-
     conv_baseline = grid["channel"].map(CONVERSION_BASELINE).to_numpy()
     conv_noise = rng.normal(0, CONVERSION_DAILY_NOISE, size=n)
-    conversion_draw = np.clip(conv_baseline + conv_noise, 0.05, 0.55)
+    conversion_draw = np.clip(conv_baseline + conv_noise, 0.05, 0.50)
 
     footfall = np.where(
         grid["transactions"] > 0,
@@ -115,6 +107,8 @@ def main() -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUTPUT_PATH, index=False)
     print(f"fact_footfall: {len(df):,} rows -> {OUTPUT_PATH}")
+    print(f"blended conversion rate: {df['transactions'].sum() / df['footfall'].sum():.1%}")
+    print(f"items per transaction: {df['units_sold'].sum() / df['transactions'].sum():.2f}")
 
 
 if __name__ == "__main__":

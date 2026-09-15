@@ -44,6 +44,7 @@ Usage:
 
 from __future__ import annotations
 
+import datetime as dt
 import hashlib
 from pathlib import Path
 
@@ -58,6 +59,14 @@ FACT_SALES_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_sales.parquet"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_stock_snapshot.parquet"
 
 RANDOM_SEED = 99  # matches build_fact_sales.py's RANDOM_SEED — has to, to reconstruct the same SKU assortment
+
+# same cutoff concept as build_fact_sales.py — a stock snapshot can't
+# exist for a week that hasn't happened yet
+PRESENT_DATE_OVERRIDE: dt.date | None = None
+
+
+def present_date() -> dt.date:
+    return PRESENT_DATE_OVERRIDE or dt.date.today()
 ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}  # same as build_fact_sales.py
 
 # separate, smaller cap on distinct style/colour lines actually held in
@@ -137,9 +146,18 @@ def build() -> pd.DataFrame:
     print(f"assortment (store, style, colour): {n_pairs:,} pairs")
 
     weekly = weekly_sales(dim_product, dim_date)
+
+    # weeks computed from the FULL calendar first, THEN cut off by
+    # week_ending_date — not by filtering dim_date's rows before
+    # grouping, which would give an in-progress week a fake early
+    # "ending" date instead of correctly excluding it until it's
+    # actually finished
     weeks = week_ending_dates(dim_date)
+    cutoff = present_date()
+    weeks = weeks[weeks["week_ending_date"] <= cutoff].reset_index(drop=True)
+    weeks["week_idx"] = np.arange(len(weeks))
     n_weeks = len(weeks)
-    print(f"weeks: {n_weeks}")
+    print(f"weeks: {n_weeks} (cutoff: {cutoff})")
 
     # pair_idx lookup via merge (vectorised), not a python dict built by looping
     pair_lookup = assortment[["store_id", "style_code", "colour"]].copy()

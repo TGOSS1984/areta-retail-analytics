@@ -60,6 +60,16 @@ MARKETS_CONFIG_PATH = GEN_ROOT / "config" / "markets.yml"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "raw" / "fact_sales_raw.csv"
 
 RANDOM_SEED = 99
+
+# Actuals stop here — anything after this date hasn't "happened" yet in
+# the story, so no sales/footfall/stock data gets generated for it.
+# Defaults to real today() so a scheduled refresh naturally extends the
+# actuals frontier week by week; override for a fixed test run.
+PRESENT_DATE_OVERRIDE: dt.date | None = None
+
+
+def present_date() -> dt.date:
+    return PRESENT_DATE_OVERRIDE or dt.date.today()
 BASE_DEMAND_SCALAR = 0.12
 
 ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}
@@ -576,6 +586,10 @@ def inject_messiness(df: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     dim_store, dim_product, dim_promo, dim_date, fx_rate, markets = load_inputs()
+
+    cutoff = present_date()
+    dim_date = dim_date[dim_date["full_date"] <= cutoff]
+    print(f"actuals cutoff: {cutoff} ({len(dim_date):,} of the full calendar's days included)")
 
     assortment = build_assortment(dim_store, dim_product, markets)
     print(f"assortment: {len(assortment):,} (store, sku) pairs")

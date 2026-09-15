@@ -30,6 +30,7 @@ Usage:
 
 from __future__ import annotations
 
+import datetime as dt
 from pathlib import Path
 
 import numpy as np
@@ -43,6 +44,17 @@ OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_footfall.parquet"
 
 RANDOM_SEED = 55
 
+# same cutoff concept as build_fact_sales.py — footfall is an actual,
+# observed metric same as sales, so it can't exist for a date that
+# hasn't happened yet either. Kept independent rather than imported so
+# this script has no dependency on fact_sales.py as a module, only on
+# its output file.
+PRESENT_DATE_OVERRIDE: dt.date | None = None
+
+
+def present_date() -> dt.date:
+    return PRESENT_DATE_OVERRIDE or dt.date.today()
+
 # in-store apparel conversion runs ~15-25% typical, specialty retail
 # ~10-20% — see module docstring for sources
 CONVERSION_BASELINE = {"Retail": 0.22, "Concession": 0.13}
@@ -52,6 +64,7 @@ CONVERSION_DAILY_NOISE = 0.04
 def build() -> pd.DataFrame:
     dim_store = pd.read_parquet(DIM_STORE_PATH)
     dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date"]].rename(columns={"full_date": "date"})
+    dim_date = dim_date[dim_date["date"] <= present_date()]
     sales = pd.read_parquet(FACT_SALES_PATH)
 
     # real invoice count per store per day — a return gets its own

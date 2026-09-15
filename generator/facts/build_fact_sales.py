@@ -1,3 +1,42 @@
+"""
+fact_sales builder — RAW pass.
+
+Rebuilt after an audit against the original brief found three real gaps:
+no invoice/transaction grain, margin didn't hold up at deep discount
+depths, and VAT was missing entirely. All three are addressed here; two
+other known gaps (multi-buy promos, actuals stopping at a "present date"
+rather than running through the full future year) are deliberately NOT in
+this pass — they're separable enough to risk on their own rather than
+bundle into an already-large change.
+
+Grain is now (invoice_id, line_number), not (date, store, sku). How that
+works: the underlying demand simulation — which SKUs sell, how many, when,
+shaped by price/season/weekday/store-strength/promo — is UNCHANGED from
+the previous version and already proven. What's new is a lightweight
+invoice-assignment pass afterward: each store-day's sold lines get grouped
+into a variable number of transactions rather than staying as flat
+independent rows. Rebuilding the whole demand engine around baskets would
+have been a much bigger, riskier change for the same end result.
+
+Margin: previously derived from dim_product's fixed cost_price_gbp, which
+is mathematically impossible to reconcile with "68-74% margin at full
+price, 50-60% even in deep clearance" — a fixed cost can't produce both.
+Real retailers handle this by decoupling markdown margin from standard
+cost (a "markdown provision" concept); this version looks up a target
+margin RANGE per discount tier and samples within it, independent of
+dim_product's cost. dim_product's cost_price_gbp still exists and still
+means something — it's the standard/book cost fact_stock_snapshot uses
+for stock valuation — it's just no longer what drives realized sale
+margin here.
+
+VAT: net_sales_gbp is now genuinely ex-VAT, with vat_gbp and
+gross_sales_gbp (inc-VAT) added, using each market's vat_rate from
+markets.yml.
+
+Usage:
+    python build_fact_sales.py
+"""
+
 from __future__ import annotations
 
 import datetime as dt
@@ -27,11 +66,8 @@ ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}
 CHANNEL_DEMAND_MULT = {"Retail": 1.0, "Concession": 0.7}
 HOME_MARKET_MULT = 1.15
 
+# keyed to dim_date's Sunday=1..Saturday=7 numbering
 WEEKDAY_MULT = {1: 1.25, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.15, 7: 1.5}
-# keyed to dim_date's new Sunday=1..Saturday=7 numbering (was Monday=1..
-# Sunday=7 before the calendar rebuild) — same real pattern as before
-# (weekday baseline, Friday a bit up, Saturday busiest, Sunday moderate),
-# just remapped to the new day numbers rather than changed
 
 SEASON_PROFILE = {
     "Outerwear": {"peak_month": 11, "amplitude": 0.55},
@@ -47,6 +83,25 @@ PROMO_ELIGIBLE_SHARE = 0.65
 PROMO_UPLIFT_FACTOR = 1.2
 RETURN_RATE = 0.03
 
+# invoice grouping — average distinct product lines per transaction.
+# Matches the basket-size assumption fact_footfall used to estimate
+# transactions with before this existed; keeping the same number means
+# items-per-transaction doesn't jump around for no reason.
+AVG_BASKET_SIZE = 1.9
+
+# target GROSS margin range by discount tier — independent of dim_product's
+# cost_price_gbp on purpose, see module docstring
+MARGIN_TIER_BOUNDS = [0, 20, 30, 40, 50, 60]
+MARGIN_TIER_RANGES = [
+    (0.68, 0.74),  # 0% off (full price)
+    (0.64, 0.70),  # up to 20% off
+    (0.60, 0.68),  # up to 30% off
+    (0.56, 0.64),  # up to 40% off
+    (0.52, 0.60),  # up to 50% off
+    (0.50, 0.58),  # up to 60% off
+    (0.50, 0.56),  # 70%+ off — floors here rather than going negative
+]
+
 
 def _seasonal_mult(major_group: str, month: int) -> float:
     prof = SEASON_PROFILE[major_group]
@@ -55,6 +110,13 @@ def _seasonal_mult(major_group: str, month: int) -> float:
 
 def _store_seed(store_id: str) -> int:
     return int(hashlib.sha256(store_id.encode()).hexdigest(), 16) % (2**32)
+
+
+def _margin_bounds(discount_arr: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    conditions = [discount_arr <= b for b in MARGIN_TIER_BOUNDS]
+    lo = np.select(conditions, [r[0] for r in MARGIN_TIER_RANGES[:-1]], default=MARGIN_TIER_RANGES[-1][0])
+    hi = np.select(conditions, [r[1] for r in MARGIN_TIER_RANGES[:-1]], default=MARGIN_TIER_RANGES[-1][1])
+    return lo, hi
 
 
 def load_inputs():
@@ -89,8 +151,8 @@ def build_assortment(dim_store: pd.DataFrame, dim_product: pd.DataFrame, markets
     eligible = set(unique_skus[elig_rng.random(len(unique_skus)) < PROMO_ELIGIBLE_SHARE])
     assortment["promo_eligible"] = assortment["sku"].isin(eligible)
 
-    price_index = assortment["market_code"].map(lambda c: markets[c]["price_index"])
-    assortment["price_index"] = price_index
+    assortment["price_index"] = assortment["market_code"].map(lambda c: markets[c]["price_index"])
+    assortment["vat_rate"] = assortment["market_code"].map(lambda c: markets[c]["vat_rate"])
 
     base_rate = (
         BASE_DEMAND_SCALAR
@@ -131,15 +193,31 @@ def precompute_season_arrays(major_group_arr: np.ndarray) -> dict:
     return result
 
 
+def assign_invoices(store_id_arr: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+    """Group a day's sold lines into a variable number of invoices per store.
+
+    Same demand simulation as before decides WHAT sold — this only decides
+    how those lines cluster into transactions. Basket sizes come out
+    naturally uneven because the assignment is random within each store's
+    invoice count, not because basket size is drawn directly.
+    """
+    unique_stores, inverse, counts = np.unique(store_id_arr, return_inverse=True, return_counts=True)
+    n_invoices_per_store = np.maximum(1, np.round(counts / AVG_BASKET_SIZE)).astype(int)
+    invoice_num = (rng.random(len(store_id_arr)) * n_invoices_per_store[inverse]).astype(int)
+    return invoice_num
+
+
 def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_lookup) -> pd.DataFrame:
     rng = np.random.default_rng(RANDOM_SEED + 1)
+    invoice_rng = np.random.default_rng(RANDOM_SEED + 10)
+    margin_rng = np.random.default_rng(RANDOM_SEED + 11)
 
     store_id_arr = assortment["store_id"].to_numpy()
     sku_arr = assortment["sku"].to_numpy()
     currency_arr = assortment["currency"].to_numpy()
     base_price_arr = assortment["base_price_gbp"].to_numpy()
-    cost_price_arr = assortment["cost_price_gbp"].to_numpy()
     price_index_arr = assortment["price_index"].to_numpy()
+    vat_rate_arr = assortment["vat_rate"].to_numpy()
     base_rate_arr = assortment["base_rate"].to_numpy()
     promo_eligible_arr = assortment["promo_eligible"].to_numpy()
 
@@ -181,42 +259,60 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
         net_unit_price_gbp = unit_price_gbp * (1 - applied_discount / 100)
         q = qty[idx]
 
+        net_sales_gbp = np.round(net_unit_price_gbp * q, 2)
+
+        margin_lo, margin_hi = _margin_bounds(applied_discount)
+        target_margin = margin_rng.uniform(margin_lo, margin_hi)
+        cost_gbp = np.round(net_sales_gbp * (1 - target_margin), 2)
+
+        vat = vat_rate_arr[idx]
+        vat_gbp = np.round(net_sales_gbp * vat, 2)
+        gross_sales_gbp = np.round(net_sales_gbp + vat_gbp, 2)
+
+        this_store_ids = store_id_arr[idx]
+        invoice_num = assign_invoices(this_store_ids, invoice_rng)
+        date_str = d.strftime("%Y%m%d")
+        invoice_id = np.array(
+            [f"INV{date_str}-{s}-{n:03d}" for s, n in zip(this_store_ids, invoice_num)]
+        )
+
         day_frames.append(
             pd.DataFrame(
                 {
                     "date": d,
-                    "store_id": store_id_arr[idx],
+                    "store_id": this_store_ids,
+                    "invoice_id": invoice_id,
                     "sku": sku_arr[idx],
                     "quantity": q,
                     "promo_id": applied_promo,
                     "discount_pct": applied_discount,
                     "unit_price_gbp": np.round(unit_price_gbp, 2),
-                    "net_sales_gbp": np.round(net_unit_price_gbp * q, 2),
-                    "net_sales_local": np.round(net_unit_price_gbp * q * fx, 2),
+                    "net_sales_gbp": net_sales_gbp,
+                    "vat_gbp": vat_gbp,
+                    "gross_sales_gbp": gross_sales_gbp,
+                    "net_sales_local": np.round(net_sales_gbp * fx, 2),
                     "currency": cur,
-                    "cost_gbp": np.round(cost_price_arr[idx] * q, 2),
+                    "cost_gbp": cost_gbp,
                     "is_return": False,
                 }
             )
         )
 
-    return pd.concat(day_frames, ignore_index=True)
+    df = pd.concat(day_frames, ignore_index=True)
+    df["line_number"] = df.groupby(["invoice_id"]).cumcount() + 1
+    return df
 
 
 def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict) -> pd.DataFrame:
     """Single-unit returns on a sample of original sale rows, 3-21 days later.
-
-    Had a bug here on the first pass — was computing net_sales_local from a
-    ratio of two already-overwritten columns, which is backwards. Grabbing
-    unit cost before quantity gets overwritten, and recomputing local value
-    from the FX rate at the *return* date rather than reusing anything from
-    the original row.
-    """
+    Each return gets its own invoice_id — a refund isn't part of the
+    original purchase transaction."""
     rng = np.random.default_rng(RANDOM_SEED + 2)
     n_returns = int(len(df) * RETURN_RATE)
     sampled = df.sample(n=n_returns, random_state=RANDOM_SEED + 2).copy()
 
     unit_cost_gbp = sampled["cost_gbp"] / sampled["quantity"]
+    unit_vat_gbp = sampled["vat_gbp"] / sampled["quantity"]
 
     offsets = rng.integers(3, 22, size=len(sampled))
     sampled["date"] = [
@@ -228,10 +324,17 @@ def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict) -> pd.Data
         [fx_lookup.get((c, d.year, d.month), 1.0) for c, d in zip(sampled["currency"], sampled["date"])]
     )
 
+    date_str = [d.strftime("%Y%m%d") for d in sampled["date"]]
+    sampled["invoice_id"] = [
+        f"RTN{ds}-{s}-{i:05d}" for i, (ds, s) in enumerate(zip(date_str, sampled["store_id"]))
+    ]
+    sampled["line_number"] = 1
     sampled["quantity"] = -1
     sampled["promo_id"] = "PROMO0000"
     sampled["discount_pct"] = 0
     sampled["net_sales_gbp"] = -sampled["unit_price_gbp"]
+    sampled["vat_gbp"] = -unit_vat_gbp
+    sampled["gross_sales_gbp"] = sampled["net_sales_gbp"] + sampled["vat_gbp"]
     sampled["net_sales_local"] = -sampled["unit_price_gbp"] * fx
     sampled["cost_gbp"] = -unit_cost_gbp
     sampled["is_return"] = True
@@ -268,7 +371,7 @@ def main() -> None:
     fx_lookup = build_fx_lookup(fx_rate)
 
     df = simulate(assortment, dim_date, promo_lookup, fx_lookup)
-    print(f"simulated: {len(df):,} positive-quantity rows")
+    print(f"simulated: {len(df):,} positive-quantity rows, {df['invoice_id'].nunique():,} invoices")
 
     df = add_returns(df, dim_date["full_date"].max(), fx_lookup)
     df = inject_messiness(df)

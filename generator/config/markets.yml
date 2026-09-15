@@ -2,6 +2,7 @@
 # store_weight drives how many stores build_dim_store.py generates per market — must sum to 1.0.
 # channel_mix is the split between owned retail and third-party concession stores.
 # price_index is a multiplier applied to base GBP prices before FX, to reflect local pricing.
+# vat_rate is the standard VAT/sales-tax rate for that market — applied on top of net_sales_gbp in fact_sales.
 
 home_market: UK
 
@@ -13,6 +14,7 @@ markets:
     store_weight: 0.40
     channel_mix: { retail: 0.55, concession: 0.45 }
     price_index: 1.00
+    vat_rate: 0.20
 
   - code: DE
     name: Germany
@@ -21,6 +23,7 @@ markets:
     store_weight: 0.15
     channel_mix: { retail: 0.70, concession: 0.30 }
     price_index: 1.05
+    vat_rate: 0.19
 
   - code: PL
     name: Poland
@@ -29,6 +32,7 @@ markets:
     store_weight: 0.12
     channel_mix: { retail: 0.45, concession: 0.55 }
     price_index: 0.68
+    vat_rate: 0.23
 
   - code: IE
     name: Ireland
@@ -37,6 +41,7 @@ markets:
     store_weight: 0.09
     channel_mix: { retail: 0.60, concession: 0.40 }
     price_index: 1.02
+    vat_rate: 0.23
 
   - code: IT
     name: Italy
@@ -45,6 +50,7 @@ markets:
     store_weight: 0.07
     channel_mix: { retail: 0.80, concession: 0.20 }
     price_index: 1.08
+    vat_rate: 0.22
 
   - code: NL
     name: Netherlands
@@ -53,6 +59,7 @@ markets:
     store_weight: 0.05
     channel_mix: { retail: 0.75, concession: 0.25 }
     price_index: 1.06
+    vat_rate: 0.21
 
   - code: CZ
     name: Czechia
@@ -61,6 +68,7 @@ markets:
     store_weight: 0.04
     channel_mix: { retail: 0.40, concession: 0.60 }
     price_index: 0.72
+    vat_rate: 0.21
 
   - code: SK
     name: Slovakia
@@ -69,6 +77,7 @@ markets:
     store_weight: 0.03
     channel_mix: { retail: 0.35, concession: 0.65 }
     price_index: 0.70
+    vat_rate: 0.20
 
   - code: FR
     name: France
@@ -77,6 +86,7 @@ markets:
     store_weight: 0.02
     channel_mix: { retail: 0.50, concession: 0.50 }
     price_index: 1.10
+    vat_rate: 0.20
 
   - code: LV
     name: Latvia
@@ -85,6 +95,7 @@ markets:
     store_weight: 0.015
     channel_mix: { retail: 0.40, concession: 0.60 }
     price_index: 0.75
+    vat_rate: 0.21
 
   - code: LT
     name: Lithuania
@@ -93,3 +104,4 @@ markets:
     store_weight: 0.015
     channel_mix: { retail: 0.40, concession: 0.60 }
     price_index: 0.74
+    vat_rate: 0.21

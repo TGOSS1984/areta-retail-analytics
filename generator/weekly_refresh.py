@@ -41,6 +41,7 @@ GEN_ROOT = Path(__file__).resolve().parent
 
 STEPS = [
     ("dimensions/build_dim_date.py", "dim_date"),
+    ("dimensions/build_dim_period.py", "dim_period"),
     ("dimensions/build_dim_store.py", "dim_store"),
     ("dimensions/build_dim_product.py", "dim_product"),
     ("dimensions/build_dim_currency.py", "dim_currency + fx_rate_monthly"),

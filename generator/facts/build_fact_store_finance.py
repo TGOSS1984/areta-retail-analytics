@@ -42,8 +42,8 @@ OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_store_finance.parquet"
 
 RANDOM_SEED = 123
 
-RENT_RATIO_RANGE = (0.05, 0.19)
-STAFF_RATIO_RANGE = (0.12, 0.22)
+RENT_RATIO_RANGE = (0.07, 0.20)
+STAFF_RATIO_RANGE = (0.15, 0.25)
 UTILITIES_RATIO_RANGE = (0.015, 0.035)
 MARKETING_RATIO_RANGE = (0.012, 0.022)   # variable, applied to actual period sales
 HEAD_OFFICE_RATIO_RANGE = (0.04, 0.06)   # variable, applied to actual period sales

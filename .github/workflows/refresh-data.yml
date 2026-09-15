@@ -1,0 +1,47 @@
+name: Weekly data refresh
+
+# Runs weekly_refresh.py on a schedule so the actuals frontier genuinely
+# advances week to week (fact_sales/fact_footfall/fact_stock_snapshot all
+# stop at date.today() — see PRESENT_DATE_OVERRIDE in each of those
+# scripts), then commits whatever changed in data/warehouse straight back
+# to the repo. data/raw and data/staging are gitignored, so those never
+# show up here regardless of how the run went.
+#
+# workflow_dispatch is there so this can be triggered manually from the
+# Actions tab too, rather than only ever running on the schedule — useful
+# for testing this workflow itself, or forcing a refresh outside the
+# normal cadence.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # every Monday, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write  # needed to commit the refreshed data back to the repo
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r generator/requirements.txt
+
+      - name: Run weekly refresh
+        run: python generator/weekly_refresh.py
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/warehouse data/exports
+          git diff --staged --quiet || git commit -m "chore: automated weekly data refresh $(date -u +%Y-%m-%d)"
+          git push

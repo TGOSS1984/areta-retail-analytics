@@ -8,11 +8,19 @@ schedule, and what "just rebuild everything" means locally too.
 Order matters here, not arbitrary:
   1. dimensions (date, store, product, currency, promo) — nothing else can
      run without these
-  2. fact_sales raw pass, then its clean step — fact_footfall, fact_targets,
-     and fact_stock_snapshot all read the CLEANED fact_sales, not the raw one
-  3. fact_footfall, fact_targets, fact_stock_snapshot — order between these
-     three doesn't matter, they're independent of each other, just all
-     downstream of fact_sales
+  2. fact_sales raw pass, then its clean step — fact_footfall,
+     fact_stock_snapshot, fact_targets, and fact_store_finance all read
+     the CLEANED fact_sales, not the raw one
+  3. fact_footfall, fact_stock_snapshot, fact_targets, fact_store_finance
+     — order between these four doesn't matter, they're independent of
+     each other, just all downstream of fact_sales
+
+What "refresh" actually does now: fact_sales, fact_footfall, and
+fact_stock_snapshot all stop generating actuals at date.today() (see
+PRESENT_DATE_OVERRIDE in each of those scripts) — so running this again
+next week genuinely extends the actuals frontier by however many days
+have passed, rather than just reproducing the same fixed dataset. Targets
+still span the full business year regardless, via fact_targets.
 
 Each step runs as its own subprocess rather than an import, mainly so this
 behaves the same locally as it will from CI — one failing step stops the
@@ -40,8 +48,9 @@ STEPS = [
     ("facts/build_fact_sales.py", "fact_sales (raw)"),
     ("clean/clean_fact_sales.py", "fact_sales (staging + warehouse)"),
     ("facts/build_fact_footfall.py", "fact_footfall"),
-    ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_stock.py", "fact_stock_snapshot"),
+    ("facts/build_fact_targets.py", "fact_targets"),
+    ("facts/build_fact_store_finance.py", "fact_store_finance"),
 ]
 
 

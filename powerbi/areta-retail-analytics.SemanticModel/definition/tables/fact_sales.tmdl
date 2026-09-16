@@ -1,0 +1,160 @@
+table fact_sales
+	lineageTag: ccce2880-e748-4240-9429-05ffb06b0406
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0c1ab5ee-4867-4903-8045-5b86a29cd32d
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column store_id
+		dataType: string
+		lineageTag: 46363be8-4cda-4cba-9188-6db83e6fb290
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoice_id
+		dataType: string
+		lineageTag: 3e28d0d1-cab3-4fff-8b1e-12e2f322a210
+		summarizeBy: none
+		sourceColumn: invoice_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sku
+		dataType: string
+		lineageTag: d4ea1db7-ed83-4631-a1b5-7470b872289d
+		summarizeBy: none
+		sourceColumn: sku
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: eb25f478-ce49-4596-b295-e2054aaec083
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column promo_id
+		dataType: string
+		lineageTag: 17a61c9b-35c3-4520-b7b5-f4d0329c45f0
+		summarizeBy: none
+		sourceColumn: promo_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column discount_pct
+		dataType: int64
+		formatString: 0
+		lineageTag: bf500bfe-c544-4176-bbc7-f86fec478ff1
+		summarizeBy: sum
+		sourceColumn: discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit_price_gbp
+		dataType: double
+		lineageTag: b1f7380f-4719-4150-a43b-4294e55a4668
+		summarizeBy: sum
+		sourceColumn: unit_price_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column net_sales_gbp
+		dataType: double
+		lineageTag: b9b50741-8c72-49d8-b605-da371717a77d
+		summarizeBy: sum
+		sourceColumn: net_sales_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vat_gbp
+		dataType: double
+		lineageTag: 16fc8941-4f9e-4d67-b401-930c573b12cc
+		summarizeBy: sum
+		sourceColumn: vat_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gross_sales_gbp
+		dataType: double
+		lineageTag: 91d4d689-c347-4992-8db8-924cc3b60422
+		summarizeBy: sum
+		sourceColumn: gross_sales_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column net_sales_local
+		dataType: double
+		lineageTag: b555f3c8-57d9-44d9-a8c2-3f7fb0e27e5f
+		summarizeBy: sum
+		sourceColumn: net_sales_local
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column currency
+		dataType: string
+		lineageTag: 348526d9-9bfb-4dd1-9483-cbcca945f6d3
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_gbp
+		dataType: double
+		lineageTag: e703e29c-a897-4ae7-8dc9-286cd6e641bd
+		summarizeBy: sum
+		sourceColumn: cost_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_return
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 5e6b0e7d-cbb3-449d-be15-b6cf07c06752
+		summarizeBy: none
+		sourceColumn: is_return
+
+		annotation SummarizationSetBy = Automatic
+
+	column line_number
+		dataType: int64
+		formatString: 0
+		lineageTag: fd404889-1738-43f3-a831-ddbe5e0dff0b
+		summarizeBy: sum
+		sourceColumn: line_number
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_sales = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_sales.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

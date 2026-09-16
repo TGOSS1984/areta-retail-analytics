@@ -1,0 +1,109 @@
+table fact_stock_snapshot
+	lineageTag: 8239be0c-cd4d-423b-b258-d6e9493c8c6b
+
+	column week_ending_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 97d52b52-07fb-47e6-b991-e45e5effe426
+		summarizeBy: none
+		sourceColumn: week_ending_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column store_id
+		dataType: string
+		lineageTag: 2eb4a35f-9d0e-482f-b2fe-ed81c6b3bee6
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column style_code
+		dataType: string
+		lineageTag: 3ef9785b-187a-4cf6-b08e-9c91301e8dfb
+		summarizeBy: none
+		sourceColumn: style_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column colour
+		dataType: string
+		lineageTag: 9b7acdc2-3520-4bdf-a8e6-a60c4c451f23
+		summarizeBy: none
+		sourceColumn: colour
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_code
+		dataType: string
+		lineageTag: 8da69d75-40bd-4fc5-8c65-1a0be7d2a409
+		summarizeBy: none
+		sourceColumn: brand_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column division
+		dataType: string
+		lineageTag: 93270cf5-deba-4579-9397-685af11beb07
+		summarizeBy: none
+		sourceColumn: division
+
+		annotation SummarizationSetBy = Automatic
+
+	column major_product_group
+		dataType: string
+		lineageTag: c1e95015-f675-4169-997c-d57de5e42f00
+		summarizeBy: none
+		sourceColumn: major_product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_group
+		dataType: string
+		lineageTag: 2f1499ad-a9f1-4d53-9702-1254731076fc
+		summarizeBy: none
+		sourceColumn: product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column stock_units
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b2ca850-97a3-447f-8678-51dbbb34f17b
+		summarizeBy: sum
+		sourceColumn: stock_units
+
+		annotation SummarizationSetBy = Automatic
+
+	column stock_value_cost_gbp
+		dataType: double
+		lineageTag: 1ae39691-0962-441e-b14b-326ed7f2c2f9
+		summarizeBy: sum
+		sourceColumn: stock_value_cost_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column stock_value_retail_gbp
+		dataType: double
+		lineageTag: f69c54e1-c42e-4645-a94e-09aa50e5da37
+		summarizeBy: sum
+		sourceColumn: stock_value_retail_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_stock_snapshot = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_stock_snapshot.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

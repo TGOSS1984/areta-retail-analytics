@@ -1,0 +1,69 @@
+table dim_promo
+	lineageTag: 06796264-7885-4fa1-a881-8472838282a0
+
+	column promo_id
+		dataType: string
+		lineageTag: 38dce3f6-163a-491c-964b-f9644e2381a1
+		summarizeBy: none
+		sourceColumn: promo_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column promo_name
+		dataType: string
+		lineageTag: 038cc933-25e3-42b7-8d44-737c11687a9c
+		summarizeBy: none
+		sourceColumn: promo_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column promo_type
+		dataType: string
+		lineageTag: 577f1cf4-5f85-47d6-8242-c710d6498ed8
+		summarizeBy: none
+		sourceColumn: promo_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2fccf995-332a-447e-957e-0e1055a7f65b
+		summarizeBy: none
+		sourceColumn: start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: db672025-6f3f-4c4e-b173-b4c31f2a8d10
+		summarizeBy: none
+		sourceColumn: end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column discount_pct
+		dataType: double
+		lineageTag: cba0e1fb-9007-425f-8b80-0f13c4517239
+		summarizeBy: none
+		sourceColumn: discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_promo = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_promo.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

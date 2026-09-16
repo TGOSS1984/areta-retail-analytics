@@ -1,0 +1,69 @@
+table fact_footfall
+	lineageTag: 0a1f02ad-fb55-4f6e-b8a1-c31be2d00ec5
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 86250c76-2be0-4fe0-ac54-f7ed646420fe
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column store_id
+		dataType: string
+		lineageTag: 347bd80e-1337-4262-8e82-f3802da36957
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column footfall
+		dataType: int64
+		formatString: 0
+		lineageTag: a6ee0b54-2fbc-44ce-bdd0-f8c62a451063
+		summarizeBy: sum
+		sourceColumn: footfall
+
+		annotation SummarizationSetBy = Automatic
+
+	column transactions
+		dataType: int64
+		formatString: 0
+		lineageTag: 4bd4f8a8-25a6-4d8c-95b2-22cb58db5632
+		summarizeBy: sum
+		sourceColumn: transactions
+
+		annotation SummarizationSetBy = Automatic
+
+	column units_sold
+		dataType: int64
+		formatString: 0
+		lineageTag: 97ef6ba9-a074-4468-b949-3c3a7349d8e7
+		summarizeBy: sum
+		sourceColumn: units_sold
+
+		annotation SummarizationSetBy = Automatic
+
+	column conversion_rate
+		dataType: double
+		lineageTag: 9affc9bf-d2df-4e05-9f51-db8508214ae4
+		summarizeBy: sum
+		sourceColumn: conversion_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_footfall = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_footfall.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

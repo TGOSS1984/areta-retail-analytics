@@ -1,0 +1,94 @@
+table dim_store
+	lineageTag: c0b9885f-201a-4ba3-806e-e7ca1ad0bbfa
+
+	column store_id
+		dataType: string
+		lineageTag: 5af24611-fa96-4e8b-9820-21ca6b8d7dbb
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_name
+		dataType: string
+		lineageTag: 6e9abde1-0b4e-4745-8892-85c168b88759
+		summarizeBy: none
+		sourceColumn: store_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: fd3d7d09-8895-407f-8cda-7257253f1702
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_type
+		dataType: string
+		lineageTag: 56f92036-f4f9-4141-b5a0-1d57b150873a
+		summarizeBy: none
+		sourceColumn: store_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column market_code
+		dataType: string
+		lineageTag: 389b7084-5763-49c1-a274-4d59873583c3
+		summarizeBy: none
+		sourceColumn: market_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column market_name
+		dataType: string
+		lineageTag: 0daadc8b-e232-4366-b399-ee1c1352943f
+		summarizeBy: none
+		sourceColumn: market_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: f79973f1-cc88-48c2-8af4-3dc209076e38
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 219cea50-f005-4ed0-97cc-aaa288482200
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency
+		dataType: string
+		lineageTag: 42d67849-bb6e-4230-a67f-7c38a4dcbda7
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_home_market
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cf267e9c-fc30-4d42-adfe-b80a7532f113
+		summarizeBy: none
+		sourceColumn: is_home_market
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_store = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_store.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

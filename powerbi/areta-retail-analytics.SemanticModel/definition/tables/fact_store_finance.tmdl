@@ -1,0 +1,168 @@
+table fact_store_finance
+	lineageTag: ad649f07-56ab-4a9b-8642-fa17a5de633c
+
+	column store_id
+		dataType: string
+		lineageTag: 395af86a-e711-468f-85da-64db2dc9fb6e
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 29a2a4e5-0f80-4370-a982-ad19d320b381
+		summarizeBy: sum
+		sourceColumn: business_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 80cff02c-0c19-483d-85de-7cc2ad45248b
+		summarizeBy: sum
+		sourceColumn: business_period_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 906a34f4-052c-462b-8e3c-08a485ccaa1a
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column net_sales_gbp
+		dataType: double
+		lineageTag: 33795aa8-bd28-465f-bb88-1d5b1b420dfd
+		summarizeBy: sum
+		sourceColumn: net_sales_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cogs_gbp
+		dataType: double
+		lineageTag: 522d766e-d3d7-40a2-a6cd-682fa5d6f444
+		summarizeBy: sum
+		sourceColumn: cogs_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gross_profit_gbp
+		dataType: double
+		lineageTag: 87f95c45-e1a2-4bae-a5cd-2fef899d3a63
+		summarizeBy: sum
+		sourceColumn: gross_profit_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column rent_gbp
+		dataType: double
+		lineageTag: d7ffddf2-0d77-43d0-8c02-efc09c271932
+		summarizeBy: sum
+		sourceColumn: rent_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column staff_gbp
+		dataType: double
+		lineageTag: 96272d45-4dd8-4aab-b3a5-a50c4db20629
+		summarizeBy: sum
+		sourceColumn: staff_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column utilities_gbp
+		dataType: double
+		lineageTag: bbda6e8a-1b64-44c8-b49e-60487d28a6e6
+		summarizeBy: sum
+		sourceColumn: utilities_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column marketing_gbp
+		dataType: double
+		lineageTag: ddbc00fc-7b9a-4c6d-a528-e5d5d0073df6
+		summarizeBy: sum
+		sourceColumn: marketing_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gross_contribution_gbp
+		dataType: double
+		lineageTag: eedd4329-c8b0-4b22-8ef4-6d4ce7a0aa88
+		summarizeBy: sum
+		sourceColumn: gross_contribution_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gross_contribution_pct
+		dataType: double
+		lineageTag: 0c4aa0fa-9050-45de-8c98-eedc6785d181
+		summarizeBy: sum
+		sourceColumn: gross_contribution_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column head_office_gbp
+		dataType: double
+		lineageTag: 7f556436-3501-43eb-b012-2b7fe481da60
+		summarizeBy: sum
+		sourceColumn: head_office_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column net_contribution_gbp
+		dataType: double
+		lineageTag: 8726c4e3-c40e-4a88-85bf-260f6c304f02
+		summarizeBy: sum
+		sourceColumn: net_contribution_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column net_contribution_pct
+		dataType: double
+		lineageTag: ab1f44fe-ee85-4e26-b111-0f0ed78c7292
+		summarizeBy: sum
+		sourceColumn: net_contribution_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_store_finance = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_store_finance.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

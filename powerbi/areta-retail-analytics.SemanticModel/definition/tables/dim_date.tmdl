@@ -1,0 +1,226 @@
+table dim_date
+	lineageTag: bad117fa-83bb-47ba-a4c8-006645ca8c7f
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 98b6087e-b4eb-4f8d-8c38-1abd71941c55
+		summarizeBy: sum
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column full_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: bec18ba8-0dc4-4269-a3b4-7d17753d3529
+		summarizeBy: none
+		sourceColumn: full_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_name
+		dataType: string
+		lineageTag: f6fd5ad4-4405-47c3-9b5e-a314684d4bcc
+		summarizeBy: none
+		sourceColumn: day_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 269d2498-aec8-4190-9a52-008a572fdd68
+		summarizeBy: sum
+		sourceColumn: day_of_week_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_weekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 436582b6-664e-4b82-9c2c-2005d99b6361
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_month
+		dataType: int64
+		formatString: 0
+		lineageTag: dce0ae33-9166-41c0-9c58-bf244eb26c8f
+		summarizeBy: sum
+		sourceColumn: day_of_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: adaa6f0e-5e8c-439b-abbd-6ad2ca321e39
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: f46ea928-20eb-4bcb-9395-6faa7fbcfe17
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column calendar_quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fef90ac-901c-415a-a510-77230f8ab4b2
+		summarizeBy: sum
+		sourceColumn: calendar_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column calendar_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 663e3c4d-36e1-4145-803a-04be43421040
+		summarizeBy: sum
+		sourceColumn: calendar_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column calendar_week_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 9940f2c8-b1a1-4a6f-a3c1-f1b43e13e3f1
+		summarizeBy: sum
+		sourceColumn: calendar_week_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column season
+		dataType: string
+		lineageTag: a9c77fe3-af09-409c-98db-bc55b8994a26
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = Automatic
+
+	column season_label
+		dataType: string
+		lineageTag: 73ac6998-a71c-4304-af04-51ebeaa8078a
+		summarizeBy: none
+		sourceColumn: season_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 32bfc208-75ea-48b0-93c3-7679c295f079
+		summarizeBy: sum
+		sourceColumn: business_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_week_number
+		dataType: int64
+		formatString: 0
+		lineageTag: f8d83e30-084b-4675-8c87-cfb3d6066e2d
+		summarizeBy: sum
+		sourceColumn: business_week_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_number
+		dataType: int64
+		formatString: 0
+		lineageTag: eb5fd35b-1c20-4685-9b72-ff111cfef3b8
+		summarizeBy: sum
+		sourceColumn: business_period_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_label
+		dataType: string
+		lineageTag: b54edc06-c2a3-4e4c-8c5e-658abe940aed
+		summarizeBy: none
+		sourceColumn: business_period_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 850c735c-a2a4-4f6e-8868-29e99d06326e
+		summarizeBy: sum
+		sourceColumn: business_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 12aaae1c-8378-44ae-9259-93709196328f
+		summarizeBy: sum
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_business_year_start
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c566a1c8-05ab-409e-8184-4c36a995d401
+		summarizeBy: none
+		sourceColumn: is_business_year_start
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_new_years_day
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 62182769-49da-4104-8918-d66b6e1e2294
+		summarizeBy: none
+		sourceColumn: is_new_years_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_christmas_day
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: a7fe3bd1-2db3-4665-a397-12931e5cf2c9
+		summarizeBy: none
+		sourceColumn: is_christmas_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_boxing_day
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: fa049ea7-20ca-44cb-916b-df462a8fd15e
+		summarizeBy: none
+		sourceColumn: is_boxing_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_black_friday
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c5b71637-955a-4107-a3a0-2816c1deb33d
+		summarizeBy: none
+		sourceColumn: is_black_friday
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_date.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

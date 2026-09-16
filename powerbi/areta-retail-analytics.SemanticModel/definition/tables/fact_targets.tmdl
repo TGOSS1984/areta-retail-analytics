@@ -1,0 +1,58 @@
+table fact_targets
+	lineageTag: 9e876f8d-e369-44ed-9f8d-20225e05a20c
+
+	column store_id
+		dataType: string
+		lineageTag: 42226a5d-0714-4f5e-9119-86b5fb285809
+		summarizeBy: none
+		sourceColumn: store_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 299465af-186e-42c2-84a2-8be0edeb43eb
+		summarizeBy: sum
+		sourceColumn: business_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_number
+		dataType: int64
+		formatString: 0
+		lineageTag: b2fa3823-321a-44b0-a23f-a0977195dad1
+		summarizeBy: sum
+		sourceColumn: business_period_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		formatString: 0
+		lineageTag: b9e084e2-9ab6-4022-a7ab-7ef4c0ee2bdd
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_net_sales_gbp
+		dataType: double
+		lineageTag: 1de27905-b288-4c79-8a8e-17a67541fccd
+		summarizeBy: sum
+		sourceColumn: target_net_sales_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_targets = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_targets.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

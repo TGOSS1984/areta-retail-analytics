@@ -7,7 +7,164 @@
         "x": 0,
         "y": 0
       },
-      "nodes": [],
+      "nodes": [
+        {
+          "location": {
+            "x": 0,
+            "y": 0
+          },
+          "nodeIndex": "dim_date",
+          "nodeLineageTag": "bad117fa-83bb-47ba-a4c8-006645ca8c7f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 26
+          },
+          "nodeIndex": "dim_period",
+          "nodeLineageTag": "d48ae802-f1e9-47f6-a933-a36e79c84829",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 568,
+            "y": 0
+          },
+          "nodeIndex": "dim_store",
+          "nodeLineageTag": "c0b9885f-201a-4ba3-806e-e7ca1ad0bbfa",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 852,
+            "y": 0
+          },
+          "nodeIndex": "dim_product",
+          "nodeLineageTag": "70764168-160e-4843-a8a3-9080d4fa314a",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1136,
+            "y": 38
+          },
+          "nodeIndex": "dim_promo",
+          "nodeLineageTag": "06796264-7885-4fa1-a881-8472838282a0",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1420,
+            "y": 50
+          },
+          "nodeIndex": "dim_currency",
+          "nodeLineageTag": "a085256c-b2f6-489b-a792-acd22cc89c49",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1704,
+            "y": 0
+          },
+          "nodeIndex": "fact_sales",
+          "nodeLineageTag": "ccce2880-e748-4240-9429-05ffb06b0406",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1988,
+            "y": 38
+          },
+          "nodeIndex": "fact_footfall",
+          "nodeLineageTag": "0a1f02ad-fb55-4f6e-b8a1-c31be2d00ec5",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2272,
+            "y": 0
+          },
+          "nodeIndex": "fact_stock_snapshot",
+          "nodeLineageTag": "8239be0c-cd4d-423b-b258-d6e9493c8c6b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2556,
+            "y": 50
+          },
+          "nodeIndex": "fact_targets",
+          "nodeLineageTag": "9e876f8d-e369-44ed-9f8d-20225e05a20c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2840,
+            "y": 0
+          },
+          "nodeIndex": "fact_store_finance",
+          "nodeLineageTag": "ad649f07-56ab-4a9b-8642-fa17a5de633c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3124,
+            "y": 74
+          },
+          "nodeIndex": "fx_rate_monthly",
+          "nodeLineageTag": "a0815869-d969-44ad-934c-433db59fec4c",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
       "name": "All tables",
       "zoomValue": 100,
       "pinKeyFieldsToTop": false,

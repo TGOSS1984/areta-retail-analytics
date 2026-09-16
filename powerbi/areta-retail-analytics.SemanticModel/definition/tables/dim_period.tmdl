@@ -1,0 +1,79 @@
+table dim_period
+	lineageTag: d48ae802-f1e9-47f6-a933-a36e79c84829
+
+	column period_key
+		dataType: int64
+		formatString: 0
+		lineageTag: d5e7c191-ac05-498e-b7a4-9fc664e43c88
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 6b3ba331-8bf7-48ac-8ddc-5dc1eab4c18a
+		summarizeBy: sum
+		sourceColumn: business_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 237af89d-9868-4650-ae4f-6799c8c26b94
+		summarizeBy: sum
+		sourceColumn: business_period_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_period_label
+		dataType: string
+		lineageTag: cbd4c23d-82ce-47e5-bdfa-285f7cdeda4a
+		summarizeBy: none
+		sourceColumn: business_period_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 71cc86f4-44ad-43a7-a457-544d0555db34
+		summarizeBy: sum
+		sourceColumn: business_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ed193376-be72-4fca-903f-8cb30e297b0d
+		summarizeBy: none
+		sourceColumn: period_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column period_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ad81753f-25da-455d-9b06-4e9cf37254db
+		summarizeBy: none
+		sourceColumn: period_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition dim_period = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_period.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

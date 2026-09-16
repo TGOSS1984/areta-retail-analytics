@@ -1,0 +1,40 @@
+table fx_rate_monthly
+	lineageTag: a0815869-d969-44ad-934c-433db59fec4c
+
+	column month_start
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c4f62824-c040-4b77-a61d-8fee22623bfd
+		summarizeBy: none
+		sourceColumn: month_start
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: 712e9531-1861-40d4-8582-ab3f3653a6ca
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column gbp_rate
+		dataType: double
+		lineageTag: e1d88f96-9cc0-4913-b2b3-ef52cb9e58e8
+		summarizeBy: sum
+		sourceColumn: gbp_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fx_rate_monthly = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fx_rate_monthly.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

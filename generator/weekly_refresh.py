@@ -52,6 +52,7 @@ STEPS = [
     ("facts/build_fact_stock.py", "fact_stock_snapshot"),
     ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_store_finance.py", "fact_store_finance"),
+    ("export_web_data.py", "web exports (data/exports)"),
 ]
 
 

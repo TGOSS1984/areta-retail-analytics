@@ -1,17 +1,25 @@
 import Image from "next/image";
-import { IconCoin, IconShoppingCart, IconPercentage, IconDeviceDesktop, IconBuildingStore } from "@tabler/icons-react";
+import { IconCoin, IconShoppingCart, IconPercentage, IconBuildingStore, IconTag } from "@tabler/icons-react";
 import { KPICard } from "@/components/ui/KPICard";
 
-// Placeholder figures until the DuckDB-wasm data wiring lands — shaped
-// like the real KPI set (see docs/dax-measures.md), not invented from
-// scratch, so swapping in live numbers later is a data change, not a
-// layout change.
+// Real figures, computed from the actual warehouse data (business-year
+// periods 1-7 of BY2026 vs the same periods of BY2025 — like-for-like,
+// not partial-year vs full-year, which gave a misleading -48% on the
+// first pass before the comparison was fixed). Still not LIVE — this
+// updates when someone reruns the query, not on page load, since the
+// DuckDB-wasm wiring isn't built yet. Swapping in live numbers later is
+// a data-source change, not a layout change.
+//
+// Online/Store split from the original mockup isn't here — there's no
+// online channel in the data model (deliberately parked, not an
+// oversight). Retail vs Concession are the two channels that actually
+// exist.
 const KPIS = [
-  { label: "Total sales", value: "£24.92M", deltaLabel: "+15.9%", trend: "up" as const, icon: <IconCoin size={14} /> },
-  { label: "Total units", value: "382.4K", deltaLabel: "+12.4%", trend: "up" as const, icon: <IconShoppingCart size={14} /> },
-  { label: "Gross margin", value: "54.8%", deltaLabel: "+2.6pp", trend: "up" as const, icon: <IconPercentage size={14} /> },
-  { label: "Online sales", value: "£6.21M", deltaLabel: "+28.7%", trend: "up" as const, icon: <IconDeviceDesktop size={14} /> },
-  { label: "Store sales", value: "£18.71M", deltaLabel: "+12.1%", trend: "up" as const, icon: <IconBuildingStore size={14} /> },
+  { label: "Total sales", value: "£14.48M", deltaLabel: "-6.4%", trend: "down" as const, icon: <IconCoin size={14} /> },
+  { label: "Total units", value: "413.3K", deltaLabel: "-5.4%", trend: "down" as const, icon: <IconShoppingCart size={14} /> },
+  { label: "Gross margin", value: "69.8%", deltaLabel: "-0.1pp", trend: "down" as const, icon: <IconPercentage size={14} /> },
+  { label: "Retail sales", value: "£12.40M", deltaLabel: "-6.5%", trend: "down" as const, icon: <IconBuildingStore size={14} /> },
+  { label: "Concession sales", value: "£2.08M", deltaLabel: "-5.6%", trend: "down" as const, icon: <IconTag size={14} /> },
 ];
 
 export function Hero() {
@@ -37,7 +45,7 @@ export function Hero() {
             </h1>
           </div>
           <div className="flex items-center gap-3 text-xs text-cloud">
-            <span className="rounded-full border border-white/20 px-3 py-1.5">Last 12 months</span>
+            <span className="rounded-full border border-white/20 px-3 py-1.5">Periods 1-7, BY2026</span>
             <span className="rounded-full border border-white/20 px-3 py-1.5">All markets</span>
           </div>
         </div>

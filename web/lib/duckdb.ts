@@ -25,7 +25,13 @@
 
 import * as duckdb from "@duckdb/duckdb-wasm";
 
-const TABLES = ["dim_date", "dim_store", "fact_sales_daily"] as const;
+const TABLES = [
+  "dim_date",
+  "dim_store",
+  "fact_sales_daily",
+  "dim_style_colour",
+  "fact_sales_style_colour_daily",
+] as const;
 
 let dbPromise: Promise<duckdb.AsyncDuckDB> | null = null;
 
@@ -57,7 +63,7 @@ async function initDuckDB(): Promise<duckdb.AsyncDuckDB> {
   // the bytes with a plain browser fetch() first sidesteps that code
   // path entirely — nothing DuckDB-specific about a fetch() call, so
   // nothing DuckDB-specific to go wrong. These files are small enough
-  // (14KB-6MB) that lazy HTTP range-requests were never buying anything
+  // (14KB-8MB) that lazy HTTP range-requests were never buying anything
   // real anyway; the app needs all of it queryable regardless.
   const conn = await db.connect();
   try {

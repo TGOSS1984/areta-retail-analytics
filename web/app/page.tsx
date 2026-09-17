@@ -4,6 +4,7 @@ import { SalesTrendChart } from "@/components/charts/SalesTrendChart";
 import { CategoryMixChart } from "@/components/charts/CategoryMixChart";
 import { ChannelMixChart } from "@/components/charts/ChannelMixChart";
 import { RegionalMapChart } from "@/components/charts/RegionalMapChart";
+import { TopProductsChart } from "@/components/charts/TopProductsChart";
 
 export default function OverviewPage() {
   return (
@@ -29,14 +30,7 @@ export default function OverviewPage() {
             <RegionalMapChart />
           </div>
 
-          {/* Top products still needs groundwork that doesn't exist yet:
-              fact_sales_daily only goes down to division, not style —
-              a product-level export, and the product-image sourcing
-              question, both need their own dedicated pass. */}
-          <div className="flex items-center justify-center rounded-xl border border-dashed border-rock-slate/30 p-8 text-center text-sm text-stone">
-            Top products — needs a product-level export and the image
-            sourcing question resolved first.
-          </div>
+          <TopProductsChart />
         </div>
       </main>
     </div>

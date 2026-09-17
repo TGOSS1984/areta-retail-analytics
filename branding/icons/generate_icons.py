@@ -60,6 +60,16 @@ ICONS = {
     "hanger": "Apparel",
     "shoe": "Footwear",
     "category": "Product group",
+    # Top-products chart fallback set (web/public/images/products/
+    # categories/) — one per major_product_group, used when a specific
+    # style/colourway doesn't have a sourced photo yet. Legwear and
+    # Footwear deliberately reuse "hanger" and "shoe" above rather than
+    # getting their own entry — same tile, same file, used both places.
+    "jacket": "Outerwear",
+    "hanger-2": "Midlayer",
+    "shirt": "Tops",
+    "sock": "Accessories",
+    "backpack": "Camping & Equipment",
     "palette": "Colour",
     "ruler": "Size",
     "snowflake": "Season (AW)",

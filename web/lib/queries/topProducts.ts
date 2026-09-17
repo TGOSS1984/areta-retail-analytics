@@ -6,6 +6,7 @@ export type TopProduct = {
   styleName: string;
   colour: string;
   brandName: string;
+  majorProductGroup: string;
   productGroup: string;
   imagePath: string;
   salesGbp: number;
@@ -48,6 +49,7 @@ export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
     style_name: string;
     colour: string;
     brand_name: string;
+    major_product_group: string;
     product_group: string;
     image_path: string;
     sales_gbp: number;
@@ -59,6 +61,7 @@ export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
       s.style_name,
       s.colour,
       s.brand_name,
+      s.major_product_group,
       s.product_group,
       s.image_path,
       CAST(SUM(f.net_sales_gbp) AS DOUBLE) AS sales_gbp,
@@ -67,7 +70,7 @@ export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_style_colour s ON f.style_code = s.style_code AND f.colour_code = s.colour_code
     WHERE d.business_year = ${year} AND d.business_period_number <= ${maxPeriod}
-    GROUP BY s.style_code, s.colour_code, s.style_name, s.colour, s.brand_name, s.product_group, s.image_path
+    GROUP BY s.style_code, s.colour_code, s.style_name, s.colour, s.brand_name, s.major_product_group, s.product_group, s.image_path
     ORDER BY sales_gbp DESC
     LIMIT ${limit}
   `);
@@ -78,6 +81,7 @@ export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
     styleName: r.style_name,
     colour: r.colour,
     brandName: r.brand_name,
+    majorProductGroup: r.major_product_group,
     productGroup: r.product_group,
     imagePath: r.image_path,
     salesGbp: r.sales_gbp,

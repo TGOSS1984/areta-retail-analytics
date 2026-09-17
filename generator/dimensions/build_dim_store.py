@@ -9,6 +9,18 @@ format itself — Garden Centre, Department Store etc — for concessions,
 since that IS the concession's format), a coarse region within each
 market, and a jittered latitude/longitude around that city's centre.
 
+Also adds one "Online" row per market — not a physical store, the
+market's whole online/fulfilment operation as a single entity, additive
+on top of TOTAL_STORES rather than part of the retail/concession split.
+Downstream effects of this channel live in build_fact_sales.py (demand
+volume), build_fact_stock.py (assortment size), and build_fact_footfall.py
+(explicitly excluded — footfall is a physical-store concept). Deliberately
+NOT modelled: online-specific costs in build_fact_store_finance.py (that
+table's rent/staff/utilities ratios are a physical-retail-estate concept;
+rather than invent an unfounded online cost structure, Online rows are
+excluded from that table for now — a real gap, documented, not silently
+papered over).
+
 Coordinates live here (store grain), not in a separate region table —
 a region-level view (for the web app's map, eventually) is a derived
 average of its stores' coordinates, computed at query time, not a second
@@ -266,6 +278,37 @@ def build() -> pd.DataFrame:
                 }
             )
             store_id += 1
+
+        # One "Online" entity per market, not a physical store — the
+        # fulfilment operation serving that whole market rather than one
+        # of several retail/concession locations within it. No jitter:
+        # jitter exists to stop multiple real store addresses in the
+        # same city overlapping on a map, and there's exactly one of
+        # these per market, at the market's lead city (cities[0] — the
+        # CITIES dict is ordered largest/capital first), representing
+        # roughly where a national distribution centre would sit rather
+        # than a real shopfront address.
+        online_city = cities[0]
+        lat, lon = CITY_COORDINATES.get(online_city, (None, None))
+        if lat is None:
+            raise KeyError(f"no coordinates for '{online_city}' ({market['name']}) — add it to CITY_COORDINATES")
+        rows.append(
+            {
+                "store_id": f"ST{store_id:04d}",
+                "store_name": f"Areta Online \u2014 {market['name']}",
+                "channel": "Online",
+                "store_type": "Online",
+                "market_code": code,
+                "market_name": market["name"],
+                "city": online_city,
+                "region": CITY_TO_REGION.get(online_city, market["name"]),
+                "latitude": lat,
+                "longitude": lon,
+                "currency": market["currency"],
+                "is_home_market": market["is_home_market"],
+            }
+        )
+        store_id += 1
 
     df = pd.DataFrame(rows)
 

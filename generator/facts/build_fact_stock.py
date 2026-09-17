@@ -67,11 +67,14 @@ PRESENT_DATE_OVERRIDE: dt.date | None = None
 
 def present_date() -> dt.date:
     return PRESENT_DATE_OVERRIDE or dt.date.today()
-ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}  # same as build_fact_sales.py
+ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120, "Online": 1000}  # same as build_fact_sales.py
 
 # separate, smaller cap on distinct style/colour lines actually held in
-# stock — see module docstring for why this is needed
-STOCK_ASSORTMENT_CAP = {"Retail": 130, "Concession": 45}
+# stock — see module docstring for why this is needed. Online's cap is
+# bigger in absolute terms (a fulfilment centre holds far more distinct
+# lines than a shop floor ever would) but still well under its full
+# ASSORTMENT_SIZE, same proportional logic as Retail/Concession.
+STOCK_ASSORTMENT_CAP = {"Retail": 130, "Concession": 45, "Online": 350}
 
 TARGET_WEEKS_COVER_RANGE = (6, 18)
 REORDER_FRACTION = 0.35

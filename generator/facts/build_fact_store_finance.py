@@ -65,8 +65,17 @@ def period_actuals() -> pd.DataFrame:
 
 
 def build() -> pd.DataFrame:
-    dim_store = pd.read_parquet(DIM_STORE_PATH)[["store_id"]]
+    dim_store = pd.read_parquet(DIM_STORE_PATH)
+    # rent/staff/utilities here are a physical-retail-estate cost model —
+    # doesn't transfer to Online (no shop floor to rent). A real online
+    # P&L (fulfilment, delivery, warehousing) is a genuinely different
+    # cost structure this project hasn't modelled, so Online is excluded
+    # here rather than given a fabricated "online rent" figure. Same
+    # judgment call as fact_footfall's Online exclusion, documented the
+    # same way — a real, known gap, not silently papered over.
+    dim_store = dim_store[dim_store["channel"] != "Online"][["store_id"]]
     actuals = period_actuals()
+    actuals = actuals[actuals["store_id"].isin(dim_store["store_id"])]
 
     # each store's own long-run average period sales — used only to
     # calibrate the FIXED cost base, not as the denominator for any

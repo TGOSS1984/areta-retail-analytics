@@ -72,8 +72,25 @@ def present_date() -> dt.date:
     return PRESENT_DATE_OVERRIDE or dt.date.today()
 BASE_DEMAND_SCALAR = 0.12
 
-ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120}
-CHANNEL_DEMAND_MULT = {"Retail": 1.0, "Concession": 0.7}
+# Online carries a wider assortment than any single physical store (no
+# shelf-space constraint) but nowhere near the full ~12k-SKU catalogue —
+# first attempt at 2500 (mult correspondingly ~9.5x) blew both memory
+# and the target revenue share, because demand is a Poisson draw per
+# (store, sku) per day: assortment size and the multiplier compound,
+# they don't add. 1000 keeps the total (store, sku) pair count for
+# Online (11,000) in the same order as Concession's (17,760).
+ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120, "Online": 1000}
+
+# Calibrated against the existing validated Retail+Concession volume,
+# not guessed: weighted pairs (assortment_size x mult, summed across all
+# stores) for Retail+Concession is ~83,100; targeting Online at ~20% of
+# total network sales (typical for outdoor/apparel multichannel
+# retailers, mid of the realistic 15-25% band) means Online's own
+# weighted pairs need to land near ~20,800 — at 11,000 pairs that's a
+# mult of ~1.9. Same "tuned by checking the actual resulting % after
+# running" approach as the rest of this module — see the actual printed
+# channel split in main() below, re-tune here if it drifts from target.
+CHANNEL_DEMAND_MULT = {"Retail": 1.0, "Concession": 0.7, "Online": 1.9}
 HOME_MARKET_MULT = 1.15
 
 # keyed to dim_date's Sunday=1..Saturday=7 numbering
@@ -599,6 +616,15 @@ def main() -> None:
 
     df = simulate(assortment, dim_date, promo_lookup, fx_lookup)
     print(f"simulated: {len(df):,} positive-quantity rows, {df['invoice_id'].nunique():,} invoices")
+
+    # Channel split, before returns/messiness — the number that actually
+    # matters for CHANNEL_DEMAND_MULT calibration (see that constant's
+    # comment). Printed every run, not just while tuning, since it's the
+    # cheapest possible early warning if a future change to the demand
+    # model quietly drifts the split away from where it was calibrated.
+    channel_by_store = dim_store.set_index("store_id")["channel"]
+    channel_sales = df["store_id"].map(channel_by_store).value_counts(normalize=True)
+    print("channel split (share of sold lines): " + ", ".join(f"{c}={p:.1%}" for c, p in channel_sales.items()))
 
     df = synthesize_multibuy_attachments(df, dim_product, assortment, fx_lookup)
     df = apply_multibuy_promos(df, dim_product)

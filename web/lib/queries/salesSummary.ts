@@ -8,12 +8,14 @@ export type SalesSummary = {
   grossMarginPct: number;
   retailSalesGbp: number;
   concessionSalesGbp: number;
+  onlineSalesGbp: number;
   deltaVsLastYear: {
     totalSalesPct: number;
     totalUnitsPct: number;
     grossMarginPp: number;
     retailSalesPct: number;
     concessionSalesPct: number;
+    onlineSalesPct: number;
   };
 };
 
@@ -23,6 +25,7 @@ type YearAggregate = {
   total_cost: number;
   retail_sales: number;
   concession_sales: number;
+  online_sales: number;
 };
 
 function pctDelta(current: number, prior: number): number {
@@ -36,7 +39,8 @@ async function aggregateForYear(year: number, maxPeriod: number): Promise<YearAg
       CAST(SUM(f.quantity) AS DOUBLE) AS total_units,
       CAST(SUM(f.cost_gbp) AS DOUBLE) AS total_cost,
       CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Retail') AS DOUBLE) AS retail_sales,
-      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Concession') AS DOUBLE) AS concession_sales
+      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Concession') AS DOUBLE) AS concession_sales,
+      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Online') AS DOUBLE) AS online_sales
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_store s ON f.store_id = s.store_id
@@ -85,12 +89,14 @@ export async function fetchSalesSummary(): Promise<SalesSummary> {
     grossMarginPct: curMargin * 100,
     retailSalesGbp: cur.retail_sales,
     concessionSalesGbp: cur.concession_sales,
+    onlineSalesGbp: cur.online_sales,
     deltaVsLastYear: {
       totalSalesPct: pctDelta(cur.total_sales, prev.total_sales),
       totalUnitsPct: pctDelta(cur.total_units, prev.total_units),
       grossMarginPp: (curMargin - prevMargin) * 100,
       retailSalesPct: pctDelta(cur.retail_sales, prev.retail_sales),
       concessionSalesPct: pctDelta(cur.concession_sales, prev.concession_sales),
+      onlineSalesPct: pctDelta(cur.online_sales, prev.online_sales),
     },
   };
 }

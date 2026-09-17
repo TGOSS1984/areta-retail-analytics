@@ -63,6 +63,11 @@ CONVERSION_DAILY_NOISE = 0.04
 
 def build() -> pd.DataFrame:
     dim_store = pd.read_parquet(DIM_STORE_PATH)
+    # Footfall is a physical-door-counter concept — doesn't exist for
+    # Online. Excluded here rather than given a fabricated conversion
+    # baseline (an "online conversion rate" is a real, different metric
+    # — sessions-to-purchase — not modelled in this project yet).
+    dim_store = dim_store[dim_store["channel"] != "Online"]
     dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date"]].rename(columns={"full_date": "date"})
     dim_date = dim_date[dim_date["date"] <= present_date()]
     sales = pd.read_parquet(FACT_SALES_PATH)

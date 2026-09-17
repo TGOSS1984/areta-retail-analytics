@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { IconCoin, IconShoppingCart, IconPercentage, IconBuildingStore, IconTag } from "@tabler/icons-react";
+import {
+  IconCoin,
+  IconShoppingCart,
+  IconPercentage,
+  IconBuildingStore,
+  IconTag,
+  IconDeviceDesktop,
+} from "@tabler/icons-react";
 import { KPICard } from "@/components/ui/KPICard";
 import { useSalesSummary } from "@/lib/hooks/useSalesSummary";
 import { formatGbpMillions, formatThousands, formatPct, formatDelta } from "@/lib/format";
@@ -47,6 +54,13 @@ export function Hero() {
             trend: summary.data.deltaVsLastYear.concessionSalesPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconTag size={14} />,
           },
+          {
+            label: "Online sales",
+            value: formatGbpMillions(summary.data.onlineSalesGbp),
+            deltaLabel: formatDelta(summary.data.deltaVsLastYear.onlineSalesPct),
+            trend: summary.data.deltaVsLastYear.onlineSalesPct >= 0 ? ("up" as const) : ("down" as const),
+            icon: <IconDeviceDesktop size={14} />,
+          },
         ]
       : [];
 
@@ -77,7 +91,7 @@ export function Hero() {
 
         {summary.status === "loading" && (
           <div className="flex gap-3">
-            {[0, 1, 2, 3, 4].map((i) => (
+            {[0, 1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-[84px] flex-1 animate-pulse rounded-xl bg-charcoal/30" />
             ))}
           </div>

@@ -1,9 +1,9 @@
 table dim_store
-	lineageTag: c0b9885f-201a-4ba3-806e-e7ca1ad0bbfa
+	lineageTag: 20575949-3d05-4d2d-9ac6-523fb593820f
 
 	column store_id
 		dataType: string
-		lineageTag: 5af24611-fa96-4e8b-9820-21ca6b8d7dbb
+		lineageTag: c5de2135-3fb0-4c21-bc84-fa60c199e490
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -11,7 +11,7 @@ table dim_store
 
 	column store_name
 		dataType: string
-		lineageTag: 6e9abde1-0b4e-4745-8892-85c168b88759
+		lineageTag: f2f3cd83-917b-4547-8964-0577f9ce3bda
 		summarizeBy: none
 		sourceColumn: store_name
 
@@ -19,7 +19,7 @@ table dim_store
 
 	column channel
 		dataType: string
-		lineageTag: fd3d7d09-8895-407f-8cda-7257253f1702
+		lineageTag: b72bb390-3910-425b-a12c-d9e0c5dfee09
 		summarizeBy: none
 		sourceColumn: channel
 
@@ -27,7 +27,7 @@ table dim_store
 
 	column store_type
 		dataType: string
-		lineageTag: 56f92036-f4f9-4141-b5a0-1d57b150873a
+		lineageTag: 8e9e372e-fdb7-4022-a73f-c9d01e1c4635
 		summarizeBy: none
 		sourceColumn: store_type
 
@@ -35,7 +35,7 @@ table dim_store
 
 	column market_code
 		dataType: string
-		lineageTag: 389b7084-5763-49c1-a274-4d59873583c3
+		lineageTag: a30a05d8-b1bd-4060-a711-58a4c892ba84
 		summarizeBy: none
 		sourceColumn: market_code
 
@@ -43,7 +43,7 @@ table dim_store
 
 	column market_name
 		dataType: string
-		lineageTag: 0daadc8b-e232-4366-b399-ee1c1352943f
+		lineageTag: 8282881a-fff0-4155-805e-9340b8725ab2
 		summarizeBy: none
 		sourceColumn: market_name
 
@@ -51,7 +51,7 @@ table dim_store
 
 	column city
 		dataType: string
-		lineageTag: f79973f1-cc88-48c2-8af4-3dc209076e38
+		lineageTag: d5f7ec82-3c52-4a0b-a74f-6b7f9afbe0ba
 		summarizeBy: none
 		sourceColumn: city
 
@@ -59,15 +59,35 @@ table dim_store
 
 	column region
 		dataType: string
-		lineageTag: 219cea50-f005-4ed0-97cc-aaa288482200
+		lineageTag: 34cfd7e9-68b5-4b47-8ebf-8dd7593bbeac
 		summarizeBy: none
 		sourceColumn: region
 
 		annotation SummarizationSetBy = Automatic
 
+	column latitude
+		dataType: double
+		lineageTag: 395fd6ef-7ac7-4853-aac8-d6cf50467f7c
+		summarizeBy: sum
+		sourceColumn: latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitude
+		dataType: double
+		lineageTag: 26f51031-c176-4c35-9457-0df9cd328ad3
+		summarizeBy: sum
+		sourceColumn: longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column currency
 		dataType: string
-		lineageTag: 42d67849-bb6e-4230-a67f-7c38a4dcbda7
+		lineageTag: 70e83c61-8c84-47cd-b9e7-dd127b222e26
 		summarizeBy: none
 		sourceColumn: currency
 
@@ -76,7 +96,7 @@ table dim_store
 	column is_home_market
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: cf267e9c-fc30-4d42-adfe-b80a7532f113
+		lineageTag: e2f88e48-bb27-490c-84ce-47fd56b49981
 		summarizeBy: none
 		sourceColumn: is_home_market
 

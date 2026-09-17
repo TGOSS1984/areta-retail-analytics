@@ -2,14 +2,6 @@ relationship AutoDetected_8cbd9c3f-e0b5-4dc2-afde-c407c6fc3385
 	fromColumn: dim_date.business_period_label
 	toColumn: dim_period.business_period_label
 
-relationship AutoDetected_561c9018-e3fb-4eb9-8779-68e8f95d11f3
-	fromColumn: dim_store.currency
-	toColumn: dim_currency.currency_code
-
-relationship AutoDetected_55b727a9-9d19-4900-9bc8-70e100d52b8b
-	fromColumn: fact_sales.store_id
-	toColumn: dim_store.store_id
-
 relationship AutoDetected_56570fb1-8b44-4599-8f6b-7465a7e8b7ed
 	fromColumn: fact_sales.sku
 	toColumn: dim_product.sku
@@ -18,31 +10,35 @@ relationship AutoDetected_94391799-5067-4b7d-b923-8e46d654cf9b
 	fromColumn: fact_sales.promo_id
 	toColumn: dim_promo.promo_id
 
-relationship AutoDetected_6257d8e8-d049-414e-957a-ce9c34b5276f
-	fromColumn: fact_footfall.store_id
-	toColumn: dim_store.store_id
-
-relationship AutoDetected_756933e3-846a-4840-863a-017d2d36f676
-	fromColumn: fact_stock_snapshot.store_id
-	toColumn: dim_store.store_id
-
 relationship AutoDetected_7a2acc15-856b-427f-b608-8c2006057c61
 	fromColumn: fact_targets.period_key
 	toColumn: dim_period.period_key
-
-relationship AutoDetected_61790ab4-974a-4322-9180-510cd6e45d7b
-	fromColumn: fact_targets.store_id
-	toColumn: dim_store.store_id
 
 relationship AutoDetected_450d2741-8200-4d97-8bf9-0fa33cfc1032
 	fromColumn: fact_store_finance.period_key
 	toColumn: dim_period.period_key
 
-relationship AutoDetected_2b8e8e65-47a6-433e-8ff7-66f678355ea0
-	fromColumn: fact_store_finance.store_id
-	toColumn: dim_store.store_id
-
 relationship AutoDetected_2af3f7af-8f1b-427f-aa0b-77fe9fa03a8b
 	fromColumn: fx_rate_monthly.currency_code
 	toColumn: dim_currency.currency_code
+
+relationship AutoDetected_1d3166fa-1213-48a2-b945-cb4a8755d285
+	fromColumn: fact_sales.store_id
+	toColumn: dim_store.store_id
+
+relationship AutoDetected_637700fb-26ec-45c2-b4e4-f5fd65cc49be
+	fromColumn: fact_footfall.store_id
+	toColumn: dim_store.store_id
+
+relationship AutoDetected_ab4117ae-3672-4996-af1a-204f6a19831f
+	fromColumn: fact_stock_snapshot.store_id
+	toColumn: dim_store.store_id
+
+relationship AutoDetected_7f8efd10-9ecb-404d-a35d-2eaa74ff6931
+	fromColumn: fact_targets.store_id
+	toColumn: dim_store.store_id
+
+relationship AutoDetected_83726218-5782-4179-9fd0-1f16246b642e
+	fromColumn: fact_store_finance.store_id
+	toColumn: dim_store.store_id
 

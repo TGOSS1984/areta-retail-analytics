@@ -6,8 +6,14 @@ store, weighted across markets by store_weight, split into owned retail vs
 concession using each market's channel_mix. Also assigns store_type
 (High Street/Retail Park/Shopping Centre/Outlet for retail; the host
 format itself — Garden Centre, Department Store etc — for concessions,
-since that IS the concession's format) and a coarse region within each
-market, derived from the city already assigned.
+since that IS the concession's format), a coarse region within each
+market, and a jittered latitude/longitude around that city's centre.
+
+Coordinates live here (store grain), not in a separate region table —
+a region-level view (for the web app's map, eventually) is a derived
+average of its stores' coordinates, computed at query time, not a second
+independently-maintained set of positions that could drift out of sync
+with this one.
 
 This one's a clean build straight to data/warehouse, no raw/staging pass.
 There's nothing meaningfully "messy" about a store list the way there is
@@ -97,6 +103,69 @@ CITY_TO_REGION = {
 RETAIL_STORE_TYPES = ["High Street", "Retail Park", "Shopping Centre", "Outlet"]
 RETAIL_STORE_TYPE_WEIGHTS = [0.40, 0.30, 0.20, 0.10]
 
+# City-centre coordinates (decimal degrees) — approximate, a real store's
+# actual address would sit a few streets off these, which is exactly what
+# the per-store jitter below is for. Enough precision for what this is
+# actually used for: a store-level bubble map in Power BI, and (via an
+# aggregate, not a separate table) a regional map in the web app later.
+# Not meant to withstand someone checking an individual store's exact
+# real-world address.
+CITY_COORDINATES = {
+    # UK
+    "London": (51.5074, -0.1278), "Manchester": (53.4808, -2.2426),
+    "Birmingham": (52.4862, -1.8904), "Leeds": (53.8008, -1.5491),
+    "Bristol": (51.4545, -2.5879), "Newcastle": (54.9783, -1.6178),
+    "Sheffield": (53.3811, -1.4701), "Nottingham": (52.9548, -1.1581),
+    "Liverpool": (53.4084, -2.9916), "York": (53.9600, -1.0873),
+    "Cardiff": (51.4816, -3.1791), "Edinburgh": (55.9533, -3.1883),
+    "Glasgow": (55.8642, -4.2518), "Belfast": (54.5973, -5.9301),
+    "Oxford": (51.7520, -1.2577), "Cambridge": (52.2053, 0.1218),
+    "Bath": (51.3811, -2.3590), "Chester": (53.1934, -2.8931),
+    # DE
+    "Berlin": (52.5200, 13.4050), "Munich": (48.1351, 11.5820),
+    "Hamburg": (53.5511, 9.9937), "Cologne": (50.9375, 6.9603),
+    "Frankfurt": (50.1109, 8.6821), "Stuttgart": (48.7758, 9.1829),
+    "Dusseldorf": (51.2277, 6.7735), "Leipzig": (51.3397, 12.3731),
+    "Dresden": (51.0504, 13.7373), "Nuremberg": (49.4521, 11.0767),
+    # PL
+    "Warsaw": (52.2297, 21.0122), "Krakow": (50.0647, 19.9450),
+    "Gdansk": (54.3520, 18.6466), "Wroclaw": (51.1079, 17.0385),
+    "Poznan": (52.4064, 16.9252), "Lodz": (51.7592, 19.4560),
+    "Katowice": (50.2649, 19.0238),
+    # IE
+    "Dublin": (53.3498, -6.2603), "Cork": (51.8985, -8.4756),
+    "Galway": (53.2707, -9.0568), "Limerick": (52.6638, -8.6267),
+    "Waterford": (52.2593, -7.1101), "Kilkenny": (52.6541, -7.2448),
+    # IT
+    "Milan": (45.4642, 9.1900), "Rome": (41.9028, 12.4964),
+    "Turin": (45.0703, 7.6869), "Bologna": (44.4949, 11.3426),
+    "Verona": (45.4384, 10.9916), "Florence": (43.7696, 11.2558),
+    # NL
+    "Amsterdam": (52.3676, 4.9041), "Rotterdam": (51.9244, 4.4777),
+    "Utrecht": (52.0907, 5.1214), "Eindhoven": (51.4416, 5.4697),
+    "The Hague": (52.0705, 4.3007),
+    # CZ
+    "Prague": (50.0755, 14.4378), "Brno": (49.1951, 16.6068),
+    "Ostrava": (49.8209, 18.2625),
+    # SK
+    "Bratislava": (48.1486, 17.1077), "Kosice": (48.7164, 21.2611),
+    # FR
+    "Paris": (48.8566, 2.3522), "Lyon": (45.7640, 4.8357),
+    "Marseille": (43.2965, 5.3698), "Toulouse": (43.6047, 1.4442),
+    # LV
+    "Riga": (56.9496, 24.1052), "Daugavpils": (55.8747, 26.5363),
+    "Liepaja": (56.5089, 21.0111),
+    # LT
+    "Vilnius": (54.6872, 25.2797), "Kaunas": (54.8985, 23.9036),
+    "Klaipeda": (55.7033, 21.1443),
+}
+
+# Degrees of random jitter applied per store so multiple stores in the
+# same city don't render as one overlapping dot on a map. ~0.03deg is
+# roughly 2-3km at these latitudes — enough visual separation, small
+# enough that every store still clearly reads as "that city".
+COORD_JITTER_DEGREES = 0.03
+
 # Fictional concession partners — generic retail-park / garden-centre /
 # department-store types, standing in for the kind of host retailer a
 # concession store would actually sit inside.
@@ -124,6 +193,16 @@ CONCESSION_PARTNER_TYPE = {
 }
 
 
+def jittered_coords(city: str, market_name: str, rng: random.Random) -> tuple[float, float]:
+    lat, lon = CITY_COORDINATES.get(city, (None, None))
+    if lat is None:
+        raise KeyError(f"no coordinates for '{city}' ({market_name}) — add it to CITY_COORDINATES")
+    return (
+        round(lat + rng.uniform(-COORD_JITTER_DEGREES, COORD_JITTER_DEGREES), 5),
+        round(lon + rng.uniform(-COORD_JITTER_DEGREES, COORD_JITTER_DEGREES), 5),
+    )
+
+
 def load_markets() -> list[dict]:
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -147,6 +226,7 @@ def build() -> pd.DataFrame:
         for _ in range(retail_count):
             city = rng.choice(cities)
             store_type = rng.choices(RETAIL_STORE_TYPES, weights=RETAIL_STORE_TYPE_WEIGHTS, k=1)[0]
+            lat, lon = jittered_coords(city, market["name"], rng)
             rows.append(
                 {
                     "store_id": f"ST{store_id:04d}",
@@ -157,6 +237,8 @@ def build() -> pd.DataFrame:
                     "market_name": market["name"],
                     "city": city,
                     "region": CITY_TO_REGION.get(city, market["name"]),
+                    "latitude": lat,
+                    "longitude": lon,
                     "currency": market["currency"],
                     "is_home_market": market["is_home_market"],
                 }
@@ -166,6 +248,7 @@ def build() -> pd.DataFrame:
         for _ in range(concession_count):
             city = rng.choice(cities)
             partner = rng.choice(CONCESSION_PARTNERS)
+            lat, lon = jittered_coords(city, market["name"], rng)
             rows.append(
                 {
                     "store_id": f"ST{store_id:04d}",
@@ -176,6 +259,8 @@ def build() -> pd.DataFrame:
                     "market_name": market["name"],
                     "city": city,
                     "region": CITY_TO_REGION.get(city, market["name"]),
+                    "latitude": lat,
+                    "longitude": lon,
                     "currency": market["currency"],
                     "is_home_market": market["is_home_market"],
                 }

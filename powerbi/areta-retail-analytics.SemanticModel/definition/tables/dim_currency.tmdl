@@ -29,7 +29,7 @@ table dim_currency
 		dataType: int64
 		formatString: 0
 		lineageTag: f35b2e1b-7d7e-4f92-abe0-b8be0296a8c6
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: decimal_places
 
 		annotation SummarizationSetBy = Automatic

@@ -1,6 +1,8 @@
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Hero } from "@/components/layout/Hero";
 import { SalesTrendChart } from "@/components/charts/SalesTrendChart";
+import { CategoryMixChart } from "@/components/charts/CategoryMixChart";
+import { ChannelMixChart } from "@/components/charts/ChannelMixChart";
 
 export default function OverviewPage() {
   return (
@@ -15,16 +17,19 @@ export default function OverviewPage() {
             <SalesTrendChart />
           </div>
 
-          {/* Category mix and channel mix donuts are the fast follow-up
-              to this — same DuckDB-wasm/ECharts pattern now that it's
-              proven working, just a different query and chart type.
-              Regional map and top products need more first: a new
-              product-level export for the latter, a map approach for
-              the former — neither exists yet. */}
-          <div className="rounded-xl border border-dashed border-rock-slate/30 p-8 text-center text-sm text-stone">
-            Category mix, channel mix — next up, same pattern as the trend
-            chart. Regional map and top products need more groundwork first.
+          <div className="flex flex-col gap-6">
+            <CategoryMixChart />
+            <ChannelMixChart />
           </div>
+        </div>
+
+        {/* Regional map and top products still need groundwork that
+            doesn't exist yet: a product-level export for the latter
+            (fact_sales_daily only goes down to division, not style),
+            a map-rendering approach for the former (dim_store now has
+            lat/long, but nothing here renders a map yet). */}
+        <div className="mt-6 rounded-xl border border-dashed border-rock-slate/30 p-8 text-center text-sm text-stone">
+          Regional map, top products — still need groundwork that doesn&apos;t exist yet.
         </div>
       </main>
     </div>

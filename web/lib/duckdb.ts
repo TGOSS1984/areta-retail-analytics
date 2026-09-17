@@ -92,8 +92,37 @@ export async function queryDuckDB<T = Record<string, unknown>>(sql: string): Pro
   const conn = await db.connect();
   try {
     const result = await conn.query(sql);
-    return result.toArray().map((row) => row.toJSON() as T);
+    return result.toArray().map((row) => sanitizeBigInts(row.toJSON()) as T);
   } finally {
     await conn.close();
   }
+}
+
+/**
+ * DuckDB returns 64-bit integer columns (quantity, business_year, any
+ * SUM() over an int64 source column) to JS as native BigInt, not Number
+ * — that's correct behaviour on DuckDB's part, done to avoid silently
+ * losing precision on values bigger than Number can represent exactly.
+ * Nothing in this app needs arbitrary-precision integers though, and
+ * mixing a BigInt into ordinary arithmetic (subtracting 1 from a year,
+ * dividing to get a percentage) throws rather than silently coercing —
+ * hit exactly that in testing. Converting every BigInt in a result row
+ * to a plain number here, once, centrally, rather than trying to
+ * remember to CAST every integer aggregate in every query — the
+ * queries do get explicit CASTs too where it's cheap to add (see
+ * salesSummary.ts), but this is the actual safety net.
+ */
+function sanitizeBigInts<T>(value: T): T {
+  if (typeof value === "bigint") {
+    return Number(value) as unknown as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => sanitizeBigInts(v)) as unknown as T;
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, sanitizeBigInts(v)])
+    ) as T;
+  }
+  return value;
 }

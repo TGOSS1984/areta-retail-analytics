@@ -32,11 +32,11 @@ function pctDelta(current: number, prior: number): number {
 async function aggregateForYear(year: number, maxPeriod: number): Promise<YearAggregate> {
   const rows = await queryDuckDB<YearAggregate>(`
     SELECT
-      SUM(f.net_sales_gbp) AS total_sales,
-      SUM(f.quantity) AS total_units,
-      SUM(f.cost_gbp) AS total_cost,
-      SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Retail') AS retail_sales,
-      SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Concession') AS concession_sales
+      CAST(SUM(f.net_sales_gbp) AS DOUBLE) AS total_sales,
+      CAST(SUM(f.quantity) AS DOUBLE) AS total_units,
+      CAST(SUM(f.cost_gbp) AS DOUBLE) AS total_cost,
+      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Retail') AS DOUBLE) AS retail_sales,
+      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Concession') AS DOUBLE) AS concession_sales
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_store s ON f.store_id = s.store_id
@@ -56,13 +56,13 @@ async function aggregateForYear(year: number, maxPeriod: number): Promise<YearAg
  */
 export async function fetchSalesSummary(): Promise<SalesSummary> {
   const yearRows = await queryDuckDB<{ current_year: number }>(`
-    SELECT MAX(d.business_year) AS current_year
+    SELECT CAST(MAX(d.business_year) AS INTEGER) AS current_year
     FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
   `);
   const currentYear = yearRows[0].current_year;
 
   const periodRows = await queryDuckDB<{ max_period: number }>(`
-    SELECT MAX(d.business_period_number) AS max_period
+    SELECT CAST(MAX(d.business_period_number) AS INTEGER) AS max_period
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     WHERE d.business_year = ${currentYear}

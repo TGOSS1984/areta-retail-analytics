@@ -1,35 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import * as echarts from "echarts";
 import { useRegionalSales } from "@/lib/hooks/useRegionalSales";
+import europeGeoJson from "@/lib/geo/europe-markets.json";
 
 const MAP_NAME = "europe-markets";
 const MIN_BUBBLE = 8;
 const MAX_BUBBLE = 55;
 
+// Registered once at module load, synchronously — not inside a
+// useEffect with an async dynamic import. The first version did that
+// and produced a real bug: the map rendered as a tiny, misshapen,
+// disconnected fragment while the scatter bubbles rendered as one giant
+// blob nowhere near it — the two series ended up resolving against
+// different coordinate scales, most likely because of the timing gap
+// between "component first renders with mapReady=false" and "map
+// actually registers a tick later". A static import + registering
+// before the component ever renders removes that gap entirely — the
+// geojson is a known local file, there was never a real reason for it
+// to be async.
+if (!echarts.getMap(MAP_NAME)) {
+  echarts.registerMap(MAP_NAME, europeGeoJson as unknown as Parameters<typeof echarts.registerMap>[1]);
+}
+
 export function RegionalMapChart() {
   const sales = useRegionalSales();
-  const [mapReady, setMapReady] = useState(false);
 
-  // registerMap needs to run once, client-side, before the chart can
-  // reference the map name — importing the trimmed GeoJSON as a normal
-  // JSON module rather than fetching it, since it's a local project file
-  useEffect(() => {
-    if (echarts.getMap(MAP_NAME)) {
-      setMapReady(true);
-      return;
-    }
-    import("@/lib/geo/europe-markets.json")
-      .then((mod) => {
-        echarts.registerMap(MAP_NAME, mod.default as unknown as Parameters<typeof echarts.registerMap>[1]);
-        setMapReady(true);
-      })
-      .catch(() => setMapReady(false));
-  }, []);
-
-  if (sales.status === "loading" || !mapReady) {
+  if (sales.status === "loading") {
     return <div className="h-96 animate-pulse rounded-xl bg-alpine-stone/40" />;
   }
 
@@ -48,7 +46,7 @@ export function RegionalMapChart() {
     textStyle: { fontFamily: "Montserrat, sans-serif" },
     tooltip: {
       trigger: "item",
-      formatter: (params: { name: string; value: [number, number, number] }) =>
+      formatter: (params: { name: string; value?: [number, number, number] }) =>
         params.value
           ? `${params.name}: £${(params.value[2] / 1_000_000).toFixed(2)}M`
           : params.name,
@@ -56,7 +54,15 @@ export function RegionalMapChart() {
     geo: {
       map: MAP_NAME,
       roam: true,
-      zoom: 1.1,
+      // Explicit layout rather than relying on ECharts' auto-fit margins
+      // — the auto-fit was very likely the actual source of the "tiny
+      // map crammed in a corner" symptom. layoutCenter/layoutSize is the
+      // standard, well-documented fix for exactly that: it forces the
+      // map to a known size and position regardless of the container's
+      // aspect ratio, rather than ECharts guessing from left/top/right/
+      // bottom margins.
+      layoutCenter: ["50%", "50%"],
+      layoutSize: "95%",
       itemStyle: { areaColor: "#E8E1D6", borderColor: "#ffffff", borderWidth: 1 },
       emphasis: { itemStyle: { areaColor: "#D0AA62" }, label: { show: false } },
     },
@@ -65,12 +71,15 @@ export function RegionalMapChart() {
         name: "Sales",
         type: "effectScatter",
         coordinateSystem: "geo",
+        geoIndex: 0,
         data: points.map((p) => ({
           name: p.marketName,
           value: [p.lon, p.lat, p.salesGbp],
         })),
-        symbolSize: (val: [number, number, number]) =>
-          Math.max(MIN_BUBBLE, Math.sqrt(val[2] / maxSales) * MAX_BUBBLE),
+        symbolSize: (val: [number, number, number]) => {
+          const size = Math.sqrt(val[2] / maxSales) * MAX_BUBBLE;
+          return Number.isFinite(size) ? Math.max(MIN_BUBBLE, size) : MIN_BUBBLE;
+        },
         showEffectOn: "render",
         rippleEffect: { brushType: "stroke" },
         itemStyle: {

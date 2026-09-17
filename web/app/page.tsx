@@ -3,6 +3,7 @@ import { Hero } from "@/components/layout/Hero";
 import { SalesTrendChart } from "@/components/charts/SalesTrendChart";
 import { CategoryMixChart } from "@/components/charts/CategoryMixChart";
 import { ChannelMixChart } from "@/components/charts/ChannelMixChart";
+import { RegionalMapChart } from "@/components/charts/RegionalMapChart";
 
 export default function OverviewPage() {
   return (
@@ -23,13 +24,19 @@ export default function OverviewPage() {
           </div>
         </div>
 
-        {/* Regional map and top products still need groundwork that
-            doesn't exist yet: a product-level export for the latter
-            (fact_sales_daily only goes down to division, not style),
-            a map-rendering approach for the former (dim_store now has
-            lat/long, but nothing here renders a map yet). */}
-        <div className="mt-6 rounded-xl border border-dashed border-rock-slate/30 p-8 text-center text-sm text-stone">
-          Regional map, top products — still need groundwork that doesn&apos;t exist yet.
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <RegionalMapChart />
+          </div>
+
+          {/* Top products still needs groundwork that doesn't exist yet:
+              fact_sales_daily only goes down to division, not style —
+              a product-level export, and the product-image sourcing
+              question, both need their own dedicated pass. */}
+          <div className="flex items-center justify-center rounded-xl border border-dashed border-rock-slate/30 p-8 text-center text-sm text-stone">
+            Top products — needs a product-level export and the image
+            sourcing question resolved first.
+          </div>
         </div>
       </main>
     </div>

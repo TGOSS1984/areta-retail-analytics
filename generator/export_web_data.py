@@ -51,7 +51,7 @@ def export_dim_store() -> None:
     df = pd.read_parquet(WAREHOUSE / "dim_store.parquet")
     cols = [
         "store_id", "store_name", "channel", "store_type", "market_code",
-        "market_name", "city", "region", "currency", "is_home_market",
+        "market_name", "city", "region", "latitude", "longitude", "currency", "is_home_market",
     ]
     df[cols].to_parquet(EXPORTS / "dim_store.parquet", index=False)
     print(f"dim_store: {len(df):,} rows")

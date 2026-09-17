@@ -33,6 +33,19 @@
           }
         }
       }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
     ]
   },
   "resourcePackages": [
@@ -55,6 +68,21 @@
           "name": "Areta_Mountain_Systems9759404559710082.json",
           "path": "Areta_Mountain_Systems9759404559710082.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "areta-logo-mark43939305072979473.webp",
+          "path": "areta-logo-mark43939305072979473.webp",
+          "type": "Image"
+        },
+        {
+          "name": "ridge-shadow08597975900248489.png",
+          "path": "ridge-shadow08597975900248489.png",
+          "type": "Image"
+        },
+        {
+          "name": "wide-hero-image-light8626649385260462.png",
+          "path": "wide-hero-image-light8626649385260462.png",
+          "type": "Image"
         }
       ]
     }

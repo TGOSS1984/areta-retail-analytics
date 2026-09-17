@@ -29,3 +29,8 @@ Thumbs.db
 # deliverable the report and web app read from.
 data/raw/
 data/staging/
+
+# web/public/data is synced from data/exports/ automatically by
+# scripts/sync-data.mjs (predev/prebuild) — regenerated on every run,
+# no reason to commit a duplicate copy of the same files
+web/public/data/*.parquet

@@ -148,6 +148,93 @@ table fact_sales
 
 		annotation SummarizationSetBy = Automatic
 
+	measure 'Net Sales (GBP)' = SUM ( fact_sales[net_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 024b0bd8-fd47-487c-ac8d-b517b530f46e
+
+	measure 'Gross Cost (GBP)' = SUM ( fact_sales[cost_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 508fbfbf-91a1-4373-8171-4fa279a7c6cd
+
+	measure 'Gross Profit (GBP)' = [Net Sales (GBP)] - [Gross Cost (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: 157d84a4-ed4b-436d-87c6-ffc8d787113a
+
+	measure 'Gross Margin %' = DIVIDE ( [Gross Profit (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 400ea95f-f6bb-4b81-a60a-28cf8ebb31ff
+
+	measure 'Gross Units Sold' = CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE )
+		formatString: #,0
+		lineageTag: e1695d36-c0ba-45ac-8d05-38c4ef2c7f7a
+
+	measure 'Units Returned' = CALCULATE ( -SUM ( fact_sales[quantity] ), fact_sales[is_return] = TRUE )
+		formatString: #,0
+		lineageTag: 1de5cd32-ab5a-4efc-b06f-289d92dbb8bd
+
+	measure 'Return Rate %' = DIVIDE ( [Units Returned], [Gross Units Sold] )
+		formatString: 0.0%
+		lineageTag: d0b36d98-965f-49e1-9d7b-ee8595317432
+
+	measure 'Net Units Sold' = SUM ( fact_sales[quantity] )
+		formatString: #,0
+		lineageTag: 1a48ea54-8db6-4310-a61e-66cb71ff1061
+
+	measure 'Full Price Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], fact_sales[promo_id] = "PROMO0000" )
+		formatString: "£"#,0.00
+		lineageTag: 384d3bdb-b44c-4b0c-b76f-a1f9bd940746
+
+	measure 'Full Price Mix %' = DIVIDE ( [Full Price Sales (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 9bcaeade-53b1-4ab1-bc9b-2659f9ba5575
+
+	measure 'Multi-buy Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], LEFT ( fact_sales[promo_id], 9 ) = "MULTIBUY-" )
+		formatString: "£"#,0.00
+		lineageTag: 8b70caf7-ab7d-4b4e-8e74-fa851ce7195a
+
+	measure 'Multi-buy Mix %' = DIVIDE ( [Multi-buy Sales (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: d3f9e44d-4d8d-478e-bf99-81e099813359
+
+	measure 'VAT (GBP)' = SUM ( fact_sales[vat_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: f2c73f4e-e774-4c33-948d-a7c825818f88
+
+	measure 'Gross Sales inc. VAT (GBP)' = SUM ( fact_sales[gross_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 66bc5a73-c9b8-4358-b9fe-12f5e6dc4f00
+
+	measure 'Net Sales LY' =
+			CALCULATE (
+			    [Net Sales (GBP)],
+			    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: efd2b77e-e632-4382-876f-26b475aba94c
+
+	measure 'Net Sales YoY %' = DIVIDE ( [Net Sales (GBP)] - [Net Sales LY], [Net Sales LY] )
+		formatString: 0.0%
+		lineageTag: 01d3df6f-632c-471c-b17b-73bc1d45cc44
+
+	measure 'Distinct Invoices (from Sales)' = CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
+		formatString: #,0
+		lineageTag: 7fcae126-a8c2-4dd8-bfa6-84580ae128d0
+
+	column 'Discount Band' =
+			SWITCH (
+			    TRUE (),
+			    fact_sales[promo_id] = "PROMO0000", "Full Price",
+			    LEFT ( fact_sales[promo_id], 9 ) = "MULTIBUY-", "Multi-buy",
+			    fact_sales[discount_pct] <= 30, "Up to 30% off",
+			    fact_sales[discount_pct] <= 50, "31-50% off",
+			    fact_sales[discount_pct] <= 70, "51-70% off",
+			    "70%+ off"
+			)
+		dataType: string
+		lineageTag: 35c68076-1cb0-4aec-affe-eccd70ff6a6e
+		summarizeBy: none
+		columnType: calculated
+
 	partition fact_sales = m
 		mode: import
 		source =

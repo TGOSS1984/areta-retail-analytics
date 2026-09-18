@@ -56,12 +56,12 @@ export function TopProductsChart() {
   const top = useTopProducts(ROW_LIMIT);
 
   if (top.status === "loading") {
-    return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
+    return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (top.status === "error") {
     return (
-      <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
+      <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
         Couldn&apos;t load top products: {top.message}
       </div>
     );

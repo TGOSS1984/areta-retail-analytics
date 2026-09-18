@@ -17,13 +17,13 @@ export function SalesMarginByMonthChart() {
   const trend = useSalesMarginByMonth(effectiveYear);
 
   if (years.status === "loading" || trend.status === "loading") {
-    return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
+    return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (years.status === "error" || trend.status === "error") {
     const message = years.status === "error" ? years.message : trend.status === "error" ? trend.message : "";
     return (
-      <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
+      <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
         Couldn&apos;t load sales &amp; margin by month: {message}
       </div>
     );
@@ -92,8 +92,8 @@ export function SalesMarginByMonthChart() {
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
-      <div className="mb-2 flex items-center justify-between">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <div className="mb-2 flex flex-shrink-0 items-center justify-between">
         <h2 className="text-sm font-medium text-cloud">Sales &amp; margin by month</h2>
         <select
           value={effectiveYear ?? ""}
@@ -108,11 +108,13 @@ export function SalesMarginByMonthChart() {
         </select>
       </div>
       {trend.data.excludedPartialMonth && (
-        <p className="mb-2 -mt-1 text-xs text-mist">
+        <p className="mb-2 -mt-1 flex-shrink-0 text-xs text-mist">
           {trend.data.excludedPartialMonth} isn&apos;t shown yet — the month&apos;s still in progress.
         </p>
       )}
-      <ReactECharts option={option} style={{ height: 320 }} notMerge />
+      <div className="min-h-0 flex-1">
+        <ReactECharts option={option} style={{ height: "100%" }} notMerge />
+      </div>
     </div>
   );
 }

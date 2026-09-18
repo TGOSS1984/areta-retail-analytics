@@ -22,7 +22,7 @@ export function KPICard({ label, value, deltaLabel, trend, icon, sparkline }: KP
   return (
     <div className="flex-1 rounded-xl bg-charcoal/40 p-4 backdrop-blur-sm">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-mist">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-summit-gold">
           {icon}
           {label}
         </div>

@@ -1,5 +1,6 @@
 table dim_date
 	lineageTag: bad117fa-83bb-47ba-a4c8-006645ca8c7f
+	dataCategory: Time
 
 	column date_key
 		dataType: int64
@@ -15,6 +16,7 @@ table dim_date
 		formatString: Long Date
 		lineageTag: bec18ba8-0dc4-4269-a3b4-7d17753d3529
 		summarizeBy: none
+		isKey
 		sourceColumn: full_date
 
 		annotation SummarizationSetBy = Automatic
@@ -223,4 +225,5 @@ table dim_date
 				    Source
 
 	annotation PBI_ResultType = Table
+
 

@@ -57,6 +57,26 @@ table fact_footfall
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Footfall' = SUM ( fact_footfall[footfall] )
+		formatString: #,0
+		lineageTag: be58b254-a3b9-4a2f-a2da-797ce3ad6e28
+
+	measure 'Transactions' = SUM ( fact_footfall[transactions] )
+		formatString: #,0
+		lineageTag: c65b6fdc-6c5a-4306-beba-cea243b06bf8
+
+	measure 'Conversion Rate %' = DIVIDE ( [Transactions], [Footfall] )
+		formatString: 0.0%
+		lineageTag: 802d5a98-2a16-43e5-9c81-631ae8271877
+
+	measure 'Items per Transaction' = DIVIDE ( [Gross Units Sold], [Transactions] )
+		formatString: #,0.00
+		lineageTag: 860f715b-30b2-41dc-9894-683eeae0cb68
+
+	measure 'Average Transaction Value (GBP)' = DIVIDE ( [Net Sales (GBP)], [Transactions] )
+		formatString: "£"#,0.00
+		lineageTag: 219d02b0-f234-46e4-b6b9-87542eed9edb
+
 	partition fact_footfall = m
 		mode: import
 		source =
@@ -66,4 +86,6 @@ table fact_footfall
 				    Source
 
 	annotation PBI_ResultType = Table
+
+
 

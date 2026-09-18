@@ -70,11 +70,11 @@ export function RegionalMapChart() {
   let points: { name: string; lat: number; lon: number; salesGbp: number }[];
   if (drilldown === "uk") {
     if (ukSales.status === "loading") {
-      return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
+      return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
     }
     if (ukSales.status === "error") {
       return (
-        <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
+        <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
           Couldn&apos;t load regional sales: {ukSales.message}
         </div>
       );
@@ -82,11 +82,11 @@ export function RegionalMapChart() {
     points = ukSales.data.map((p) => ({ name: p.region, lat: p.lat, lon: p.lon, salesGbp: p.salesGbp }));
   } else {
     if (europeSales.status === "loading") {
-      return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
+      return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
     }
     if (europeSales.status === "error") {
       return (
-        <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
+        <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
           Couldn&apos;t load regional sales: {europeSales.message}
         </div>
       );
@@ -145,8 +145,8 @@ export function RegionalMapChart() {
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
-      <div className="mb-2 flex items-center justify-between">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <div className="mb-2 flex flex-shrink-0 items-center justify-between">
         <h2 className="text-sm font-medium text-cloud">
           {drilldown === "uk" ? "Sales by region — United Kingdom" : "Sales by market"}
         </h2>
@@ -161,9 +161,17 @@ export function RegionalMapChart() {
         )}
       </div>
       {drilldown === "europe" && (
-        <p className="mb-2 -mt-1 text-xs text-mist">Click the UK to see the regional breakdown</p>
+        <p className="mb-2 -mt-1 flex-shrink-0 text-xs text-mist">Click the UK to see the regional breakdown</p>
       )}
-      <ReactECharts option={option} style={{ height: 380 }} onEvents={onEvents} notMerge />
+      {/* select-none: this is the one chart with roam (pan/zoom)
+          enabled, and without it a click-drag that starts a few pixels
+          off the canvas can trigger the BROWSER's own native
+          drag-selection instead of ECharts' pan handling — showing up
+          as a ghost rectangle over part of the map rather than an
+          actual rendering bug. */}
+      <div className="min-h-0 flex-1 select-none">
+        <ReactECharts option={option} style={{ height: "100%" }} onEvents={onEvents} notMerge />
+      </div>
     </div>
   );
 }

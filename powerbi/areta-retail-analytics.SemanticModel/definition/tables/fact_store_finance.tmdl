@@ -156,6 +156,50 @@ table fact_store_finance
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Cost of Goods (GBP)' = SUM ( fact_store_finance[cogs_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 0472e30d-00fd-4561-b99b-04bf30d65d2b
+
+	measure 'Rent (GBP)' = SUM ( fact_store_finance[rent_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 652bffd0-6210-4d19-9cab-f1c9c8b7dc67
+
+	measure 'Staff Costs (GBP)' = SUM ( fact_store_finance[staff_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 9850dd08-dcf6-4245-ab65-003b456e104c
+
+	measure 'Utilities (GBP)' = SUM ( fact_store_finance[utilities_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: c132cf14-fe92-4f2a-a585-ae3b62033699
+
+	measure 'Marketing (GBP)' = SUM ( fact_store_finance[marketing_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 94d10f07-8e03-4ebf-837a-ae1ff799c5cf
+
+	measure 'Store Operating Costs (GBP)' = [Rent (GBP)] + [Staff Costs (GBP)] + [Utilities (GBP)] + [Marketing (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: c5ee857b-8b32-48de-bcd1-a065243f94e4
+
+	measure 'Gross Contribution (GBP)' = SUM ( fact_store_finance[gross_contribution_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 492bcbdd-b5af-4478-ae6c-9d8bfd80d863
+
+	measure 'Gross Contribution %' = DIVIDE ( [Gross Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) )
+		formatString: 0.0%
+		lineageTag: d704bc3c-2193-43cb-9bba-0fac26edc764
+
+	measure 'Head Office Allocation (GBP)' = SUM ( fact_store_finance[head_office_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: da9be2f5-ad3b-495a-b31c-18d69d2592d0
+
+	measure 'Net Contribution (GBP)' = SUM ( fact_store_finance[net_contribution_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: a2da6bdb-0b07-41c2-837b-280513ac1cf5
+
+	measure 'Net Contribution %' = DIVIDE ( [Net Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) )
+		formatString: 0.0%
+		lineageTag: 1346e55f-183f-423f-af22-a98fc27169bd
+
 	partition fact_store_finance = m
 		mode: import
 		source =

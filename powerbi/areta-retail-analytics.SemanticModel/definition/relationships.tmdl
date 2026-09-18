@@ -22,23 +22,39 @@ relationship AutoDetected_2af3f7af-8f1b-427f-aa0b-77fe9fa03a8b
 	fromColumn: fx_rate_monthly.currency_code
 	toColumn: dim_currency.currency_code
 
-relationship AutoDetected_31af001e-5f99-45f9-b560-fa8c61d948ae
+relationship AutoDetected_1d3166fa-1213-48a2-b945-cb4a8755d285
 	fromColumn: fact_sales.store_id
 	toColumn: dim_store.store_id
 
-relationship AutoDetected_2e0c66fc-c85d-4a41-9101-a42a3bdbf040
+relationship AutoDetected_637700fb-26ec-45c2-b4e4-f5fd65cc49be
 	fromColumn: fact_footfall.store_id
 	toColumn: dim_store.store_id
 
-relationship AutoDetected_14120664-bd63-4470-905e-21c716430587
+relationship AutoDetected_ab4117ae-3672-4996-af1a-204f6a19831f
 	fromColumn: fact_stock_snapshot.store_id
 	toColumn: dim_store.store_id
 
-relationship AutoDetected_ebe13f65-e45a-4b5c-b03e-ccf406803bf6
+relationship AutoDetected_7f8efd10-9ecb-404d-a35d-2eaa74ff6931
 	fromColumn: fact_targets.store_id
 	toColumn: dim_store.store_id
 
-relationship AutoDetected_2b3f9a7c-51e5-444e-b11c-11961e1cdf25
+relationship AutoDetected_83726218-5782-4179-9fd0-1f16246b642e
 	fromColumn: fact_store_finance.store_id
 	toColumn: dim_store.store_id
+
+relationship eef5ef0a-3823-402a-8a72-3af28a75c9ab
+	fromColumn: fact_sales.date
+	toColumn: dim_date.full_date
+
+relationship e61584c2-5109-458d-ad93-2ecbffe9d8cc
+	fromColumn: fact_footfall.date
+	toColumn: dim_date.full_date
+
+relationship 2641a2a1-f818-4a4b-b3de-1b8ddf921c97
+	fromColumn: fact_stock_snapshot.week_ending_date
+	toColumn: dim_date.full_date
+
+relationship 19a2b829-8efe-4191-8f27-ddfd20f55548
+	fromColumn: fact_sales.currency
+	toColumn: dim_currency.currency_code
 

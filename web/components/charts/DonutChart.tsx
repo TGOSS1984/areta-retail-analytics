@@ -15,7 +15,15 @@ type DonutChartProps = {
 
 /** Shared by category mix and channel mix — same visual, different data.
  * Takes pre-fetched slices rather than owning its own query, so it stays
- * reusable for whatever the next mix-style breakdown turns out to be. */
+ * reusable for whatever the next mix-style breakdown turns out to be.
+ *
+ * Sized by its parent, not a hardcoded height: the ECharts instance is
+ * height:100% of a flex-1 wrapper, and the card root is h-full — so
+ * whatever box the caller's layout gives this component (a full grid
+ * row in CategoryMixChart's case, half a row split with an image panel
+ * in ChannelMixChart's case), the ring and legend fill it, rather than
+ * this component guessing two different pixel heights for two
+ * different contexts. */
 export function DonutChart({ title, slices }: DonutChartProps) {
   // The ring's own total — not a second query. Slices already sum to
   // the whole (channel/category sums have been checked against the
@@ -60,10 +68,10 @@ export function DonutChart({ title, slices }: DonutChartProps) {
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
-      <h2 className="mb-2 text-sm font-medium text-cloud">{title}</h2>
-      <div className="relative">
-        <ReactECharts option={option} style={{ height: 220 }} notMerge />
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <h2 className="mb-2 flex-shrink-0 text-sm font-medium text-cloud">{title}</h2>
+      <div className="relative min-h-0 flex-1">
+        <ReactECharts option={option} style={{ height: "100%" }} notMerge />
         {/* Positioned to match the ring's own center: [0] is the
             ring's "36%" center X, which is offset left of the box's
             true 50% midpoint to leave room for the legend on the

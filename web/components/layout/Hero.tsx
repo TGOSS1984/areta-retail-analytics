@@ -30,7 +30,7 @@ export function Hero() {
             value: formatGbpMillions(summary.data.totalSalesGbp),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.totalSalesPct),
             trend: summary.data.deltaVsLastYear.totalSalesPct >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconCoin size={14} />,
+            icon: <IconCoin size={16} />,
             sparkline: t?.totalSales,
           },
           {
@@ -38,7 +38,7 @@ export function Hero() {
             value: formatThousands(summary.data.totalUnits),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.totalUnitsPct),
             trend: summary.data.deltaVsLastYear.totalUnitsPct >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconShoppingCart size={14} />,
+            icon: <IconShoppingCart size={16} />,
             sparkline: t?.totalUnits,
           },
           {
@@ -46,7 +46,7 @@ export function Hero() {
             value: formatPct(summary.data.grossMarginPct),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.grossMarginPp, "pp"),
             trend: summary.data.deltaVsLastYear.grossMarginPp >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconPercentage size={14} />,
+            icon: <IconPercentage size={16} />,
             sparkline: t?.grossMarginPct,
           },
           {
@@ -54,7 +54,7 @@ export function Hero() {
             value: formatGbpMillions(summary.data.retailSalesGbp),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.retailSalesPct),
             trend: summary.data.deltaVsLastYear.retailSalesPct >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconBuildingStore size={14} />,
+            icon: <IconBuildingStore size={16} />,
             sparkline: t?.retailSales,
           },
           {
@@ -62,7 +62,7 @@ export function Hero() {
             value: formatGbpMillions(summary.data.concessionSalesGbp),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.concessionSalesPct),
             trend: summary.data.deltaVsLastYear.concessionSalesPct >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconTag size={14} />,
+            icon: <IconTag size={16} />,
             sparkline: t?.concessionSales,
           },
           {
@@ -70,7 +70,7 @@ export function Hero() {
             value: formatGbpMillions(summary.data.onlineSalesGbp),
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.onlineSalesPct),
             trend: summary.data.deltaVsLastYear.onlineSalesPct >= 0 ? ("up" as const) : ("down" as const),
-            icon: <IconDeviceDesktop size={14} />,
+            icon: <IconDeviceDesktop size={16} />,
             sparkline: t?.onlineSales,
           },
         ]

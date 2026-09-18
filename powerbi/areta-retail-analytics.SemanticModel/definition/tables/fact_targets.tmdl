@@ -46,6 +46,22 @@ table fact_targets
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Target Net Sales (GBP)' = SUM ( fact_targets[target_net_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
+
+	measure 'Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
+
+	measure 'Target Variance %' = DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
+
+	measure 'Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
+
 	partition fact_targets = m
 		mode: import
 		source =
@@ -55,4 +71,6 @@ table fact_targets
 				    Source
 
 	annotation PBI_ResultType = Table
+
+
 

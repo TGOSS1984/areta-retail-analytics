@@ -16,12 +16,12 @@ export function SalesTrendChart() {
   const trend = useMonthlyTrend();
 
   if (trend.status === "loading") {
-    return <div className="h-80 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
+    return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (trend.status === "error") {
     return (
-      <div className="flex h-80 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm text-mist">
+      <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm text-mist">
         Couldn&apos;t load the sales trend: {trend.message}
       </div>
     );
@@ -79,13 +79,15 @@ export function SalesTrendChart() {
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
-      <div className="mb-1 flex items-center justify-between">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <div className="mb-1 flex flex-shrink-0 items-center justify-between">
         <h2 className="text-sm font-medium text-cloud">Sales trend</h2>
       </div>
-      <ReactECharts option={option} style={{ height: 300 }} notMerge />
+      <div className="min-h-0 flex-1">
+        <ReactECharts option={option} style={{ height: "100%" }} notMerge />
+      </div>
       {excludedPartialMonth && (
-        <p className="mt-2 text-[11px] text-mist">
+        <p className="mt-2 flex-shrink-0 text-[11px] text-mist">
           {excludedPartialMonth} {currentYear} isn&apos;t shown yet — the month&apos;s still in progress.
         </p>
       )}

@@ -1,6 +1,26 @@
 table fact_stock_snapshot
 	lineageTag: 8239be0c-cd4d-423b-b258-d6e9493c8c6b
 
+	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
+		formatString: #,0
+		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
+
+	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
+
+	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
+
+	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
+		formatString: #,0.00
+		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
+
+	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
+		formatString: #,0.00
+		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
+
 	column week_ending_date
 		dataType: dateTime
 		formatString: Long Date
@@ -96,26 +116,6 @@ table fact_stock_snapshot
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
-		formatString: #,0
-		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
-
-	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
-
-	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
-
-	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
-		formatString: #,0.00
-		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
-
-	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
-		formatString: #,0.00
-		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
 
 	partition fact_stock_snapshot = m
 		mode: import

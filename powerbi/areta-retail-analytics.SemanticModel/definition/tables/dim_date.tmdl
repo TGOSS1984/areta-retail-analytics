@@ -13,10 +13,10 @@ table dim_date
 
 	column full_date
 		dataType: dateTime
+		isKey
 		formatString: Long Date
 		lineageTag: bec18ba8-0dc4-4269-a3b4-7d17753d3529
 		summarizeBy: none
-		isKey
 		sourceColumn: full_date
 
 		annotation SummarizationSetBy = Automatic
@@ -225,5 +225,4 @@ table dim_date
 				    Source
 
 	annotation PBI_ResultType = Table
-
 

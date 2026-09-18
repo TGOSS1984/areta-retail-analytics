@@ -11,10 +11,16 @@ import {
 } from "@tabler/icons-react";
 import { KPICard } from "@/components/ui/KPICard";
 import { useSalesSummary } from "@/lib/hooks/useSalesSummary";
+import { useKpiTrends } from "@/lib/hooks/useKpiTrends";
 import { formatGbpMillions, formatThousands, formatPct, formatDelta } from "@/lib/format";
 
 export function Hero() {
   const summary = useSalesSummary();
+  const trends = useKpiTrends();
+  // Sparklines are optional polish, not load-bearing — if the trends
+  // query is still loading or fails, cards render fine with no
+  // sparkline rather than blocking on a second data source.
+  const t = trends.status === "ready" ? trends.data : null;
 
   const kpis =
     summary.status === "ready"
@@ -25,6 +31,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.totalSalesPct),
             trend: summary.data.deltaVsLastYear.totalSalesPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconCoin size={14} />,
+            sparkline: t?.totalSales,
           },
           {
             label: "Total units",
@@ -32,6 +39,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.totalUnitsPct),
             trend: summary.data.deltaVsLastYear.totalUnitsPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconShoppingCart size={14} />,
+            sparkline: t?.totalUnits,
           },
           {
             label: "Gross margin",
@@ -39,6 +47,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.grossMarginPp, "pp"),
             trend: summary.data.deltaVsLastYear.grossMarginPp >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconPercentage size={14} />,
+            sparkline: t?.grossMarginPct,
           },
           {
             label: "Retail sales",
@@ -46,6 +55,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.retailSalesPct),
             trend: summary.data.deltaVsLastYear.retailSalesPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconBuildingStore size={14} />,
+            sparkline: t?.retailSales,
           },
           {
             label: "Concession sales",
@@ -53,6 +63,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.concessionSalesPct),
             trend: summary.data.deltaVsLastYear.concessionSalesPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconTag size={14} />,
+            sparkline: t?.concessionSales,
           },
           {
             label: "Online sales",
@@ -60,6 +71,7 @@ export function Hero() {
             deltaLabel: formatDelta(summary.data.deltaVsLastYear.onlineSalesPct),
             trend: summary.data.deltaVsLastYear.onlineSalesPct >= 0 ? ("up" as const) : ("down" as const),
             icon: <IconDeviceDesktop size={14} />,
+            sparkline: t?.onlineSales,
           },
         ]
       : [];

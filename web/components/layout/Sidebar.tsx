@@ -35,17 +35,19 @@ export function Sidebar({ active = "Overview" }: { active?: string }) {
   return (
     <aside className="flex h-screen w-60 flex-col justify-between bg-deep-terrain px-4 py-6">
       <div>
-        <div className="mb-8 flex items-center gap-2 px-2">
-          <Image
-            src="/images/areta-logo-mark.webp"
-            alt=""
-            width={28}
-            height={14}
-            className="h-4 w-auto"
-          />
-          <div>
-            <div className="text-sm tracking-wide text-cloud">Areta</div>
-            <div className="text-[10px] tracking-wide text-mist">Retail Analytics</div>
+        <div className="mb-8 px-3">
+          {/* fill + object-contain rather than fixed width/height — this
+              renders correctly regardless of the cropped asset's actual
+              aspect ratio, and object-contain's default center position
+              is what keeps it centered here, not extra markup. */}
+          <div className="relative h-24 w-full">
+            <Image
+              src="/images/areta-logo-mark-cropped.png"
+              alt="Areta"
+              fill
+              sizes="240px"
+              className="object-contain"
+            />
           </div>
         </div>
 
@@ -83,9 +85,26 @@ export function Sidebar({ active = "Overview" }: { active?: string }) {
             </a>
           ))}
         </div>
-        <p className="px-2 text-[11px] leading-relaxed text-mist">
+        <p className="mb-4 px-2 text-[11px] leading-relaxed text-mist">
           Explore. Climb. Protect. Belong.
         </p>
+        {/* Full-bleed strip at the very bottom — -mx-4/-mb-6 cancel the
+            aside's own px-4/py-6 so this reaches all three outer edges
+            (left, right, bottom) rather than sitting inset like
+            everything else in the sidebar. h-[13vh] ties it to the
+            sidebar's own full-viewport height (aside is h-screen), not
+            a fixed pixel value, so it stays roughly 10-15% of the
+            sidebar regardless of window height. */}
+        <div className="relative -mx-4 -mb-6 h-[13vh] overflow-hidden">
+          <Image
+            src="/images/ridge-shadow.png"
+            alt=""
+            fill
+            className="object-cover"
+            sizes="240px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-terrain/40 to-transparent" />
+        </div>
       </div>
     </aside>
   );

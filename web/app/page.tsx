@@ -5,6 +5,7 @@ import { CategoryMixChart } from "@/components/charts/CategoryMixChart";
 import { ChannelMixChart } from "@/components/charts/ChannelMixChart";
 import { RegionalMapChart } from "@/components/charts/RegionalMapChart";
 import { TopProductsChart } from "@/components/charts/TopProductsChart";
+import { SalesMarginByMonthChart } from "@/components/charts/SalesMarginByMonthChart";
 
 export default function OverviewPage() {
   return (
@@ -31,6 +32,10 @@ export default function OverviewPage() {
           </div>
 
           <TopProductsChart />
+        </div>
+
+        <div className="mt-6">
+          <SalesMarginByMonthChart />
         </div>
       </main>
     </div>

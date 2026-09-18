@@ -1,25 +1,10 @@
 table fact_targets
 	lineageTag: 9e876f8d-e369-44ed-9f8d-20225e05a20c
 
-	measure 'Target Net Sales (GBP)' = SUM ( fact_targets[target_net_sales_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
-
-	measure 'Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
-		formatString: "£"#,0.00
-		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
-
-	measure 'Target Variance %' = DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
-
-	measure 'Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
-
 	column store_id
 		dataType: string
 		lineageTag: 42226a5d-0714-4f5e-9119-86b5fb285809
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -29,6 +14,7 @@ table fact_targets
 		dataType: int64
 		formatString: 0
 		lineageTag: 299465af-186e-42c2-84a2-8be0edeb43eb
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_year
 
@@ -38,6 +24,7 @@ table fact_targets
 		dataType: int64
 		formatString: 0
 		lineageTag: b2fa3823-321a-44b0-a23f-a0977195dad1
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_period_number
 
@@ -47,6 +34,7 @@ table fact_targets
 		dataType: int64
 		formatString: 0
 		lineageTag: b9e084e2-9ab6-4022-a7ab-7ef4c0ee2bdd
+		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
@@ -55,12 +43,33 @@ table fact_targets
 	column target_net_sales_gbp
 		dataType: double
 		lineageTag: 1de27905-b288-4c79-8a8e-17a67541fccd
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_net_sales_gbp
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Target Net Sales (GBP)' = SUM ( fact_targets[target_net_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
+		displayFolder: Targets
+
+	measure 'Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
+		displayFolder: Targets
+
+	measure 'Target Variance %' = DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
+		displayFolder: Targets
+
+	measure 'Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
+		displayFolder: Targets
 
 	partition fact_targets = m
 		mode: import

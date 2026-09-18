@@ -4,6 +4,7 @@ table dim_promo
 	column promo_id
 		dataType: string
 		lineageTag: 38dce3f6-163a-491c-964b-f9644e2381a1
+		isHidden
 		summarizeBy: none
 		sourceColumn: promo_id
 

@@ -1,30 +1,11 @@
 table fact_stock_snapshot
 	lineageTag: 8239be0c-cd4d-423b-b258-d6e9493c8c6b
 
-	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
-		formatString: #,0
-		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
-
-	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
-
-	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
-
-	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
-		formatString: #,0.00
-		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
-
-	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
-		formatString: #,0.00
-		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
-
 	column week_ending_date
 		dataType: dateTime
 		formatString: Long Date
 		lineageTag: 97d52b52-07fb-47e6-b991-e45e5effe426
+		isHidden
 		summarizeBy: none
 		sourceColumn: week_ending_date
 
@@ -35,6 +16,7 @@ table fact_stock_snapshot
 	column store_id
 		dataType: string
 		lineageTag: 2eb4a35f-9d0e-482f-b2fe-ed81c6b3bee6
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -92,6 +74,7 @@ table fact_stock_snapshot
 		dataType: int64
 		formatString: 0
 		lineageTag: 0b2ca850-97a3-447f-8678-51dbbb34f17b
+		isHidden
 		summarizeBy: sum
 		sourceColumn: stock_units
 
@@ -100,6 +83,7 @@ table fact_stock_snapshot
 	column stock_value_cost_gbp
 		dataType: double
 		lineageTag: 1ae39691-0962-441e-b14b-326ed7f2c2f9
+		isHidden
 		summarizeBy: sum
 		sourceColumn: stock_value_cost_gbp
 
@@ -110,12 +94,38 @@ table fact_stock_snapshot
 	column stock_value_retail_gbp
 		dataType: double
 		lineageTag: f69c54e1-c42e-4645-a94e-09aa50e5da37
+		isHidden
 		summarizeBy: sum
 		sourceColumn: stock_value_retail_gbp
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
+		formatString: #,0
+		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
+		displayFolder: Stock
+
+	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
+		displayFolder: Stock
+
+	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
+		displayFolder: Stock
+
+	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
+		formatString: #,0.00
+		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
+		displayFolder: Stock
+
+	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
+		formatString: #,0.00
+		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
+		displayFolder: Stock
 
 	partition fact_stock_snapshot = m
 		mode: import

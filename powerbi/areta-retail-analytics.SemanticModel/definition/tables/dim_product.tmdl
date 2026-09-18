@@ -4,6 +4,7 @@ table dim_product
 	column sku
 		dataType: string
 		lineageTag: 362d6e4f-336d-4164-9a7d-4580bf6f2ea3
+		isHidden
 		summarizeBy: none
 		sourceColumn: sku
 
@@ -158,4 +159,5 @@ table dim_product
 				    Source
 
 	annotation PBI_ResultType = Table
+
 

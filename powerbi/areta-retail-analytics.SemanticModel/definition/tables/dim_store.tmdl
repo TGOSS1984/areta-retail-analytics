@@ -1,9 +1,10 @@
 table dim_store
-	lineageTag: 5ec73946-9ca3-4dbf-8788-516bbd092908
+	lineageTag: 20575949-3d05-4d2d-9ac6-523fb593820f
 
 	column store_id
 		dataType: string
-		lineageTag: 3bc7985e-06c1-4152-97d0-d62ce123f9bb
+		lineageTag: c5de2135-3fb0-4c21-bc84-fa60c199e490
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -11,7 +12,7 @@ table dim_store
 
 	column store_name
 		dataType: string
-		lineageTag: e0e7ee23-389c-4911-8d54-f270c3e5f46d
+		lineageTag: f2f3cd83-917b-4547-8964-0577f9ce3bda
 		summarizeBy: none
 		sourceColumn: store_name
 
@@ -19,7 +20,7 @@ table dim_store
 
 	column channel
 		dataType: string
-		lineageTag: 1cadfd45-ad4b-44b0-ad44-acf1a7b42eb5
+		lineageTag: b72bb390-3910-425b-a12c-d9e0c5dfee09
 		summarizeBy: none
 		sourceColumn: channel
 
@@ -27,7 +28,7 @@ table dim_store
 
 	column store_type
 		dataType: string
-		lineageTag: 75e3eaa1-fa40-4a09-94fa-ca0c8932e8fc
+		lineageTag: 8e9e372e-fdb7-4022-a73f-c9d01e1c4635
 		summarizeBy: none
 		sourceColumn: store_type
 
@@ -35,7 +36,7 @@ table dim_store
 
 	column market_code
 		dataType: string
-		lineageTag: c019a115-d90a-47b1-b5f2-646ba48b0eee
+		lineageTag: a30a05d8-b1bd-4060-a711-58a4c892ba84
 		summarizeBy: none
 		sourceColumn: market_code
 
@@ -43,7 +44,7 @@ table dim_store
 
 	column market_name
 		dataType: string
-		lineageTag: 539354f0-5c96-4e41-8c8d-420ed3a31d61
+		lineageTag: 8282881a-fff0-4155-805e-9340b8725ab2
 		summarizeBy: none
 		sourceColumn: market_name
 
@@ -51,7 +52,7 @@ table dim_store
 
 	column city
 		dataType: string
-		lineageTag: a58880db-1dae-421f-b305-e3c4e5e4aad6
+		lineageTag: d5f7ec82-3c52-4a0b-a74f-6b7f9afbe0ba
 		summarizeBy: none
 		sourceColumn: city
 
@@ -59,7 +60,7 @@ table dim_store
 
 	column region
 		dataType: string
-		lineageTag: 87241fad-bcf5-4283-ac0a-9fae3f00bae6
+		lineageTag: 34cfd7e9-68b5-4b47-8ebf-8dd7593bbeac
 		summarizeBy: none
 		sourceColumn: region
 
@@ -67,7 +68,7 @@ table dim_store
 
 	column latitude
 		dataType: double
-		lineageTag: e8d5e70f-73f3-4abf-a6eb-f9f8e7dbcfc6
+		lineageTag: 395fd6ef-7ac7-4853-aac8-d6cf50467f7c
 		summarizeBy: sum
 		sourceColumn: latitude
 
@@ -77,7 +78,7 @@ table dim_store
 
 	column longitude
 		dataType: double
-		lineageTag: 62403d73-de54-4655-9548-c426ac5ee7c4
+		lineageTag: 26f51031-c176-4c35-9457-0df9cd328ad3
 		summarizeBy: sum
 		sourceColumn: longitude
 
@@ -87,7 +88,7 @@ table dim_store
 
 	column currency
 		dataType: string
-		lineageTag: a18f9455-e9ec-4bc7-913d-abe2d0600c45
+		lineageTag: 70e83c61-8c84-47cd-b9e7-dd127b222e26
 		summarizeBy: none
 		sourceColumn: currency
 
@@ -96,7 +97,7 @@ table dim_store
 	column is_home_market
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: 3e45f680-02e9-4176-94c6-35dd43b26ad4
+		lineageTag: e2f88e48-bb27-490c-84ce-47fd56b49981
 		summarizeBy: none
 		sourceColumn: is_home_market
 

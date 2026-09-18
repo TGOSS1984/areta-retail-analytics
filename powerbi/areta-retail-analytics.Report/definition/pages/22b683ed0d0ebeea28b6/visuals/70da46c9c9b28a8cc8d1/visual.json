@@ -13,6 +13,25 @@
     "visualType": "lineClusteredColumnComboChart",
     "query": {
       "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "business_quarter"
+                }
+              },
+              "queryRef": "dim_date.business_quarter",
+              "nativeQueryRef": "business_quarter",
+              "active": true
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {

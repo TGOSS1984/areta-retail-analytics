@@ -9,11 +9,17 @@ Order matters here, not arbitrary:
   1. dimensions (date, store, product, currency, promo) — nothing else can
      run without these
   2. fact_sales raw pass, then its clean step — fact_footfall,
-     fact_stock_snapshot, fact_targets, and fact_store_finance all read
-     the CLEANED fact_sales, not the raw one
+     fact_stock_snapshot, fact_targets, fact_store_finance, and
+     fact_digital_sales all read the CLEANED fact_sales, not the raw one
   3. fact_footfall, fact_stock_snapshot, fact_targets, fact_store_finance
      — order between these four doesn't matter, they're independent of
      each other, just all downstream of fact_sales
+  4. fact_digital_sales, then fact_digital_traffic — digital_sales
+     derives its device-level split from the real Online-channel totals
+     in fact_sales (so digital sales figures reconcile exactly, see that
+     script's own docstring); digital_traffic then calibrates its
+     session counts against digital_sales' orders for a realistic
+     conversion rate, so it has to run after, not alongside, it
 
 What "refresh" actually does now: fact_sales, fact_footfall, and
 fact_stock_snapshot all stop generating actuals at date.today() (see
@@ -52,6 +58,8 @@ STEPS = [
     ("facts/build_fact_stock.py", "fact_stock_snapshot"),
     ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_store_finance.py", "fact_store_finance"),
+    ("facts/build_fact_digital_sales.py", "fact_digital_sales"),
+    ("facts/build_fact_digital_traffic.py", "fact_digital_traffic"),
     ("export_web_data.py", "web exports (data/exports)"),
 ]
 

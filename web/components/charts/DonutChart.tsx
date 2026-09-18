@@ -35,7 +35,7 @@ export function DonutChart({ title, slices }: DonutChartProps) {
       orient: "vertical",
       right: 0,
       top: "middle",
-      textStyle: { color: "#5B6A72", fontSize: 11 },
+      textStyle: { color: "#8D9AA1", fontSize: 11 },
       itemWidth: 10,
       itemHeight: 10,
     },
@@ -46,7 +46,10 @@ export function DonutChart({ title, slices }: DonutChartProps) {
         center: ["36%", "50%"],
         avoidLabelOverlap: true,
         label: { show: false },
-        itemStyle: { borderColor: "#fff", borderWidth: 2 },
+        // Slice-gap border matches the card's own background
+        // (deep-terrain) rather than white, so gaps between slices
+        // blend into the card instead of standing out as bright rings.
+        itemStyle: { borderColor: "#003744", borderWidth: 2 },
         data: slices.map((s, i) => ({
           name: s.label,
           value: s.salesGbp,
@@ -57,8 +60,8 @@ export function DonutChart({ title, slices }: DonutChartProps) {
   };
 
   return (
-    <div className="rounded-xl bg-white p-5">
-      <h2 className="mb-2 text-sm font-medium text-charcoal">{title}</h2>
+    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <h2 className="mb-2 text-sm font-medium text-cloud">{title}</h2>
       <div className="relative">
         <ReactECharts option={option} style={{ height: 220 }} notMerge />
         {/* Positioned to match the ring's own center: [0] is the
@@ -70,8 +73,8 @@ export function DonutChart({ title, slices }: DonutChartProps) {
           className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
           style={{ left: "36%", top: "50%" }}
         >
-          <span className="text-lg font-medium text-charcoal">{formatGbpMillions(total)}</span>
-          <span className="text-[10px] uppercase tracking-wide text-stone">Total sales</span>
+          <span className="text-lg font-medium text-cloud">{formatGbpMillions(total)}</span>
+          <span className="text-[10px] uppercase tracking-wide text-mist">Total sales</span>
         </div>
       </div>
     </div>

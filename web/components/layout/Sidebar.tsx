@@ -33,7 +33,7 @@ const FOOTER_ITEMS: { label: string; icon: Icon }[] = [
 
 export function Sidebar({ active = "Overview" }: { active?: string }) {
   return (
-    <aside className="flex h-screen w-60 flex-col justify-between bg-deep-terrain px-4 py-6">
+    <aside className="flex h-screen w-60 flex-col justify-between border-r border-white/10 bg-deep-terrain px-4 py-6">
       <div>
         <div className="mb-8 px-3">
           {/* fill + object-contain rather than fixed width/height — this

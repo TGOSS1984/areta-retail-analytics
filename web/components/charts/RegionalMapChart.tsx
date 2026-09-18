@@ -70,11 +70,11 @@ export function RegionalMapChart() {
   let points: { name: string; lat: number; lon: number; salesGbp: number }[];
   if (drilldown === "uk") {
     if (ukSales.status === "loading") {
-      return <div className="h-96 animate-pulse rounded-xl bg-alpine-stone/40" />;
+      return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
     }
     if (ukSales.status === "error") {
       return (
-        <div className="flex h-96 items-center justify-center rounded-xl bg-alpine-stone/20 p-4 text-center text-sm text-stone">
+        <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
           Couldn&apos;t load regional sales: {ukSales.message}
         </div>
       );
@@ -82,11 +82,11 @@ export function RegionalMapChart() {
     points = ukSales.data.map((p) => ({ name: p.region, lat: p.lat, lon: p.lon, salesGbp: p.salesGbp }));
   } else {
     if (europeSales.status === "loading") {
-      return <div className="h-96 animate-pulse rounded-xl bg-alpine-stone/40" />;
+      return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
     }
     if (europeSales.status === "error") {
       return (
-        <div className="flex h-96 items-center justify-center rounded-xl bg-alpine-stone/20 p-4 text-center text-sm text-stone">
+        <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
           Couldn&apos;t load regional sales: {europeSales.message}
         </div>
       );
@@ -116,7 +116,7 @@ export function RegionalMapChart() {
       // bottom margins.
       layoutCenter: ["50%", "50%"],
       layoutSize: "95%",
-      itemStyle: { areaColor: "#E8E1D6", borderColor: "#ffffff", borderWidth: 1 },
+      itemStyle: { areaColor: "#4A5B63", borderColor: "rgba(255,255,255,0.25)", borderWidth: 1 },
       emphasis: { itemStyle: { areaColor: "#D0AA62" }, label: { show: false } },
     },
     series: [
@@ -145,9 +145,9 @@ export function RegionalMapChart() {
   };
 
   return (
-    <div className="rounded-xl bg-white p-5">
+    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-charcoal">
+        <h2 className="text-sm font-medium text-cloud">
           {drilldown === "uk" ? "Sales by region — United Kingdom" : "Sales by market"}
         </h2>
         {drilldown === "uk" && (
@@ -161,7 +161,7 @@ export function RegionalMapChart() {
         )}
       </div>
       {drilldown === "europe" && (
-        <p className="mb-2 -mt-1 text-xs text-stone">Click the UK to see the regional breakdown</p>
+        <p className="mb-2 -mt-1 text-xs text-mist">Click the UK to see the regional breakdown</p>
       )}
       <ReactECharts option={option} style={{ height: 380 }} onEvents={onEvents} notMerge />
     </div>

@@ -16,12 +16,12 @@ export function SalesTrendChart() {
   const trend = useMonthlyTrend();
 
   if (trend.status === "loading") {
-    return <div className="h-80 animate-pulse rounded-xl bg-alpine-stone/40" />;
+    return <div className="h-80 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (trend.status === "error") {
     return (
-      <div className="flex h-80 items-center justify-center rounded-xl bg-alpine-stone/20 text-sm text-stone">
+      <div className="flex h-80 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm text-mist">
         Couldn&apos;t load the sales trend: {trend.message}
       </div>
     );
@@ -36,7 +36,7 @@ export function SalesTrendChart() {
       data: [`${currentYear}`, `${priorYear}`],
       top: 0,
       right: 0,
-      textStyle: { color: "#5B6A72", fontSize: 12 },
+      textStyle: { color: "#8D9AA1", fontSize: 12 },
     },
     tooltip: {
       trigger: "axis",
@@ -46,13 +46,13 @@ export function SalesTrendChart() {
     xAxis: {
       type: "category",
       data: points.map((p) => p.monthName.slice(0, 3)),
-      axisLine: { lineStyle: { color: "#E8E1D6" } },
-      axisLabel: { color: "#5B6A72", fontSize: 11 },
+      axisLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
+      axisLabel: { color: "#8D9AA1", fontSize: 11 },
     },
     yAxis: {
       type: "value",
-      axisLabel: { color: "#5B6A72", fontSize: 11, formatter: formatGbpAxis },
-      splitLine: { lineStyle: { color: "#E8E1D6" } },
+      axisLabel: { color: "#8D9AA1", fontSize: 11, formatter: formatGbpAxis },
+      splitLine: { lineStyle: { color: "rgba(255,255,255,0.08)" } },
     },
     series: [
       {
@@ -79,13 +79,13 @@ export function SalesTrendChart() {
   };
 
   return (
-    <div className="rounded-xl bg-white p-5">
+    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
       <div className="mb-1 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-charcoal">Sales trend</h2>
+        <h2 className="text-sm font-medium text-cloud">Sales trend</h2>
       </div>
       <ReactECharts option={option} style={{ height: 300 }} notMerge />
       {excludedPartialMonth && (
-        <p className="mt-2 text-[11px] text-stone">
+        <p className="mt-2 text-[11px] text-mist">
           {excludedPartialMonth} {currentYear} isn&apos;t shown yet — the month&apos;s still in progress.
         </p>
       )}

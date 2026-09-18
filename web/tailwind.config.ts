@@ -13,6 +13,12 @@ const config: Config = {
         "summit-gold": "#D0AA62",
         "rock-slate": "#4A5B63",
         "alpine-stone": "#E8E1D6",
+        // Canvas background for the dark theme — a much darker version
+        // of deep-terrain (same hue, lower lightness), not a separate
+        // colour family. Chart cards sit on this at deep-terrain itself,
+        // so the two need to read as "darker shade of the same teal"
+        // sitting behind "the teal", not two unrelated darks.
+        abyss: "#00141A",
         charcoal: "#0F1A1E",
         slate: "#2F3A40",
         stone: "#5B6A72",

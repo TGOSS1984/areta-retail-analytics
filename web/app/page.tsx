@@ -9,7 +9,7 @@ import { SalesMarginByMonthChart } from "@/components/charts/SalesMarginByMonthC
 
 export default function OverviewPage() {
   return (
-    <div className="flex min-h-screen bg-cloud">
+    <div className="flex min-h-screen bg-abyss">
       <Sidebar active="Overview" />
 
       <main className="flex-1 p-6">

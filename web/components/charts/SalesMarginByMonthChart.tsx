@@ -17,13 +17,13 @@ export function SalesMarginByMonthChart() {
   const trend = useSalesMarginByMonth(effectiveYear);
 
   if (years.status === "loading" || trend.status === "loading") {
-    return <div className="h-96 animate-pulse rounded-xl bg-alpine-stone/40" />;
+    return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (years.status === "error" || trend.status === "error") {
     const message = years.status === "error" ? years.message : trend.status === "error" ? trend.message : "";
     return (
-      <div className="flex h-96 items-center justify-center rounded-xl bg-alpine-stone/20 p-4 text-center text-sm text-stone">
+      <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
         Couldn&apos;t load sales &amp; margin by month: {message}
       </div>
     );
@@ -47,7 +47,7 @@ export function SalesMarginByMonthChart() {
       data: ["Sales", "Margin %"],
       top: 0,
       right: 0,
-      textStyle: { color: "#5B6A72", fontSize: 11 },
+      textStyle: { color: "#8D9AA1", fontSize: 11 },
       itemWidth: 10,
       itemHeight: 10,
     },
@@ -55,18 +55,18 @@ export function SalesMarginByMonthChart() {
     xAxis: {
       type: "category",
       data: points.map((p) => p.monthName.slice(0, 3)),
-      axisLine: { lineStyle: { color: "#D8D2C4" } },
-      axisLabel: { color: "#5B6A72", fontSize: 11 },
+      axisLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
+      axisLabel: { color: "#8D9AA1", fontSize: 11 },
     },
     yAxis: [
       {
         type: "value",
-        axisLabel: { color: "#5B6A72", fontSize: 11, formatter: (v: number) => formatGbpMillions(v) },
-        splitLine: { lineStyle: { color: "#EEE9DF" } },
+        axisLabel: { color: "#8D9AA1", fontSize: 11, formatter: (v: number) => formatGbpMillions(v) },
+        splitLine: { lineStyle: { color: "rgba(255,255,255,0.08)" } },
       },
       {
         type: "value",
-        axisLabel: { color: "#5B6A72", fontSize: 11, formatter: "{value}%" },
+        axisLabel: { color: "#8D9AA1", fontSize: 11, formatter: "{value}%" },
         splitLine: { show: false },
       },
     ],
@@ -92,13 +92,13 @@ export function SalesMarginByMonthChart() {
   };
 
   return (
-    <div className="rounded-xl bg-white p-5">
+    <div className="rounded-xl border border-white/10 bg-deep-terrain p-5">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-charcoal">Sales &amp; margin by month</h2>
+        <h2 className="text-sm font-medium text-cloud">Sales &amp; margin by month</h2>
         <select
           value={effectiveYear ?? ""}
           onChange={(e) => setYearOverride(Number(e.target.value))}
-          className="rounded-lg border border-alpine-stone/40 bg-white px-2 py-1 text-xs text-charcoal"
+          className="rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-cloud"
         >
           {years.data.map((y) => (
             <option key={y} value={y}>
@@ -108,7 +108,7 @@ export function SalesMarginByMonthChart() {
         </select>
       </div>
       {trend.data.excludedPartialMonth && (
-        <p className="mb-2 -mt-1 text-xs text-stone">
+        <p className="mb-2 -mt-1 text-xs text-mist">
           {trend.data.excludedPartialMonth} isn&apos;t shown yet — the month&apos;s still in progress.
         </p>
       )}

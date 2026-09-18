@@ -47,7 +47,7 @@ function ProductThumb({ product }: { product: TopProduct }) {
       src={src}
       onError={() => setSrc(fallbackSrc)}
       alt=""
-      className="h-11 w-11 flex-shrink-0 rounded-lg bg-alpine-stone/40 object-cover"
+      className="h-11 w-11 flex-shrink-0 rounded-lg bg-white/10 object-cover"
     />
   );
 }
@@ -56,31 +56,31 @@ export function TopProductsChart() {
   const top = useTopProducts(ROW_LIMIT);
 
   if (top.status === "loading") {
-    return <div className="h-96 animate-pulse rounded-xl bg-alpine-stone/40" />;
+    return <div className="h-96 animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
 
   if (top.status === "error") {
     return (
-      <div className="flex h-96 items-center justify-center rounded-xl bg-alpine-stone/20 p-4 text-center text-sm text-stone">
+      <div className="flex h-96 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
         Couldn&apos;t load top products: {top.message}
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col rounded-xl bg-white p-5">
-      <h2 className="mb-3 text-sm font-medium text-charcoal">Top products</h2>
+    <div className="flex h-full flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+      <h2 className="mb-3 text-sm font-medium text-cloud">Top products</h2>
       <ul className="flex flex-1 flex-col justify-between gap-3">
         {top.data.map((product) => (
           <li key={`${product.styleCode}-${product.colourCode}`} className="flex items-center gap-3">
             <ProductThumb product={product} />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-charcoal">{product.styleName}</p>
-              <p className="truncate text-xs text-stone">
+              <p className="truncate text-sm font-medium text-cloud">{product.styleName}</p>
+              <p className="truncate text-xs text-mist">
                 {product.colour} &middot; {product.brandName}
               </p>
             </div>
-            <p className="flex-shrink-0 text-sm font-medium text-charcoal">
+            <p className="flex-shrink-0 text-sm font-medium text-cloud">
               {formatGbpCompact(product.salesGbp)}
             </p>
           </li>

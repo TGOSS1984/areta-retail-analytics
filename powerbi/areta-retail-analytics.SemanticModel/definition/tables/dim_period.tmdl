@@ -3,9 +3,9 @@ table dim_period
 
 	column period_key
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: d5e7c191-ac05-498e-b7a4-9fc664e43c88
-		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
@@ -32,9 +32,9 @@ table dim_period
 	column business_period_label
 		dataType: string
 		lineageTag: cbd4c23d-82ce-47e5-bdfa-285f7cdeda4a
-		sortByColumn: period_key
 		summarizeBy: none
 		sourceColumn: business_period_label
+		sortByColumn: period_key
 
 		annotation SummarizationSetBy = Automatic
 
@@ -78,5 +78,4 @@ table dim_period
 				    Source
 
 	annotation PBI_ResultType = Table
-
 

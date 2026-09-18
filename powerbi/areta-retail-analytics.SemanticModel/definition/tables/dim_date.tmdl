@@ -4,9 +4,9 @@ table dim_date
 
 	column date_key
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 98b6087e-b4eb-4f8d-8c38-1abd71941c55
-		isHidden
 		summarizeBy: sum
 		sourceColumn: date_key
 
@@ -14,10 +14,10 @@ table dim_date
 
 	column full_date
 		dataType: dateTime
+		isKey
 		formatString: Long Date
 		lineageTag: bec18ba8-0dc4-4269-a3b4-7d17753d3529
 		summarizeBy: none
-		isKey
 		sourceColumn: full_date
 
 		annotation SummarizationSetBy = Automatic
@@ -27,17 +27,17 @@ table dim_date
 	column day_name
 		dataType: string
 		lineageTag: f6fd5ad4-4405-47c3-9b5e-a314684d4bcc
-		sortByColumn: day_of_week_num
 		summarizeBy: none
 		sourceColumn: day_name
+		sortByColumn: day_of_week_num
 
 		annotation SummarizationSetBy = Automatic
 
 	column day_of_week_num
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 269d2498-aec8-4190-9a52-008a572fdd68
-		isHidden
 		summarizeBy: sum
 		sourceColumn: day_of_week_num
 
@@ -63,9 +63,9 @@ table dim_date
 
 	column month_num
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: adaa6f0e-5e8c-439b-abbd-6ad2ca321e39
-		isHidden
 		summarizeBy: sum
 		sourceColumn: month_num
 
@@ -74,9 +74,9 @@ table dim_date
 	column month_name
 		dataType: string
 		lineageTag: f46ea928-20eb-4bcb-9395-6faa7fbcfe17
-		sortByColumn: month_num
 		summarizeBy: none
 		sourceColumn: month_name
+		sortByColumn: month_num
 
 		annotation SummarizationSetBy = Automatic
 
@@ -143,9 +143,9 @@ table dim_date
 
 	column business_period_number
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: eb5fd35b-1c20-4685-9b72-ff111cfef3b8
-		isHidden
 		summarizeBy: sum
 		sourceColumn: business_period_number
 
@@ -154,9 +154,9 @@ table dim_date
 	column business_period_label
 		dataType: string
 		lineageTag: b54edc06-c2a3-4e4c-8c5e-658abe940aed
-		sortByColumn: period_key
 		summarizeBy: none
 		sourceColumn: business_period_label
+		sortByColumn: period_key
 
 		annotation SummarizationSetBy = Automatic
 
@@ -171,9 +171,9 @@ table dim_date
 
 	column period_key
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 12aaae1c-8378-44ae-9259-93709196328f
-		isHidden
 		summarizeBy: sum
 		sourceColumn: period_key
 
@@ -228,37 +228,31 @@ table dim_date
 		lineageTag: dbb09661-7209-4aa8-90e9-a9f7ee22a8e2
 
 		level Year
-			ordinal: 0
-			column: calendar_year
 			lineageTag: 70b1452e-7157-4a4f-8ad6-f13c15acdee8
+			column: calendar_year
 
 		level Quarter
-			ordinal: 1
-			column: calendar_quarter
 			lineageTag: 8bbf8f8a-3c35-43de-9b88-b83609b6536c
+			column: calendar_quarter
 
 		level Month
-			ordinal: 2
-			column: month_name
 			lineageTag: 93f554ef-6fe9-4e5c-9de0-0985303e90fa
+			column: month_name
 
 		level Day
-			ordinal: 3
-			column: day_of_month
 			lineageTag: 5ce6277c-d8ca-4a42-ab16-d89b0ff24315
+			column: day_of_month
 
 	hierarchy 'Business Calendar'
 		lineageTag: c2011d0a-bb7b-4936-bf73-1f9b35fdd360
 
 		level 'Business Year'
-			ordinal: 0
-			column: business_year
 			lineageTag: b9ad3b3c-b308-4ac2-af24-69a2595c99f1
+			column: business_year
 
 		level 'Business Period'
-			ordinal: 1
-			column: business_period_label
 			lineageTag: b0a605d7-df2a-4edb-bd9f-af9bdc19fe70
+			column: business_period_label
 
 	partition dim_date = m
 		mode: import

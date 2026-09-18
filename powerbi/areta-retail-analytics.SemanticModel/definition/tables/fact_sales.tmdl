@@ -247,6 +247,86 @@ table fact_sales
 		lineageTag: 01d3df6f-632c-471c-b17b-73bc1d45cc44
 		displayFolder: Time Intelligence
 
+	measure 'Net Sales YoY (GBP)' = [Net Sales (GBP)] - [Net Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 971f3181-8543-400c-b2f0-b5246d46bc8e
+		displayFolder: Time Intelligence
+
+	measure 'Net Units Sold YoY (Units)' = [Net Units Sold] - [Net Units Sold LY]
+		formatString: #,0
+		lineageTag: b69c4175-effe-4914-92ca-9d22351967f9
+		displayFolder: Time Intelligence
+
+	measure 'Retail Sales YoY (GBP)' = [Retail Sales (GBP)] - [Retail Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 553430a0-846e-414c-96e8-009ab039faf8
+		displayFolder: Time Intelligence
+
+	measure 'Concession Sales YoY (GBP)' = [Concession Sales (GBP)] - [Concession Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: b9315390-e2e5-483e-932e-ddc4efedbed4
+		displayFolder: Time Intelligence
+
+	measure 'Online Sales YoY (GBP)' = [Online Sales (GBP)] - [Online Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 62e3d59a-00ca-4c63-a578-d03c03a42b99
+		displayFolder: Time Intelligence
+
+	measure 'Net Sales YoY Combo' = [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 3492abb1-acc8-46dd-a656-550f60f373d9
+		displayFolder: KPI Trend Indicators
+
+	measure 'Net Units Sold YoY Combo' = [Net Units Sold Trend Arrow] & " " & FORMAT ( ABS ( [Net Units Sold YoY (Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 69faa9fc-e794-4561-8386-f06600fbbbb2
+		displayFolder: KPI Trend Indicators
+
+	measure 'Retail Sales YoY Combo' = [Retail Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Retail Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Retail Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 947fdd56-0111-4c33-9fdd-b284661069e6
+		displayFolder: KPI Trend Indicators
+
+	measure 'Concession Sales YoY Combo' = [Concession Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Concession Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Concession Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: ea7ac2d9-d4d4-434d-82cb-9a6bde7ea015
+		displayFolder: KPI Trend Indicators
+
+	measure 'Online Sales YoY Combo' = [Online Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Online Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Online Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 52c2c241-1f3c-44b8-a248-beeae31d99ae
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Margin YoY Combo' = [Gross Margin Trend Arrow] & " " & FORMAT ( [Gross Margin YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 06cdde71-0829-48d2-ae84-79c49813baa1
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit LY' =
+			CALCULATE (
+			    [Gross Profit (GBP)],
+			    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: 82cff70f-a397-4d42-830b-c4136ae97da5
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit YoY (GBP)' = [Gross Profit (GBP)] - [Gross Profit LY]
+		formatString: "£"#,0.00
+		lineageTag: df60fc19-cd63-4682-9e2f-741eef43fe75
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit YoY %' = DIVIDE ( [Gross Profit (GBP)] - [Gross Profit LY], [Gross Profit LY] )
+		formatString: 0.0%
+		lineageTag: a725fc4c-4e33-42d5-a2db-3e379c43d2b8
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit Trend Arrow' = IF ( [Gross Profit YoY %] > 0, "▲", IF ( [Gross Profit YoY %] < 0, "▼", "▬" ) )
+		lineageTag: ed16ba78-b211-4560-bc6c-a3875244a63a
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit Trend Colour' = IF ( [Gross Profit YoY %] > 0, "#2E7D32", IF ( [Gross Profit YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 3b8bb0cf-c519-42c4-a8f5-b70e3f158a0d
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit YoY Combo' = [Gross Profit Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 4861f910-090d-4e9b-8751-52d09c643003
+		displayFolder: KPI Trend Indicators
+
 	measure 'Distinct Invoices (from Sales)' = CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
 		formatString: #,0
 		lineageTag: 7fcae126-a8c2-4dd8-bfa6-84580ae128d0

@@ -1,6 +1,7 @@
 relationship AutoDetected_8cbd9c3f-e0b5-4dc2-afde-c407c6fc3385
 	fromColumn: dim_date.business_period_label
 	toColumn: dim_period.business_period_label
+	isActive: false
 
 relationship AutoDetected_56570fb1-8b44-4599-8f6b-7465a7e8b7ed
 	fromColumn: fact_sales.sku

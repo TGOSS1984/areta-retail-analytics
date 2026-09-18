@@ -227,6 +227,37 @@ table fact_store_finance
 		lineageTag: 1346e55f-183f-423f-af22-a98fc27169bd
 		displayFolder: Contribution
 
+	measure 'Net Contribution LY' =
+			CALCULATE (
+			    [Net Contribution (GBP)],
+			    FILTER ( ALL ( dim_period ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: b0a4dab3-2f93-4047-922f-18b5fcf768de
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY (GBP)' = [Net Contribution (GBP)] - [Net Contribution LY]
+		formatString: "£"#,0.00
+		lineageTag: ae481c5c-ac3c-463f-834f-64df421cfc37
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY %' = DIVIDE ( [Net Contribution (GBP)] - [Net Contribution LY], [Net Contribution LY] )
+		formatString: 0.0%
+		lineageTag: 9922ed4f-4b12-4879-be0e-c314209163c7
+		displayFolder: Contribution
+
+	measure 'Net Contribution Trend Arrow' = IF ( [Net Contribution YoY %] > 0, "▲", IF ( [Net Contribution YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 454045ee-a413-4ab8-83d6-95c2132ab3ba
+		displayFolder: Contribution
+
+	measure 'Net Contribution Trend Colour' = IF ( [Net Contribution YoY %] > 0, "#2E7D32", IF ( [Net Contribution YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 0a1e6db1-c282-48c2-bcf6-10dc86fde39a
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY Combo' = [Net Contribution Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 2708d09f-bb2c-4c0a-abb5-d745a8073def
+		displayFolder: Contribution
+
 	partition fact_store_finance = m
 		mode: import
 		source =

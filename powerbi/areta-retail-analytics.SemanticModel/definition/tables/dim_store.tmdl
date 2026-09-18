@@ -3,8 +3,8 @@ table dim_store
 
 	column store_id
 		dataType: string
-		lineageTag: c5de2135-3fb0-4c21-bc84-fa60c199e490
 		isHidden
+		lineageTag: c5de2135-3fb0-4c21-bc84-fa60c199e490
 		summarizeBy: none
 		sourceColumn: store_id
 

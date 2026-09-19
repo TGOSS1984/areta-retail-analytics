@@ -9,12 +9,17 @@ Order matters here, not arbitrary:
   1. dimensions (date, store, product, currency, promo) — nothing else can
      run without these
   2. fact_sales raw pass, then its clean step — fact_footfall,
-     fact_stock_snapshot, fact_targets, fact_store_finance, and
+     fact_stock_snapshot, fact_store_finance, fact_targets, and
      fact_digital_sales all read the CLEANED fact_sales, not the raw one
-  3. fact_footfall, fact_stock_snapshot, fact_targets, fact_store_finance
-     — order between these four doesn't matter, they're independent of
-     each other, just all downstream of fact_sales
-  4. fact_digital_sales, then fact_digital_traffic — digital_sales
+  3. fact_footfall, fact_stock_snapshot, fact_store_finance — order
+     between these three doesn't matter, they're independent of each
+     other, just downstream of fact_sales
+  4. fact_targets — now has to run AFTER fact_footfall and
+     fact_store_finance specifically, not just after fact_sales: it
+     targets footfall and net contribution too, not just net sales, so
+     it reads both of those facts' actuals directly rather than
+     re-deriving them
+  5. fact_digital_sales, then fact_digital_traffic — digital_sales
      derives its device-level split from the real Online-channel totals
      in fact_sales (so digital sales figures reconcile exactly, see that
      script's own docstring); digital_traffic then calibrates its
@@ -56,8 +61,8 @@ STEPS = [
     ("clean/clean_fact_sales.py", "fact_sales (staging + warehouse)"),
     ("facts/build_fact_footfall.py", "fact_footfall"),
     ("facts/build_fact_stock.py", "fact_stock_snapshot"),
-    ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_store_finance.py", "fact_store_finance"),
+    ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_digital_sales.py", "fact_digital_sales"),
     ("facts/build_fact_digital_traffic.py", "fact_digital_traffic"),
     ("export_web_data.py", "web exports (data/exports)"),

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "a113515d4c16d5b360d1",
   "position": {
-    "x": 1205.3710247349823,
-    "y": 151.51943462897526,
+    "x": 960,
+    "y": 151.66965888689407,
     "z": 11,
-    "height": 388.97526501766782,
-    "width": 697.66784452296815,
+    "height": 387.79174147217236,
+    "width": 942.76481149012568,
     "tabOrder": 10
   },
   "visual": {
@@ -51,6 +51,34 @@
                       "Entity": "dim_product"
                     }
                   },
+                  "Property": "colour"
+                }
+              },
+              "queryRef": "dim_product.colour",
+              "nativeQueryRef": "colour"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "colour_code"
+                }
+              },
+              "queryRef": "dim_product.colour_code",
+              "nativeQueryRef": "colour_code"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
                   "Property": "product_group"
                 }
               },
@@ -70,6 +98,20 @@
               },
               "queryRef": "fact_sales.Net Sales (GBP)",
               "nativeQueryRef": "Net Sales (GBP)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "image_url"
+                }
+              },
+              "queryRef": "dim_product.image_url",
+              "nativeQueryRef": "image_url"
             }
           ]
         }

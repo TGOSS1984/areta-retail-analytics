@@ -1,30 +1,10 @@
 table fact_targets
 	lineageTag: 9e876f8d-e369-44ed-9f8d-20225e05a20c
 
-	measure 'Target Net Sales (GBP)' = SUM ( fact_targets[target_net_sales_gbp] )
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
-
-	measure 'Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
-
-	measure 'Target Variance %' = DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
-
-	measure 'Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
-
 	column store_id
 		dataType: string
-		isHidden
 		lineageTag: 42226a5d-0714-4f5e-9119-86b5fb285809
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -32,9 +12,9 @@ table fact_targets
 
 	column business_year
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 299465af-186e-42c2-84a2-8be0edeb43eb
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_year
 
@@ -42,9 +22,9 @@ table fact_targets
 
 	column business_period_number
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: b2fa3823-321a-44b0-a23f-a0977195dad1
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_period_number
 
@@ -52,9 +32,9 @@ table fact_targets
 
 	column period_key
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: b9e084e2-9ab6-4022-a7ab-7ef4c0ee2bdd
+		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
@@ -62,14 +42,78 @@ table fact_targets
 
 	column target_net_sales_gbp
 		dataType: double
-		isHidden
 		lineageTag: 1de27905-b288-4c79-8a8e-17a67541fccd
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_net_sales_gbp
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column target_net_units_sold
+		dataType: double
+		lineageTag: 9f5d647c-e400-4280-a804-7029f7deb549
+		isHidden
+		summarizeBy: sum
+		sourceColumn: target_net_units_sold
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column target_gross_margin_pct
+		dataType: double
+		lineageTag: 21fd1a76-f5f4-4ff2-81aa-995e384e091f
+		isHidden
+		summarizeBy: none
+		sourceColumn: target_gross_margin_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column target_footfall
+		dataType: double
+		lineageTag: e760cb79-2312-4c00-941c-558f70fffadb
+		isHidden
+		summarizeBy: sum
+		sourceColumn: target_footfall
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column target_net_contribution_gbp
+		dataType: double
+		lineageTag: ddf95394-1c16-44d0-b545-5f7ce942e611
+		isHidden
+		summarizeBy: sum
+		sourceColumn: target_net_contribution_gbp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Target Net Sales (GBP)' = SUM ( fact_targets[target_net_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
+		displayFolder: Targets
+
+	measure 'Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
+		displayFolder: Targets
+
+	measure 'Target Variance %' = DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
+		displayFolder: Targets
+
+	measure 'Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
+		displayFolder: Targets
 
 	partition fact_targets = m
 		mode: import

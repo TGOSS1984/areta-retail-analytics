@@ -1,0 +1,23 @@
+table dim_report_metadata
+	lineageTag: 6258432f-ba01-4fe0-b389-51d25ca1a194
+
+	measure 'Report Last Refreshed' = MAX ( dim_report_metadata[Last Refreshed] )
+		formatString: dddd\, dd mmmm yyyy hh:mm
+		lineageTag: 2b543daa-211a-44a4-b01b-aee0dffc2c05
+
+	column 'Last Refreshed'
+		dataType: dateTime
+		formatString: dddd\, dd mmmm yyyy hh:mm
+		lineageTag: 1f8e6a3c-4b2d-4e91-9c7a-8d5f3e2b1a06
+		summarizeBy: none
+		sourceColumn: Last Refreshed
+
+	partition dim_report_metadata = m
+		mode: import
+		source =
+				let
+				    Source = #table({"Last Refreshed"}, {{DateTimeZone.FixedLocalNow()}})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

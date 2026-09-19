@@ -1,0 +1,40 @@
+table dim_browser
+	lineageTag: b6d1b7d0-9108-4728-9278-be6426c32547
+
+	column browser
+		dataType: string
+		lineageTag: e8df2c87-df4c-4d98-a38b-23acde6e666e
+		summarizeBy: none
+		sourceColumn: browser
+
+	column icon_url
+		dataType: string
+		lineageTag: 96c41ffa-df55-4f0c-8d55-0999d8afcf7b
+		summarizeBy: none
+		sourceColumn: icon_url
+		dataCategory: ImageUrl
+
+	column description
+		dataType: string
+		lineageTag: ee4d4f6e-8a79-49dc-914f-0a2f0042c1fb
+		summarizeBy: none
+		sourceColumn: description
+
+	partition dim_browser = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        {"browser", "icon_url", "description"},
+				        {
+				    {"Chrome", "https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_128x128.png", "Google Chrome"},
+				    {"Safari", "https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/safari/safari_128x128.png", "Apple Safari"},
+				    {"Firefox", "https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_128x128.png", "Mozilla Firefox"},
+				    {"Edge", "https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_128x128.png", "Microsoft Edge"},
+				    {"Other", "https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/web/web_128x128.png", "Other / unrecognised browser"}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

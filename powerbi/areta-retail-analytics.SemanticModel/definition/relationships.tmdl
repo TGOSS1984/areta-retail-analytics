@@ -1,7 +1,7 @@
 relationship AutoDetected_8cbd9c3f-e0b5-4dc2-afde-c407c6fc3385
-	isActive: false
 	fromColumn: dim_date.business_period_label
 	toColumn: dim_period.business_period_label
+	isActive: false
 
 relationship AutoDetected_56570fb1-8b44-4599-8f6b-7465a7e8b7ed
 	fromColumn: fact_sales.sku
@@ -72,7 +72,12 @@ relationship d316f653-1b9c-41e9-ad7c-69c21113d587
 	toColumn: dim_date.full_date
 
 relationship dfc3ff29-c425-47f5-8138-9c38e68a2970
-	isActive: false
 	fromColumn: fact_digital_traffic.market_code
 	toColumn: dim_market.market_code
+	isActive: false
+
+relationship 3bec15c5-dff2-4ea5-b346-9f4bb3f4e3f9
+	fromColumn: fact_digital_traffic.browser
+	toColumn: dim_browser.browser
+
 

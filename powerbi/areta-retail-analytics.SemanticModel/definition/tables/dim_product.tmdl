@@ -150,6 +150,12 @@ table dim_product
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	column image_url = "https://raw.githubusercontent.com/TGOSS1984/areta-retail-analytics/main/web/public/images/products/" & dim_product[style_code] & "-" & dim_product[colour_code] & ".webp"
+		dataType: string
+		lineageTag: 884a9692-8753-4d3c-9094-3be70db4595a
+		dataCategory: ImageUrl
+		summarizeBy: none
+
 	partition dim_product = m
 		mode: import
 		source =

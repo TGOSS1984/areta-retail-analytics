@@ -8,18 +8,20 @@ table dim_pnl_bridge
 		sourceColumn: step_name
 
 	column step_order
-		dataType: int64
-		formatString: 0
+		dataType: string
 		lineageTag: 43b6e6a7-0420-4375-a034-d5d619d20779
 		summarizeBy: none
 		sourceColumn: step_order
 
+		annotation SummarizationSetBy = Automatic
+
 	column is_total
-		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
+		dataType: string
 		lineageTag: 9fb87dea-a561-4b2e-bc73-a46c14f2c00d
 		summarizeBy: none
 		sourceColumn: is_total
+
+		annotation SummarizationSetBy = Automatic
 
 	partition dim_pnl_bridge = m
 		mode: import
@@ -37,3 +39,4 @@ table dim_pnl_bridge
 				    Source
 
 	annotation PBI_ResultType = Table
+

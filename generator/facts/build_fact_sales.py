@@ -93,6 +93,34 @@ ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120, "Online": 1000}
 CHANNEL_DEMAND_MULT = {"Retail": 1.0, "Concession": 0.7, "Online": 1.9}
 HOME_MARKET_MULT = 1.15
 
+# Areta is the flagship/parent brand and Tom wants it reading as the
+# largest brand with real bestseller variety, not a total sweep of the
+# top-N list. Before this, Areta's larger assortment (same genders/
+# divisions as Basecamp) was being outweighed by Kestrel Ridge's
+# premium price_index (1.45) — demand scales as 1/sqrt(price), not
+# 1/price, so a higher-priced brand loses proportionally less volume
+# than it gains in per-unit revenue, letting Kestrel Ridge (smaller
+# range) punch above its assortment size.
+#
+# Calibrated iteratively by checking BOTH the actual resulting brand
+# share AND top-20 composition after running (1.3/1.6/2.0/2.5/2.8/3.5
+# all tried) — not derived algebraically. Found a genuine structural
+# tension, not just an uncalibrated number: Areta's assortment is
+# meaningfully bigger than the other 3 brands', so even a modest
+# multiplier compounds with basic order statistics (bigger sample ->
+# higher max) to sweep the ENTIRE top-20 with Areta styles well before
+# aggregate share crosses 50% — the crossover from "some competitor
+# variety" to "total sweep" sits between 1.3x and 1.6x, while 50%+
+# aggregate share needs ~2.5x+. Tom chose variety over the 50% floor:
+# 1.3x lands Areta as the clear largest brand (~34% vs each competitor's
+# ~19-23%) with real top-20 variety (14/20 Areta, 6/20 Kestrel Ridge)
+# rather than a complete sweep. If "Areta >=50% AND real top-20 variety"
+# is ever wanted simultaneously, a flat per-brand multiplier can't do
+# it — would need a non-uniform adjustment targeting Areta's very top
+# performers specifically (e.g. diminishing the boost as an individual
+# style's own demand rises), not attempted here.
+BRAND_DEMAND_MULT = {"Areta": 1.3, "Kestrel Ridge": 1.0, "Basecamp": 1.0, "Areta Pro": 1.0}
+
 # keyed to dim_date's Sunday=1..Saturday=7 numbering
 WEEKDAY_MULT = {1: 1.25, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.15, 7: 1.5}
 
@@ -227,6 +255,7 @@ def build_assortment(dim_store: pd.DataFrame, dim_product: pd.DataFrame, markets
         BASE_DEMAND_SCALAR
         / np.sqrt(assortment["base_price_gbp"])
         * assortment["channel"].map(CHANNEL_DEMAND_MULT)
+        * assortment["brand_name"].map(BRAND_DEMAND_MULT)
         * np.where(assortment["is_home_market"], HOME_MARKET_MULT, 1.0)
         * assortment["store_perf_factor"]
     )
@@ -625,6 +654,19 @@ def main() -> None:
     channel_by_store = dim_store.set_index("store_id")["channel"]
     channel_sales = df["store_id"].map(channel_by_store).value_counts(normalize=True)
     print("channel split (share of sold lines): " + ", ".join(f"{c}={p:.1%}" for c, p in channel_sales.items()))
+
+    # Brand split (share of NET SALES £, not line count — what actually
+    # matters for "is Areta the biggest brand" is revenue, and revenue
+    # share can differ meaningfully from line-count share once price
+    # differences between brands are in play). See BRAND_DEMAND_MULT's
+    # comment for why this needed calibrating in the first place.
+    brand_by_sku = dim_product.set_index("sku")["brand_name"]
+    brand_sales_gbp = df.assign(brand_name=df["sku"].map(brand_by_sku)).groupby("brand_name")["net_sales_gbp"].sum()
+    brand_share = brand_sales_gbp / brand_sales_gbp.sum()
+    print(
+        "brand split (share of net sales £): "
+        + ", ".join(f"{b}={p:.1%}" for b, p in brand_share.sort_values(ascending=False).items())
+    )
 
     df = synthesize_multibuy_attachments(df, dim_product, assortment, fx_lookup)
     df = apply_multibuy_promos(df, dim_product)

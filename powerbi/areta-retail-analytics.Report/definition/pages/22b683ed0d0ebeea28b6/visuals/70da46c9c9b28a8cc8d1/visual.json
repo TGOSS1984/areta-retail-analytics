@@ -25,14 +25,14 @@
                           "Entity": "dim_date"
                         }
                       },
-                      "Hierarchy": "Calendar Date"
+                      "Hierarchy": "Business Calendar"
                     }
                   },
-                  "Level": "Year"
+                  "Level": "Business Year"
                 }
               },
-              "queryRef": "dim_date.Calendar Date.Year",
-              "nativeQueryRef": "Calendar Date Year",
+              "queryRef": "dim_date.Business Calendar.Business Year",
+              "nativeQueryRef": "Business Calendar Business Year",
               "active": false
             },
             {
@@ -45,14 +45,14 @@
                           "Entity": "dim_date"
                         }
                       },
-                      "Hierarchy": "Calendar Date"
+                      "Hierarchy": "Business Calendar"
                     }
                   },
-                  "Level": "Quarter"
+                  "Level": "business_quarter"
                 }
               },
-              "queryRef": "dim_date.Calendar Date.Quarter",
-              "nativeQueryRef": "Calendar Date Quarter",
+              "queryRef": "dim_date.Business Calendar.business_quarter",
+              "nativeQueryRef": "Business Calendar business_quarter",
               "active": true
             },
             {
@@ -65,14 +65,14 @@
                           "Entity": "dim_date"
                         }
                       },
-                      "Hierarchy": "Calendar Date"
+                      "Hierarchy": "Business Calendar"
                     }
                   },
-                  "Level": "Month"
+                  "Level": "Business Period"
                 }
               },
-              "queryRef": "dim_date.Calendar Date.Month",
-              "nativeQueryRef": "Calendar Date Month",
+              "queryRef": "dim_date.Business Calendar.Business Period",
+              "nativeQueryRef": "Business Calendar Business Period",
               "active": false
             },
             {
@@ -85,14 +85,34 @@
                           "Entity": "dim_date"
                         }
                       },
-                      "Hierarchy": "Calendar Date"
+                      "Hierarchy": "Business Calendar"
                     }
                   },
-                  "Level": "Day"
+                  "Level": "Business Week"
                 }
               },
-              "queryRef": "dim_date.Calendar Date.Day",
-              "nativeQueryRef": "Calendar Date Day",
+              "queryRef": "dim_date.Business Calendar.Business Week",
+              "nativeQueryRef": "Business Calendar Business Week",
+              "active": false
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dim_date"
+                        }
+                      },
+                      "Hierarchy": "Business Calendar"
+                    }
+                  },
+                  "Level": "day_name"
+                }
+              },
+              "queryRef": "dim_date.Business Calendar.day_name",
+              "nativeQueryRef": "Business Calendar day_name",
               "active": false
             }
           ]

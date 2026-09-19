@@ -88,6 +88,24 @@ ICONS = {
     "filter": "Filters",
     "database": "Data",
     "file-text": "Reports",
+    # Added for the digital/stock/targets/refresh-stamp work built after
+    # this set was first curated — real gaps checked against the actual
+    # measure list, not guessed: device-desktop already covered Digital
+    # generally, but the device SPLIT (Desktop/Mobile/Tablet) needed its
+    # other two. chart-funnel deliberately shared between Conversion
+    # Rate % (retail) and Digital Conversion Rate % — same underlying
+    # concept (visits -> outcome), one icon not two.
+    "device-mobile": "Mobile",
+    "device-tablet": "Tablet",
+    "eye": "Visitors",
+    "click": "Sessions",
+    "basket": "Average basket value",
+    "chart-funnel": "Conversion rate",
+    "refresh": "Last refreshed",
+    "hourglass-high": "Weeks of cover",
+    "stairs": "Pareto / cumulative %",
+    "chart-candle": "Waterfall / P&L bridge",
+    "browser": "Browser",
 }
 
 

@@ -1,0 +1,39 @@
+table dim_pnl_bridge
+	lineageTag: 9c8fb69f-3afd-47b9-bee1-5ec678b19fa3
+
+	column step_name
+		dataType: string
+		lineageTag: 3279a1aa-9b6a-4fe8-925f-62088bde6862
+		summarizeBy: none
+		sourceColumn: step_name
+
+	column step_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 43b6e6a7-0420-4375-a034-d5d619d20779
+		summarizeBy: none
+		sourceColumn: step_order
+
+	column is_total
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9fb87dea-a561-4b2e-bc73-a46c14f2c00d
+		summarizeBy: none
+		sourceColumn: is_total
+
+	partition dim_pnl_bridge = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        {"step_name", "step_order", "is_total"},
+				        {
+				    {"Net Sales", 1, false},
+				    {"Cost of Goods", 2, false},
+				    {"Gross Profit", 3, true}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

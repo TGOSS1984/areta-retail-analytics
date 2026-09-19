@@ -10,9 +10,9 @@ table dim_browser
 	column icon_url
 		dataType: string
 		lineageTag: 96c41ffa-df55-4f0c-8d55-0999d8afcf7b
+		dataCategory: ImageUrl
 		summarizeBy: none
 		sourceColumn: icon_url
-		dataCategory: ImageUrl
 
 	column description
 		dataType: string
@@ -38,3 +38,4 @@ table dim_browser
 				    Source
 
 	annotation PBI_ResultType = Table
+

@@ -1,0 +1,33 @@
+table dim_vat_view
+	lineageTag: 5895eea1-27ed-491d-9693-0bf0d803c6a3
+
+	column vat_view
+		dataType: string
+		lineageTag: cd09256e-4541-4a52-97c0-6dbdbeb4bff5
+		summarizeBy: none
+		sourceColumn: vat_view
+		sortByColumn: sort_order
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 11899221-c4a1-4773-b12e-0255d12d1d4e
+		isHidden
+		summarizeBy: none
+		sourceColumn: sort_order
+
+	partition dim_vat_view = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        {"vat_view", "sort_order"},
+				        {
+				    {"Excluding VAT", 1},
+				    {"Including VAT", 2}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

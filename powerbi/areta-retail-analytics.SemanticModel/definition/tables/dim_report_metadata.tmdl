@@ -6,11 +6,12 @@ table dim_report_metadata
 		lineageTag: 2b543daa-211a-44a4-b01b-aee0dffc2c05
 
 	column 'Last Refreshed'
-		dataType: dateTime
-		formatString: dddd\, dd mmmm yyyy hh:mm
+		dataType: string
 		lineageTag: 1f8e6a3c-4b2d-4e91-9c7a-8d5f3e2b1a06
 		summarizeBy: none
 		sourceColumn: Last Refreshed
+
+		annotation SummarizationSetBy = Automatic
 
 	partition dim_report_metadata = m
 		mode: import
@@ -21,3 +22,4 @@ table dim_report_metadata
 				    Source
 
 	annotation PBI_ResultType = Table
+

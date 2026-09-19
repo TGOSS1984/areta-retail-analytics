@@ -1,124 +1,11 @@
 table fact_footfall
 	lineageTag: 0a1f02ad-fb55-4f6e-b8a1-c31be2d00ec5
 
-	measure 'Total Footfall' = SUM ( fact_footfall[footfall] )
-		formatString: #,0
-		displayFolder: Footfall & Conversion
-		lineageTag: be58b254-a3b9-4a2f-a2da-797ce3ad6e28
-
-	measure 'Total Transactions' = SUM ( fact_footfall[transactions] )
-		formatString: #,0
-		displayFolder: Footfall & Conversion
-		lineageTag: c65b6fdc-6c5a-4306-beba-cea243b06bf8
-
-	measure 'Conversion Rate %' = DIVIDE ( [Total Transactions], [Total Footfall] )
-		formatString: 0.0%
-		displayFolder: Footfall & Conversion
-		lineageTag: 802d5a98-2a16-43e5-9c81-631ae8271877
-
-	measure 'Items per Transaction' = DIVIDE ( [Gross Units Sold], [Total Transactions] )
-		formatString: #,0.00
-		displayFolder: Footfall & Conversion
-		lineageTag: 860f715b-30b2-41dc-9894-683eeae0cb68
-
-	measure 'Average Transaction Value (GBP)' = DIVIDE ( [Net Sales (GBP)], [Total Transactions] )
-		formatString: "£"#,0.00
-		displayFolder: Footfall & Conversion
-		lineageTag: 219d02b0-f234-46e4-b6b9-87542eed9edb
-
-	measure 'Total Footfall LY' =
-			CALCULATE (
-			    [Total Footfall],
-			    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0
-		displayFolder: Footfall & Conversion
-		lineageTag: 882f7f95-23df-44ed-926b-a0d674baaad9
-
-	measure 'Total Footfall YoY' = [Total Footfall] - [Total Footfall LY]
-		formatString: #,0
-		displayFolder: Footfall & Conversion
-		lineageTag: a39f824c-3dd0-4664-98d3-e250481ee46d
-
-	measure 'Total Footfall YoY %' = DIVIDE ( [Total Footfall] - [Total Footfall LY], [Total Footfall LY] )
-		formatString: 0.0%
-		displayFolder: Footfall & Conversion
-		lineageTag: bcb19d07-cdb4-41af-b7c4-e8d87f573807
-
-	measure 'Total Footfall Trend Arrow' = IF ( [Total Footfall YoY %] > 0, "▲", IF ( [Total Footfall YoY %] < 0, "▼", "▬" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: 68d8b966-19dc-4f0a-bfc7-e37cc8526b57
-
-	measure 'Total Footfall Trend Colour' = IF ( [Total Footfall YoY %] > 0, "#2E7D32", IF ( [Total Footfall YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: 778c16d8-5497-4fe6-97ff-cccc384c0131
-
-	measure 'Total Footfall YoY Combo' = [Total Footfall Trend Arrow] & " " & FORMAT ( ABS ( [Total Footfall YoY] ), "#,0" ) & " (" & FORMAT ( [Total Footfall YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Footfall & Conversion
-		lineageTag: 388bc1c2-b098-4503-b16c-04b0a71f1dfd
-
-	measure 'Average Transaction Value LY' =
-			CALCULATE (
-			    [Average Transaction Value (GBP)],
-			    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Footfall & Conversion
-		lineageTag: e2af10da-a2e1-440b-b0d6-731b9d147468
-
-	measure 'Average Transaction Value YoY (GBP)' = [Average Transaction Value (GBP)] - [Average Transaction Value LY]
-		formatString: "£"#,0.00
-		displayFolder: Footfall & Conversion
-		lineageTag: ea35da8f-91ea-40ab-bfc6-c75cea58ea67
-
-	measure 'Average Transaction Value YoY %' = DIVIDE ( [Average Transaction Value (GBP)] - [Average Transaction Value LY], [Average Transaction Value LY] )
-		formatString: 0.0%
-		displayFolder: Footfall & Conversion
-		lineageTag: b7b7f840-6e88-4585-b17d-92a693b77245
-
-	measure 'Average Transaction Value Trend Arrow' = IF ( [Average Transaction Value YoY %] > 0, "▲", IF ( [Average Transaction Value YoY %] < 0, "▼", "▬" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: ac638baa-5d56-495d-b4d2-6a12254c91e8
-
-	measure 'Average Transaction Value Trend Colour' = IF ( [Average Transaction Value YoY %] > 0, "#2E7D32", IF ( [Average Transaction Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: 45e6cff5-9e79-45fe-b049-5a3af13b1741
-
-	measure 'Average Transaction Value YoY Combo' = [Average Transaction Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Transaction Value YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Transaction Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Footfall & Conversion
-		lineageTag: 84ab7449-c5d1-4330-bed5-160e01d4422c
-
-	measure 'Conversion Rate % LY' =
-			CALCULATE (
-			    [Conversion Rate %],
-			    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Footfall & Conversion
-		lineageTag: 90de8917-f675-4458-8f08-3b8fe4fce801
-
-	measure 'Conversion Rate YoY (pp)' = [Conversion Rate %] - [Conversion Rate % LY]
-		formatString: 0.0%
-		displayFolder: Footfall & Conversion
-		lineageTag: e970ba61-3160-45bf-9822-7228f6cd574e
-
-	measure 'Conversion Rate Trend Arrow' = IF ( [Conversion Rate YoY (pp)] > 0, "▲", IF ( [Conversion Rate YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: e10657d1-d570-48d9-846e-b84c4f9e295e
-
-	measure 'Conversion Rate Trend Colour' = IF ( [Conversion Rate YoY (pp)] > 0, "#2E7D32", IF ( [Conversion Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Footfall & Conversion
-		lineageTag: 9cb15783-b45c-46d8-be3d-c923d5e97555
-
-	measure 'Conversion Rate YoY Combo' = [Conversion Rate Trend Arrow] & " " & FORMAT ( [Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: Footfall & Conversion
-		lineageTag: 96c7a8f7-5b7c-451a-bc25-efd4958b7b17
-
 	column date
 		dataType: dateTime
-		isHidden
 		formatString: Long Date
 		lineageTag: 86250c76-2be0-4fe0-ac54-f7ed646420fe
+		isHidden
 		summarizeBy: none
 		sourceColumn: date
 
@@ -128,8 +15,8 @@ table fact_footfall
 
 	column store_id
 		dataType: string
-		isHidden
 		lineageTag: 347bd80e-1337-4262-8e82-f3802da36957
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -137,9 +24,9 @@ table fact_footfall
 
 	column footfall
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: a6ee0b54-2fbc-44ce-bdd0-f8c62a451063
+		isHidden
 		summarizeBy: sum
 		sourceColumn: footfall
 
@@ -147,9 +34,9 @@ table fact_footfall
 
 	column transactions
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 4bd4f8a8-25a6-4d8c-95b2-22cb58db5632
+		isHidden
 		summarizeBy: sum
 		sourceColumn: transactions
 
@@ -157,9 +44,9 @@ table fact_footfall
 
 	column units_sold
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 97ef6ba9-a074-4468-b949-3c3a7349d8e7
+		isHidden
 		summarizeBy: sum
 		sourceColumn: units_sold
 
@@ -167,14 +54,158 @@ table fact_footfall
 
 	column conversion_rate
 		dataType: double
-		isHidden
 		lineageTag: 9affc9bf-d2df-4e05-9f51-db8508214ae4
+		isHidden
 		summarizeBy: sum
 		sourceColumn: conversion_rate
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Footfall' = SUM ( fact_footfall[footfall] )
+		formatString: #,0
+		lineageTag: be58b254-a3b9-4a2f-a2da-797ce3ad6e28
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Transactions' = SUM ( fact_footfall[transactions] )
+		formatString: #,0
+		lineageTag: c65b6fdc-6c5a-4306-beba-cea243b06bf8
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate %' = DIVIDE ( [Total Transactions], [Total Footfall] )
+		formatString: 0.0%
+		lineageTag: 802d5a98-2a16-43e5-9c81-631ae8271877
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction' = DIVIDE ( [Gross Units Sold], [Total Transactions] )
+		formatString: #,0.00
+		lineageTag: 860f715b-30b2-41dc-9894-683eeae0cb68
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value (GBP)' = DIVIDE ( [Net Sales (GBP)], [Total Transactions] )
+		formatString: "£"#,0.00
+		lineageTag: 219d02b0-f234-46e4-b6b9-87542eed9edb
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall LY' =
+			CALCULATE (
+			    [Total Footfall],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: #,0
+		lineageTag: 882f7f95-23df-44ed-926b-a0d674baaad9
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall YoY' = [Total Footfall] - [Total Footfall LY]
+		formatString: #,0
+		lineageTag: a39f824c-3dd0-4664-98d3-e250481ee46d
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall YoY %' = DIVIDE ( [Total Footfall] - [Total Footfall LY], [Total Footfall LY] )
+		formatString: 0.0%
+		lineageTag: bcb19d07-cdb4-41af-b7c4-e8d87f573807
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall Trend Arrow' = IF ( [Total Footfall YoY %] > 0, "▲", IF ( [Total Footfall YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 68d8b966-19dc-4f0a-bfc7-e37cc8526b57
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall Trend Colour' = IF ( [Total Footfall YoY %] > 0, "#2E7D32", IF ( [Total Footfall YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 778c16d8-5497-4fe6-97ff-cccc384c0131
+		displayFolder: Footfall & Conversion
+
+	measure 'Total Footfall YoY Combo' = [Total Footfall Trend Arrow] & " " & FORMAT ( ABS ( [Total Footfall YoY] ), "#,0" ) & " (" & FORMAT ( [Total Footfall YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 388bc1c2-b098-4503-b16c-04b0a71f1dfd
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value LY' =
+			CALCULATE (
+			    [Average Transaction Value (GBP)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: e2af10da-a2e1-440b-b0d6-731b9d147468
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value YoY (GBP)' = [Average Transaction Value (GBP)] - [Average Transaction Value LY]
+		formatString: "£"#,0.00
+		lineageTag: ea35da8f-91ea-40ab-bfc6-c75cea58ea67
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value YoY %' = DIVIDE ( [Average Transaction Value (GBP)] - [Average Transaction Value LY], [Average Transaction Value LY] )
+		formatString: 0.0%
+		lineageTag: b7b7f840-6e88-4585-b17d-92a693b77245
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value Trend Arrow' = IF ( [Average Transaction Value YoY %] > 0, "▲", IF ( [Average Transaction Value YoY %] < 0, "▼", "▬" ) )
+		lineageTag: ac638baa-5d56-495d-b4d2-6a12254c91e8
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value Trend Colour' = IF ( [Average Transaction Value YoY %] > 0, "#2E7D32", IF ( [Average Transaction Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 45e6cff5-9e79-45fe-b049-5a3af13b1741
+		displayFolder: Footfall & Conversion
+
+	measure 'Average Transaction Value YoY Combo' = [Average Transaction Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Transaction Value YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Transaction Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 84ab7449-c5d1-4330-bed5-160e01d4422c
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate % LY' =
+			CALCULATE (
+			    [Conversion Rate %],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: 0.0%
+		lineageTag: 90de8917-f675-4458-8f08-3b8fe4fce801
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate YoY (pp)' = [Conversion Rate %] - [Conversion Rate % LY]
+		formatString: 0.0%
+		lineageTag: e970ba61-3160-45bf-9822-7228f6cd574e
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate Trend Arrow' = IF ( [Conversion Rate YoY (pp)] > 0, "▲", IF ( [Conversion Rate YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: e10657d1-d570-48d9-846e-b84c4f9e295e
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate Trend Colour' = IF ( [Conversion Rate YoY (pp)] > 0, "#2E7D32", IF ( [Conversion Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 9cb15783-b45c-46d8-be3d-c923d5e97555
+		displayFolder: Footfall & Conversion
+
+	measure 'Conversion Rate YoY Combo' = [Conversion Rate Trend Arrow] & " " & FORMAT ( [Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 96c7a8f7-5b7c-451a-bc25-efd4958b7b17
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction LY' =
+			CALCULATE (
+			    [Items per Transaction],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: #,0.00
+		lineageTag: f8955e8b-026f-42bf-864f-299b32f1fb53
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction YoY' = [Items per Transaction] - [Items per Transaction LY]
+		formatString: #,0.00
+		lineageTag: 10dc7d57-f169-4d64-bbdb-4e651f91e7ed
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction YoY %' = DIVIDE ( [Items per Transaction] - [Items per Transaction LY], [Items per Transaction LY] )
+		formatString: 0.0%
+		lineageTag: 1fca8c5d-14ed-4d5f-b1d1-c7043b92eb92
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction Trend Arrow' = IF ( [Items per Transaction YoY %] > 0, "▲", IF ( [Items per Transaction YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 6b5bdee2-f302-4191-9a55-9469ce3ddad7
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction Trend Colour' = IF ( [Items per Transaction YoY %] > 0, "#2E7D32", IF ( [Items per Transaction YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 4336905e-b584-4017-9e2f-b84b5c2077dc
+		displayFolder: Footfall & Conversion
+
+	measure 'Items per Transaction YoY Combo' = [Items per Transaction Trend Arrow] & " " & FORMAT ( ABS ( [Items per Transaction YoY] ), "0.00" ) & " (" & FORMAT ( [Items per Transaction YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: aa5d2ba7-f617-442b-b9ca-a3dbadba942d
+		displayFolder: Footfall & Conversion
 
 	partition fact_footfall = m
 		mode: import

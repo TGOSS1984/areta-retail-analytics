@@ -1,0 +1,70 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "6b7ade4947a65705075b",
+  "position": {
+    "x": 748.8299531981279,
+    "y": 184.21216848673947,
+    "z": 15,
+    "height": 585.585023400936,
+    "width": 567.61310452418093,
+    "tabOrder": 14
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales LY"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales LY",
+              "nativeQueryRef": "Net Sales LY"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "Net Sales (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

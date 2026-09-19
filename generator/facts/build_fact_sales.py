@@ -121,6 +121,59 @@ HOME_MARKET_MULT = 1.15
 # style's own demand rises), not attempted here.
 BRAND_DEMAND_MULT = {"Areta": 1.3, "Kestrel Ridge": 1.0, "Basecamp": 1.0, "Areta Pro": 1.0}
 
+# Tom wants more variety in the top-N bestseller list specifically —
+# Boots was taking 11 of the top 20 individual style/colour slots even
+# though it isn't even the single largest product_group by AGGREGATE
+# sales (Softshell is, at #1) — the same "individual styles can crowd
+# the very top ranks without dominating the aggregate" effect already
+# seen with brand share. Defaults to 1.0 (no change) for every
+# product_group not named here.
+#
+# Calibrated iteratively (four rounds), same discipline as
+# BRAND_DEMAND_MULT — checked the real resulting top-20 composition
+# after each run, not derived algebraically. First attempt (Boots 0.5,
+# Shell 2.2, Fleece 2.5) badly overcorrected: Waterproof Shell swept
+# ALL 20 slots and Fleece didn't appear even ONCE despite the highest
+# multiplier — same order-statistics sensitivity as brand share, small
+# multipliers have outsized effects on which styles reach the very top.
+# Dialled back hard from there. Fleece needed a much bigger relative
+# lift than Boots/Shell throughout, because its aggregate base is
+# smaller (~£4.5M vs Shell's ~£8.0M) — at the multiplier that gave
+# Boots/Shell good variety, Fleece STILL didn't appear at all; only
+# broke through once pushed to 2.0 specifically. That result gave real
+# top-20 variety, but the AGGREGATE category mix was still unrealistic
+# — Softshell was the single biggest product_group overall (~£12.9M),
+# ahead of Waterproof Shell, Waterproof Insulated Jacket, and Boots,
+# which isn't how real outdoor/mountain apparel sales break down.
+#
+# Second pass, checked against real industry research (Grand View/
+# Mordor/GM Insights/Business Research Insights market reports on
+# outdoor apparel, 2025-2026) rather than guessed: topwear/jackets
+# consistently reported as the largest category (51-54.5% of apparel
+# revenue), waterproof/technical jackets specifically the leading
+# sub-segment (24-41% of apparel sales depending on the report's
+# definition), insulated jackets a standout at ~26%, thermal wear/
+# fleece ~27%, and boots specifically ~49% of footwear demand (ahead of
+# shoes) — with softshell never once called out as a leading category
+# in any report checked; it's a supporting/transitional piece, not a
+# hero product. Re-tuned to match that shape: pushed Waterproof Shell
+# and Waterproof Insulated Jacket up, pulled Softshell down hard, and
+# nudged Boots up (it had been pulled down to fix the EARLIER top-20-
+# sweep problem, but that overshot — real data says boots should lead
+# footwear, not trail behind shoes). Took a second round of iteration
+# to find values giving BOTH a realistic aggregate ordering (Shell >
+# Fleece > Insulated Jacket > Boots > ... > Softshell, checked against
+# the actual output) AND some top-20 variety across 4 different product
+# groups, rather than the aggregate-realistic version alone (which
+# swept the top-20 down to just 2 categories on the first try).
+PRODUCT_GROUP_DEMAND_MULT: dict[str, float] = {
+    "Boots": 1.2,
+    "Waterproof Shell": 1.5,
+    "Waterproof Insulated Jacket": 1.35,
+    "Fleece": 2.1,
+    "Softshell": 0.5,
+}
+
 # keyed to dim_date's Sunday=1..Saturday=7 numbering
 WEEKDAY_MULT = {1: 1.25, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.15, 7: 1.5}
 
@@ -256,6 +309,7 @@ def build_assortment(dim_store: pd.DataFrame, dim_product: pd.DataFrame, markets
         / np.sqrt(assortment["base_price_gbp"])
         * assortment["channel"].map(CHANNEL_DEMAND_MULT)
         * assortment["brand_name"].map(BRAND_DEMAND_MULT)
+        * assortment["product_group"].map(PRODUCT_GROUP_DEMAND_MULT).fillna(1.0)
         * np.where(assortment["is_home_market"], HOME_MARKET_MULT, 1.0)
         * assortment["store_perf_factor"]
     )

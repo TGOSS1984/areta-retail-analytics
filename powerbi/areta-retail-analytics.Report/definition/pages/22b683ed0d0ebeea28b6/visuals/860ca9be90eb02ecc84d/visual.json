@@ -54,6 +54,21 @@
     "objects": {
       "referenceLabel": [
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Sales (GBP)",
+            "id": "field-bcfefb72-4e1d-592d-d45b-19819f06cb30",
+            "order": 0
+          }
+        },
+        {
           "properties": {
             "value": {
               "expr": {
@@ -77,7 +92,7 @@
               }
             ],
             "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-bcfefb72-4e1d-592d-d45b-19819f06cb30",
+            "id": "field-54612733-9066-981f-2b2c-149ac4cd675d",
             "order": 0
           }
         }

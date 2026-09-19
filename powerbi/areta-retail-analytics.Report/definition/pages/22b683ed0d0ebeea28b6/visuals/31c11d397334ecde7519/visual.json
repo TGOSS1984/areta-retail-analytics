@@ -17,22 +17,17 @@
           "projections": [
             {
               "field": {
-                "HierarchyLevel": {
+                "Column": {
                   "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "dim_date"
-                        }
-                      },
-                      "Hierarchy": "Calendar Date"
+                    "SourceRef": {
+                      "Entity": "dim_date"
                     }
                   },
-                  "Level": "Year"
+                  "Property": "business_year"
                 }
               },
-              "queryRef": "dim_date.Calendar Date.Year",
-              "nativeQueryRef": "Calendar Date Year",
+              "queryRef": "dim_date.business_year",
+              "nativeQueryRef": "business_year",
               "active": true
             }
           ]
@@ -92,7 +87,7 @@
                                   "Source": "d"
                                 }
                               },
-                              "Property": "calendar_year"
+                              "Property": "business_year"
                             }
                           }
                         ],
@@ -104,61 +99,6 @@
                               }
                             }
                           ]
-                        ]
-                      }
-                    },
-                    "Annotations": {
-                      "filterExpressionMetadata": {
-                        "expressions": [
-                          {
-                            "HierarchyLevel": {
-                              "Expression": {
-                                "Hierarchy": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "dim_date"
-                                    }
-                                  },
-                                  "Hierarchy": "Calendar Date"
-                                }
-                              },
-                              "Level": "Year"
-                            }
-                          }
-                        ],
-                        "decomposedIdentities": {
-                          "values": [
-                            [
-                              {
-                                "0": [
-                                  {
-                                    "Literal": {
-                                      "Value": "2024L"
-                                    }
-                                  }
-                                ]
-                              }
-                            ]
-                          ],
-                          "columns": [
-                            {
-                              "value": {
-                                "Column": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "dim_date"
-                                    }
-                                  },
-                                  "Property": "calendar_year"
-                                }
-                              }
-                            }
-                          ]
-                        },
-                        "valueMap": [
-                          {
-                            "0": "2024"
-                          }
                         ]
                       }
                     }

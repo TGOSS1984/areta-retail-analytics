@@ -1,11 +1,191 @@
 table fact_stock_snapshot
 	lineageTag: 8239be0c-cd4d-423b-b258-d6e9493c8c6b
 
+	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
+		formatString: #,0
+		displayFolder: Stock
+		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
+
+	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
+
+	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
+
+	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
+
+	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
+
+	measure 'Stock Units LY' =
+			CALCULATE (
+			    [Stock Units],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: #,0
+		displayFolder: Stock
+		lineageTag: ad5ecffe-37b3-4bcb-9241-49d5e03e8eaf
+
+	measure 'Stock Units YoY' = [Stock Units] - [Stock Units LY]
+		formatString: #,0
+		displayFolder: Stock
+		lineageTag: 7b3e5772-e9f5-4727-a52a-5e9547037b4b
+
+	measure 'Stock Units YoY %' = DIVIDE ( [Stock Units] - [Stock Units LY], [Stock Units LY] )
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: c0248d57-797e-458b-ae9b-51dc737cec4a
+
+	measure 'Stock Units Trend Arrow' = IF ( [Stock Units YoY %] > 0, "▲", IF ( [Stock Units YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Stock
+		lineageTag: da4a5766-5f51-41af-a168-c138cabcc92d
+
+	measure 'Stock Units Trend Colour' = IF ( [Stock Units YoY %] > 0, "#2E7D32", IF ( [Stock Units YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Stock
+		lineageTag: e130d52e-62f2-4865-9600-05221b329b50
+
+	measure 'Stock Units YoY Combo' = [Stock Units Trend Arrow] & " " & FORMAT ( ABS ( [Stock Units YoY] ), "#,0.00" ) & " (" & FORMAT ( [Stock Units YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Stock
+		lineageTag: fde48161-ca45-4724-94b5-d8f4499fd953
+
+	measure 'Stock Value Cost LY' =
+			CALCULATE (
+			    [Stock Value (Cost, GBP)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: c1e63521-edee-4933-974e-6eb03d211423
+
+	measure 'Stock Value Cost YoY (GBP)' = [Stock Value (Cost, GBP)] - [Stock Value Cost LY]
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: b610739a-d689-47bd-81e6-8bcd750c2d45
+
+	measure 'Stock Value Cost YoY %' = DIVIDE ( [Stock Value (Cost, GBP)] - [Stock Value Cost LY], [Stock Value Cost LY] )
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: 171bc135-cd9d-451c-9eb2-89ed472b5683
+
+	measure 'Stock Value Cost Trend Arrow' = IF ( [Stock Value Cost YoY %] > 0, "▲", IF ( [Stock Value Cost YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Stock
+		lineageTag: 2ed7013e-099d-4689-8ece-2f41c09d1e37
+
+	measure 'Stock Value Cost Trend Colour' = IF ( [Stock Value Cost YoY %] > 0, "#2E7D32", IF ( [Stock Value Cost YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Stock
+		lineageTag: 68d042f7-dbe7-4abc-a512-309965d32915
+
+	measure 'Stock Value Cost YoY Combo' = [Stock Value Cost Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Cost YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Cost YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Stock
+		lineageTag: 43c8483e-4937-4bb4-8a44-a29b11f8fb0f
+
+	measure 'Stock Value Retail LY' =
+			CALCULATE (
+			    [Stock Value (Retail, GBP)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: 41f418c9-48bc-499f-afbd-fd5ac7be67f7
+
+	measure 'Stock Value Retail YoY (GBP)' = [Stock Value (Retail, GBP)] - [Stock Value Retail LY]
+		formatString: "£"#,0.00
+		displayFolder: Stock
+		lineageTag: 4869248a-5ea0-4f3a-8c76-deea3e34ee77
+
+	measure 'Stock Value Retail YoY %' = DIVIDE ( [Stock Value (Retail, GBP)] - [Stock Value Retail LY], [Stock Value Retail LY] )
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: 476cc9dc-8d30-4172-ae58-8d2b3d8ae460
+
+	measure 'Stock Value Retail Trend Arrow' = IF ( [Stock Value Retail YoY %] > 0, "▲", IF ( [Stock Value Retail YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Stock
+		lineageTag: db967f50-eec2-47d1-adae-6a489975cd3d
+
+	measure 'Stock Value Retail Trend Colour' = IF ( [Stock Value Retail YoY %] > 0, "#2E7D32", IF ( [Stock Value Retail YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Stock
+		lineageTag: 70a00892-ce28-4ffe-9729-ed7bf94421b1
+
+	measure 'Stock Value Retail YoY Combo' = [Stock Value Retail Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Retail YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Retail YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Stock
+		lineageTag: 3347b857-7b18-4f35-9f9e-1478b720e783
+
+	measure 'Avg Weekly Sales LY' =
+			CALCULATE (
+			    [Avg Weekly Sales (Units)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 27c59e70-4ef7-4dd0-b311-0b3e75b2c61c
+
+	measure 'Avg Weekly Sales YoY (Units)' = [Avg Weekly Sales (Units)] - [Avg Weekly Sales LY]
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 696b91e6-9487-424d-ac5d-3c488b0e8995
+
+	measure 'Avg Weekly Sales YoY %' = DIVIDE ( [Avg Weekly Sales (Units)] - [Avg Weekly Sales LY], [Avg Weekly Sales LY] )
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: 6299b857-1d25-46e2-8ab0-49eb28935d6d
+
+	measure 'Avg Weekly Sales Trend Arrow' = IF ( [Avg Weekly Sales YoY %] > 0, "▲", IF ( [Avg Weekly Sales YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Stock
+		lineageTag: 93c78cc6-bf01-4c0d-9507-3eb973ad0b20
+
+	measure 'Avg Weekly Sales Trend Colour' = IF ( [Avg Weekly Sales YoY %] > 0, "#2E7D32", IF ( [Avg Weekly Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Stock
+		lineageTag: 28205273-a25f-4646-998e-9e02fcba7f4d
+
+	measure 'Avg Weekly Sales YoY Combo' = [Avg Weekly Sales Trend Arrow] & " " & FORMAT ( ABS ( [Avg Weekly Sales YoY (Units)] ), "#,0.00" ) & " (" & FORMAT ( [Avg Weekly Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Stock
+		lineageTag: 5385f567-2936-49c2-900d-01d11f4be351
+
+	measure 'Weeks of Cover LY' =
+			CALCULATE (
+			    [Weeks of Cover],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 3245b419-a5cb-4fa5-844a-031a85ac549b
+
+	measure 'Weeks of Cover YoY (Weeks)' = [Weeks of Cover] - [Weeks of Cover LY]
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 21605a93-41da-4393-b49a-c575829c7e4b
+
+	measure 'Weeks of Cover YoY %' = DIVIDE ( [Weeks of Cover] - [Weeks of Cover LY], [Weeks of Cover LY] )
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: 2acf13dc-69ec-463c-8049-1c6eab32dbdf
+
+	measure 'Weeks of Cover Trend Arrow' = IF ( [Weeks of Cover YoY %] > 0, "▲", IF ( [Weeks of Cover YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Stock
+		lineageTag: 5a882cf4-8059-4ee8-99e5-ec95c48ecad9
+
+	measure 'Weeks of Cover Trend Colour' = IF ( [Weeks of Cover YoY %] > 0, "#2E7D32", IF ( [Weeks of Cover YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Stock
+		lineageTag: 9947e70e-7b38-4534-b1ae-8c07ec2e5e16
+
+	measure 'Weeks of Cover YoY Combo' = [Weeks of Cover Trend Arrow] & " " & FORMAT ( ABS ( [Weeks of Cover YoY (Weeks)] ), "#,0.00" ) & " (" & FORMAT ( [Weeks of Cover YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Stock
+		lineageTag: 3d30deba-a777-43aa-ae48-a0e33e64e59c
+
 	column week_ending_date
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 97d52b52-07fb-47e6-b991-e45e5effe426
-		isHidden
 		summarizeBy: none
 		sourceColumn: week_ending_date
 
@@ -15,8 +195,8 @@ table fact_stock_snapshot
 
 	column store_id
 		dataType: string
-		lineageTag: 2eb4a35f-9d0e-482f-b2fe-ed81c6b3bee6
 		isHidden
+		lineageTag: 2eb4a35f-9d0e-482f-b2fe-ed81c6b3bee6
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -72,9 +252,9 @@ table fact_stock_snapshot
 
 	column stock_units
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 0b2ca850-97a3-447f-8678-51dbbb34f17b
-		isHidden
 		summarizeBy: sum
 		sourceColumn: stock_units
 
@@ -82,8 +262,8 @@ table fact_stock_snapshot
 
 	column stock_value_cost_gbp
 		dataType: double
-		lineageTag: 1ae39691-0962-441e-b14b-326ed7f2c2f9
 		isHidden
+		lineageTag: 1ae39691-0962-441e-b14b-326ed7f2c2f9
 		summarizeBy: sum
 		sourceColumn: stock_value_cost_gbp
 
@@ -93,194 +273,14 @@ table fact_stock_snapshot
 
 	column stock_value_retail_gbp
 		dataType: double
-		lineageTag: f69c54e1-c42e-4645-a94e-09aa50e5da37
 		isHidden
+		lineageTag: f69c54e1-c42e-4645-a94e-09aa50e5da37
 		summarizeBy: sum
 		sourceColumn: stock_value_retail_gbp
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Stock Units' = SUM ( fact_stock_snapshot[stock_units] )
-		formatString: #,0
-		lineageTag: 11fa61c2-8292-4931-a162-4cdee5113a2c
-		displayFolder: Stock
-
-	measure 'Stock Value (Cost, GBP)' = SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: c26d5a47-5e69-493c-b37e-cf34ee65d6de
-		displayFolder: Stock
-
-	measure 'Stock Value (Retail, GBP)' = SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
-		formatString: #,0.00
-		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
-		displayFolder: Stock
-
-	measure 'Weeks of Cover' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
-		formatString: #,0.00
-		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
-		displayFolder: Stock
-
-	measure 'Stock Units LY' =
-			CALCULATE (
-			    [Stock Units],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0
-		lineageTag: ad5ecffe-37b3-4bcb-9241-49d5e03e8eaf
-		displayFolder: Stock
-
-	measure 'Stock Units YoY' = [Stock Units] - [Stock Units LY]
-		formatString: #,0
-		lineageTag: 7b3e5772-e9f5-4727-a52a-5e9547037b4b
-		displayFolder: Stock
-
-	measure 'Stock Units YoY %' = DIVIDE ( [Stock Units] - [Stock Units LY], [Stock Units LY] )
-		formatString: 0.0%
-		lineageTag: c0248d57-797e-458b-ae9b-51dc737cec4a
-		displayFolder: Stock
-
-	measure 'Stock Units Trend Arrow' = IF ( [Stock Units YoY %] > 0, "▲", IF ( [Stock Units YoY %] < 0, "▼", "▬" ) )
-		lineageTag: da4a5766-5f51-41af-a168-c138cabcc92d
-		displayFolder: Stock
-
-	measure 'Stock Units Trend Colour' = IF ( [Stock Units YoY %] > 0, "#2E7D32", IF ( [Stock Units YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: e130d52e-62f2-4865-9600-05221b329b50
-		displayFolder: Stock
-
-	measure 'Stock Units YoY Combo' = [Stock Units Trend Arrow] & " " & FORMAT ( ABS ( [Stock Units YoY] ), "#,0.00" ) & " (" & FORMAT ( [Stock Units YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: fde48161-ca45-4724-94b5-d8f4499fd953
-		displayFolder: Stock
-
-	measure 'Stock Value Cost LY' =
-			CALCULATE (
-			    [Stock Value (Cost, GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		lineageTag: c1e63521-edee-4933-974e-6eb03d211423
-		displayFolder: Stock
-
-	measure 'Stock Value Cost YoY (GBP)' = [Stock Value (Cost, GBP)] - [Stock Value Cost LY]
-		formatString: "£"#,0.00
-		lineageTag: b610739a-d689-47bd-81e6-8bcd750c2d45
-		displayFolder: Stock
-
-	measure 'Stock Value Cost YoY %' = DIVIDE ( [Stock Value (Cost, GBP)] - [Stock Value Cost LY], [Stock Value Cost LY] )
-		formatString: 0.0%
-		lineageTag: 171bc135-cd9d-451c-9eb2-89ed472b5683
-		displayFolder: Stock
-
-	measure 'Stock Value Cost Trend Arrow' = IF ( [Stock Value Cost YoY %] > 0, "▲", IF ( [Stock Value Cost YoY %] < 0, "▼", "▬" ) )
-		lineageTag: 2ed7013e-099d-4689-8ece-2f41c09d1e37
-		displayFolder: Stock
-
-	measure 'Stock Value Cost Trend Colour' = IF ( [Stock Value Cost YoY %] > 0, "#2E7D32", IF ( [Stock Value Cost YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 68d042f7-dbe7-4abc-a512-309965d32915
-		displayFolder: Stock
-
-	measure 'Stock Value Cost YoY Combo' = [Stock Value Cost Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Cost YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Cost YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 43c8483e-4937-4bb4-8a44-a29b11f8fb0f
-		displayFolder: Stock
-
-	measure 'Stock Value Retail LY' =
-			CALCULATE (
-			    [Stock Value (Retail, GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		lineageTag: 41f418c9-48bc-499f-afbd-fd5ac7be67f7
-		displayFolder: Stock
-
-	measure 'Stock Value Retail YoY (GBP)' = [Stock Value (Retail, GBP)] - [Stock Value Retail LY]
-		formatString: "£"#,0.00
-		lineageTag: 4869248a-5ea0-4f3a-8c76-deea3e34ee77
-		displayFolder: Stock
-
-	measure 'Stock Value Retail YoY %' = DIVIDE ( [Stock Value (Retail, GBP)] - [Stock Value Retail LY], [Stock Value Retail LY] )
-		formatString: 0.0%
-		lineageTag: 476cc9dc-8d30-4172-ae58-8d2b3d8ae460
-		displayFolder: Stock
-
-	measure 'Stock Value Retail Trend Arrow' = IF ( [Stock Value Retail YoY %] > 0, "▲", IF ( [Stock Value Retail YoY %] < 0, "▼", "▬" ) )
-		lineageTag: db967f50-eec2-47d1-adae-6a489975cd3d
-		displayFolder: Stock
-
-	measure 'Stock Value Retail Trend Colour' = IF ( [Stock Value Retail YoY %] > 0, "#2E7D32", IF ( [Stock Value Retail YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 70a00892-ce28-4ffe-9729-ed7bf94421b1
-		displayFolder: Stock
-
-	measure 'Stock Value Retail YoY Combo' = [Stock Value Retail Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Retail YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Retail YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 3347b857-7b18-4f35-9f9e-1478b720e783
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales LY' =
-			CALCULATE (
-			    [Avg Weekly Sales (Units)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0.00
-		lineageTag: 27c59e70-4ef7-4dd0-b311-0b3e75b2c61c
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales YoY (Units)' = [Avg Weekly Sales (Units)] - [Avg Weekly Sales LY]
-		formatString: #,0.00
-		lineageTag: 696b91e6-9487-424d-ac5d-3c488b0e8995
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales YoY %' = DIVIDE ( [Avg Weekly Sales (Units)] - [Avg Weekly Sales LY], [Avg Weekly Sales LY] )
-		formatString: 0.0%
-		lineageTag: 6299b857-1d25-46e2-8ab0-49eb28935d6d
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales Trend Arrow' = IF ( [Avg Weekly Sales YoY %] > 0, "▲", IF ( [Avg Weekly Sales YoY %] < 0, "▼", "▬" ) )
-		lineageTag: 93c78cc6-bf01-4c0d-9507-3eb973ad0b20
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales Trend Colour' = IF ( [Avg Weekly Sales YoY %] > 0, "#2E7D32", IF ( [Avg Weekly Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 28205273-a25f-4646-998e-9e02fcba7f4d
-		displayFolder: Stock
-
-	measure 'Avg Weekly Sales YoY Combo' = [Avg Weekly Sales Trend Arrow] & " " & FORMAT ( ABS ( [Avg Weekly Sales YoY (Units)] ), "#,0.00" ) & " (" & FORMAT ( [Avg Weekly Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 5385f567-2936-49c2-900d-01d11f4be351
-		displayFolder: Stock
-
-	measure 'Weeks of Cover LY' =
-			CALCULATE (
-			    [Weeks of Cover],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0.00
-		lineageTag: 3245b419-a5cb-4fa5-844a-031a85ac549b
-		displayFolder: Stock
-
-	measure 'Weeks of Cover YoY (Weeks)' = [Weeks of Cover] - [Weeks of Cover LY]
-		formatString: #,0.00
-		lineageTag: 21605a93-41da-4393-b49a-c575829c7e4b
-		displayFolder: Stock
-
-	measure 'Weeks of Cover YoY %' = DIVIDE ( [Weeks of Cover] - [Weeks of Cover LY], [Weeks of Cover LY] )
-		formatString: 0.0%
-		lineageTag: 2acf13dc-69ec-463c-8049-1c6eab32dbdf
-		displayFolder: Stock
-
-	measure 'Weeks of Cover Trend Arrow' = IF ( [Weeks of Cover YoY %] > 0, "▲", IF ( [Weeks of Cover YoY %] < 0, "▼", "▬" ) )
-		lineageTag: 5a882cf4-8059-4ee8-99e5-ec95c48ecad9
-		displayFolder: Stock
-
-	measure 'Weeks of Cover Trend Colour' = IF ( [Weeks of Cover YoY %] > 0, "#2E7D32", IF ( [Weeks of Cover YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 9947e70e-7b38-4534-b1ae-8c07ec2e5e16
-		displayFolder: Stock
-
-	measure 'Weeks of Cover YoY Combo' = [Weeks of Cover Trend Arrow] & " " & FORMAT ( ABS ( [Weeks of Cover YoY (Weeks)] ), "#,0.00" ) & " (" & FORMAT ( [Weeks of Cover YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 3d30deba-a777-43aa-ae48-a0e33e64e59c
-		displayFolder: Stock
 
 	partition fact_stock_snapshot = m
 		mode: import

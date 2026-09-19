@@ -1,0 +1,83 @@
+table fact_digital_sales
+	lineageTag: 2ad09c39-2870-45e4-bb1f-20a71fa69675
+
+	measure 'Digital Orders' = SUM ( fact_digital_sales[orders] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 5baee575-c310-43da-91bc-99975746ce52
+
+	measure 'Digital Units' = SUM ( fact_digital_sales[units] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: df12ab4d-d8e8-49a1-b9f6-7d26b297487c
+
+	measure 'Digital Net Sales (GBP)' = SUM ( fact_digital_sales[net_sales_gbp] )
+		formatString: "£"#,0.00
+		displayFolder: Digital
+		lineageTag: be573ac3-36a8-4a43-8c12-361b2db0dd6b
+
+	measure 'Average Basket Value (GBP)' = DIVIDE ( [Digital Net Sales (GBP)], [Digital Orders] )
+		formatString: "£"#,0.00
+		displayFolder: Digital
+		lineageTag: 7d9fd329-9b3e-4611-bacf-b5c2f758e3b1
+
+	column date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: f07e7591-bd39-4e3b-92c7-ccad63f47958
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column market_code
+		dataType: string
+		lineageTag: a6f272e9-6b0a-4608-a482-d994c7241f6e
+		summarizeBy: none
+		sourceColumn: market_code
+
+	column device_type
+		dataType: string
+		lineageTag: f5642598-1319-4185-8066-7da9d2df519e
+		summarizeBy: none
+		sourceColumn: device_type
+
+	column orders
+		dataType: int64
+		formatString: #,0
+		lineageTag: 88b852fe-cc5b-44ac-9697-ae34728d7f11
+		summarizeBy: none
+		sourceColumn: orders
+
+	column units
+		dataType: int64
+		formatString: #,0
+		lineageTag: 339acdc0-8022-47ae-b471-9c5472888c8a
+		summarizeBy: none
+		sourceColumn: units
+
+	column net_sales_gbp
+		dataType: double
+		formatString: "£"#,0.00
+		lineageTag: 73ec5e08-40de-44c3-a2ee-a4ae853ad915
+		summarizeBy: none
+		sourceColumn: net_sales_gbp
+
+	column basket_value_gbp
+		dataType: double
+		formatString: "£"#,0.00
+		lineageTag: 9dd35372-1508-440b-a5ef-139901551b31
+		summarizeBy: none
+		sourceColumn: basket_value_gbp
+
+	partition fact_digital_sales = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_digital_sales.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

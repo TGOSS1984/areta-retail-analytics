@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "860ca9be90eb02ecc84d",
   "position": {
-    "x": 225.72614107883817,
-    "y": 136.76348547717842,
+    "x": 226.14840989399292,
+    "y": 136.81978798586573,
     "z": 8,
-    "height": 177.9253112033195,
-    "width": 379.7510373443983,
+    "height": 194.48763250883391,
+    "width": 330.1766784452297,
     "tabOrder": 7
   },
   "visual": {
@@ -23,11 +23,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Gross Sales inc. VAT (GBP)"
+                  "Property": "Net Sales (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Gross Sales inc. VAT (GBP)",
-              "nativeQueryRef": "Gross Sales inc. VAT (GBP)"
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Gross Sales inc. VAT (GBP)"
+                "Property": "Net Sales (GBP)"
               }
             },
             "direction": "Descending"
@@ -63,7 +63,7 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Sales LY"
+                  "Property": "Net Sales YoY Combo"
                 }
               }
             }
@@ -76,37 +76,9 @@
                 }
               }
             ],
-            "metadata": "fact_sales.Gross Sales inc. VAT (GBP)",
-            "id": "field-0e921e1e-a06e-e573-0f90-8bd6bdeab309",
+            "metadata": "fact_sales.Net Sales (GBP)",
+            "id": "field-bcfefb72-4e1d-592d-d45b-19819f06cb30",
             "order": 0
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_sales"
-                    }
-                  },
-                  "Property": "Net Sales Trend Arrow"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Gross Sales inc. VAT (GBP)",
-            "id": "field-8d255702-744c-dd38-38ff-b6ac0b158437",
-            "order": 1
           }
         }
       ]

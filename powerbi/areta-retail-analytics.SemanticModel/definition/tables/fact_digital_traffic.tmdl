@@ -1,0 +1,91 @@
+table fact_digital_traffic
+	lineageTag: 3b85a639-6220-498b-a588-fd4141a0c4fa
+
+	measure 'Total Visitors' = SUM ( fact_digital_traffic[visitors] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: e38632e0-6b8e-4f64-8c77-2e3a5dd76b92
+
+	measure 'Total Sessions' = SUM ( fact_digital_traffic[sessions] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 30c38724-bda5-454c-9a4e-9e755230fdbd
+
+	measure 'Page Views' = SUM ( fact_digital_traffic[page_views] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 9a904f96-ed0f-465e-8e75-fe3584aa99d2
+
+	measure 'Pages per Session' = DIVIDE ( [Page Views], [Total Sessions] )
+		formatString: #,0.00
+		displayFolder: Digital
+		lineageTag: 4a4adea2-a93a-4a8d-909c-429e02476bb0
+
+	measure 'Digital Conversion Rate %' =
+			CALCULATE (
+			    DIVIDE ( [Digital Orders], [Total Sessions] ),
+			    USERELATIONSHIP ( fact_digital_traffic[market_code], dim_market[market_code] )
+			)
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: f09432b5-ab08-4543-9fa5-7473c486fcbf
+
+	column date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: decc9e82-d60d-440e-94ce-e6f67817026b
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column market_code
+		dataType: string
+		lineageTag: 3cb4e421-df6d-49cc-b0a5-042d8d20cfcf
+		summarizeBy: none
+		sourceColumn: market_code
+
+	column device_type
+		dataType: string
+		lineageTag: 4252e2a8-8964-4def-9b85-ddbf96274874
+		summarizeBy: none
+		sourceColumn: device_type
+
+	column browser
+		dataType: string
+		lineageTag: 522e09d8-050f-4f04-868c-2e9fc064b75b
+		summarizeBy: none
+		sourceColumn: browser
+
+	column visitors
+		dataType: int64
+		formatString: #,0
+		lineageTag: 04feb421-6fb0-443b-a8e1-bc2245e8ce92
+		summarizeBy: none
+		sourceColumn: visitors
+
+	column sessions
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8e968b39-64fd-4e5b-b984-477c006be35d
+		summarizeBy: none
+		sourceColumn: sessions
+
+	column page_views
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9ba73b24-9c63-42de-88da-a875de4719e6
+		summarizeBy: none
+		sourceColumn: page_views
+
+	partition fact_digital_traffic = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\fact_digital_traffic.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

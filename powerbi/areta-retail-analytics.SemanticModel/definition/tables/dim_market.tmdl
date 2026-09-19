@@ -1,0 +1,40 @@
+table dim_market
+	lineageTag: a2ed69c1-ba36-45e4-a9fe-ca556b8689e6
+
+	column market_code
+		dataType: string
+		lineageTag: 4ae30681-6639-401b-9c22-94b5cf57c435
+		summarizeBy: none
+		sourceColumn: market_code
+
+	column market_name
+		dataType: string
+		lineageTag: 6f0fefd5-7e7c-4913-bd08-492bea5366e6
+		summarizeBy: none
+		sourceColumn: market_name
+
+	column currency
+		dataType: string
+		lineageTag: 556b3af7-b0a7-4db6-b390-1ac98edf7e27
+		summarizeBy: none
+		sourceColumn: currency
+
+	column is_home_market
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 99a95963-0e0d-4106-8f3a-b6889f7b848b
+		summarizeBy: none
+		sourceColumn: is_home_market
+
+	partition dim_market = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("C:\Users\tomgo\OneDrive\Documents\vscode-projects\areta-retail-analytics\data\warehouse\dim_store.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+				    #"Kept Market Columns" = Table.SelectColumns(Source, {"market_code", "market_name", "currency", "is_home_market"}),
+				    #"Distinct Markets" = Table.Distinct(#"Kept Market Columns", {"market_code"})
+				in
+				    #"Distinct Markets"
+
+	annotation PBI_ResultType = Table
+

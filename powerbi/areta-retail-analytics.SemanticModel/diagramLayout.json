@@ -11,7 +11,7 @@
         {
           "location": {
             "x": 125.78083100000002,
-            "y": 151.4684655
+            "y": 252.20269825000005
           },
           "nodeIndex": "dim_date",
           "nodeLineageTag": "bad117fa-83bb-47ba-a4c8-006645ca8c7f",
@@ -24,7 +24,7 @@
         {
           "location": {
             "x": 1013.8831320000002,
-            "y": 170.95563650000003
+            "y": 271.68986925000007
           },
           "nodeIndex": "dim_period",
           "nodeLineageTag": "d48ae802-f1e9-47f6-a933-a36e79c84829",
@@ -37,7 +37,7 @@
         {
           "location": {
             "x": 1.7715609999999913,
-            "y": 620.09783149999987
+            "y": 720.83206424999992
           },
           "nodeIndex": "dim_product",
           "nodeLineageTag": "70764168-160e-4843-a8a3-9080d4fa314a",
@@ -50,7 +50,7 @@
         {
           "location": {
             "x": 491.48717099999993,
-            "y": 1210.0137395000002
+            "y": 1310.7479722500002
           },
           "nodeIndex": "dim_promo",
           "nodeLineageTag": "06796264-7885-4fa1-a881-8472838282a0",
@@ -63,7 +63,7 @@
         {
           "location": {
             "x": 900.02814099999978,
-            "y": 1386.2464825000002
+            "y": 1486.9807152500002
           },
           "nodeIndex": "dim_currency",
           "nodeLineageTag": "a085256c-b2f6-489b-a792-acd22cc89c49",
@@ -76,7 +76,7 @@
         {
           "location": {
             "x": 368.16354899999982,
-            "y": 561.77851349999992
+            "y": 662.51274625
           },
           "nodeIndex": "fact_sales",
           "nodeLineageTag": "ccce2880-e748-4240-9429-05ffb06b0406",
@@ -89,7 +89,7 @@
         {
           "location": {
             "x": 1598,
-            "y": 435.4894885
+            "y": 536.22372125
           },
           "nodeIndex": "fact_footfall",
           "nodeLineageTag": "0a1f02ad-fb55-4f6e-b8a1-c31be2d00ec5",
@@ -102,7 +102,7 @@
         {
           "location": {
             "x": 727.19880799999964,
-            "y": 372.91359050000017
+            "y": 473.64782325000022
           },
           "nodeIndex": "fact_stock_snapshot",
           "nodeLineageTag": "8239be0c-cd4d-423b-b258-d6e9493c8c6b",
@@ -115,7 +115,7 @@
         {
           "location": {
             "x": 1636.5598410000002,
-            "y": 727.6220825
+            "y": 828.35631525000008
           },
           "nodeIndex": "fact_targets",
           "nodeLineageTag": "9e876f8d-e369-44ed-9f8d-20225e05a20c",
@@ -128,7 +128,7 @@
         {
           "location": {
             "x": 696.33885099999941,
-            "y": 843.9859295
+            "y": 944.72016225
           },
           "nodeIndex": "fact_store_finance",
           "nodeLineageTag": "ad649f07-56ab-4a9b-8642-fa17a5de633c",
@@ -141,7 +141,7 @@
         {
           "location": {
             "x": 1224.8866620637514,
-            "y": 1419.9061415
+            "y": 1520.6403742500001
           },
           "nodeIndex": "fx_rate_monthly",
           "nodeLineageTag": "a0815869-d969-44ad-934c-433db59fec4c",
@@ -154,10 +154,49 @@
         {
           "location": {
             "x": 1918.7882800000002,
-            "y": 617.87849700000015
+            "y": 718.6127297500002
           },
           "nodeIndex": "dim_store",
           "nodeLineageTag": "5ec73946-9ca3-4dbf-8788-516bbd092908",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2535.20147018063,
+            "y": 682.92819034510921
+          },
+          "nodeIndex": "dim_market",
+          "nodeLineageTag": "a2ed69c1-ba36-45e4-a9fe-ca556b8689e6",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2819.37835841536,
+            "y": 634.25318297754632
+          },
+          "nodeIndex": "fact_digital_sales",
+          "nodeLineageTag": "2ad09c39-2870-45e4-bb1f-20a71fa69675",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2251.016719,
+            "y": 601.99329952245375
+          },
+          "nodeIndex": "fact_digital_traffic",
+          "nodeLineageTag": "3b85a639-6220-498b-a588-fd4141a0c4fa",
           "size": {
             "height": 300,
             "width": 234

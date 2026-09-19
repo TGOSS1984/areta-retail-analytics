@@ -33,7 +33,7 @@
               },
               "queryRef": "dim_date.Calendar Date.Year",
               "nativeQueryRef": "Calendar Date Year",
-              "active": true
+              "active": false
             },
             {
               "field": {
@@ -53,7 +53,7 @@
               },
               "queryRef": "dim_date.Calendar Date.Quarter",
               "nativeQueryRef": "Calendar Date Quarter",
-              "active": false
+              "active": true
             },
             {
               "field": {

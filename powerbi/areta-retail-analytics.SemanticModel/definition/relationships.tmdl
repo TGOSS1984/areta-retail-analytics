@@ -1,7 +1,7 @@
 relationship AutoDetected_8cbd9c3f-e0b5-4dc2-afde-c407c6fc3385
+	isActive: false
 	fromColumn: dim_date.business_period_label
 	toColumn: dim_period.business_period_label
-	isActive: false
 
 relationship AutoDetected_56570fb1-8b44-4599-8f6b-7465a7e8b7ed
 	fromColumn: fact_sales.sku
@@ -58,4 +58,21 @@ relationship 2641a2a1-f818-4a4b-b3de-1b8ddf921c97
 relationship 19a2b829-8efe-4191-8f27-ddfd20f55548
 	fromColumn: fact_sales.currency
 	toColumn: dim_currency.currency_code
+
+relationship f661a0c1-bc57-4731-a07f-f822a794eefd
+	fromColumn: fact_digital_sales.date
+	toColumn: dim_date.full_date
+
+relationship ed920f57-240f-474c-ae6c-b4b5e3b30f96
+	fromColumn: fact_digital_sales.market_code
+	toColumn: dim_market.market_code
+
+relationship d316f653-1b9c-41e9-ad7c-69c21113d587
+	fromColumn: fact_digital_traffic.date
+	toColumn: dim_date.full_date
+
+relationship dfc3ff29-c425-47f5-8138-9c38e68a2970
+	isActive: false
+	fromColumn: fact_digital_traffic.market_code
+	toColumn: dim_market.market_code
 

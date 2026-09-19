@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["dim_date","dim_period","dim_product","dim_promo","dim_currency","fact_sales","fact_footfall","fact_stock_snapshot","fact_targets","fact_store_finance","fx_rate_monthly","dim_store"]
+annotation PBI_QueryOrder = ["dim_date","dim_period","dim_product","dim_promo","dim_currency","fact_sales","fact_footfall","fact_stock_snapshot","fact_targets","fact_store_finance","fx_rate_monthly","dim_store","dim_market","fact_digital_sales","fact_digital_traffic"]
 
 ref table dim_date
 ref table dim_period
@@ -25,6 +25,9 @@ ref table fact_targets
 ref table fact_store_finance
 ref table fx_rate_monthly
 ref table dim_store
+ref table dim_market
+ref table fact_digital_sales
+ref table fact_digital_traffic
 
 ref cultureInfo en-GB
 

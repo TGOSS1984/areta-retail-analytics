@@ -11,14 +11,18 @@ table 'Currency Conversion'
 
 	column 'Currency Conversion'
 		dataType: string
-		lineageTag: 2833ad9d-a1d9-4004-9c0d-6546d87dc9e8
-		sourceColumn: Name
 		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+		lineageTag: c69aa377-61a2-4874-8008-c08e5971189d
 
-	partition 'Currency Conversion' = calculated
-		mode: import
-		source = ```
-			{"Local Currency (GBP)", "Selected Currency"}
-			```
+		annotation SummarizationSetBy = Automatic
 
-	annotation PBI_ResultType = Table
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: Ordinal
+		lineageTag: 19c6411b-7f4f-4268-8264-cc7af5d1e22c
+
+		annotation SummarizationSetBy = Automatic

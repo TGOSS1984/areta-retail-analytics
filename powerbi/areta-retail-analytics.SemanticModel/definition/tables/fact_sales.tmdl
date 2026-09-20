@@ -1,626 +1,11 @@
 table fact_sales
 	lineageTag: ccce2880-e748-4240-9429-05ffb06b0406
 
-	measure 'Net Sales (GBP)' = SUM ( fact_sales[net_sales_gbp] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 024b0bd8-fd47-487c-ac8d-b517b530f46e
-
-	measure 'Gross Cost (GBP)' = SUM ( fact_sales[cost_gbp] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 508fbfbf-91a1-4373-8171-4fa279a7c6cd
-
-	measure 'Gross Profit (GBP)' = [Net Sales (GBP)] - [Gross Cost (GBP)]
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 157d84a4-ed4b-436d-87c6-ffc8d787113a
-
-	measure 'Gross Margin %' = DIVIDE ( [Gross Profit (GBP)], [Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Sales & Margin
-		lineageTag: 400ea95f-f6bb-4b81-a60a-28cf8ebb31ff
-
-	measure 'Gross Units Sold' = CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE )
-		formatString: #,0
-		displayFolder: Sales & Margin
-		lineageTag: e1695d36-c0ba-45ac-8d05-38c4ef2c7f7a
-
-	measure 'Units Returned' = CALCULATE ( -SUM ( fact_sales[quantity] ), fact_sales[is_return] = TRUE )
-		formatString: #,0
-		displayFolder: Sales & Margin
-		lineageTag: 1de5cd32-ab5a-4efc-b06f-289d92dbb8bd
-
-	measure 'Return Rate %' = DIVIDE ( [Units Returned], [Gross Units Sold] )
-		formatString: 0.0%
-		displayFolder: Sales & Margin
-		lineageTag: d0b36d98-965f-49e1-9d7b-ee8595317432
-
-	measure 'Net Units Sold' = SUM ( fact_sales[quantity] )
-		formatString: #,0
-		displayFolder: Sales & Margin
-		lineageTag: 1a48ea54-8db6-4310-a61e-66cb71ff1061
-
-	measure 'Full Price Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], fact_sales[promo_id] = "PROMO0000" )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 384d3bdb-b44c-4b0c-b76f-a1f9bd940746
-
-	measure 'Full Price Mix %' = DIVIDE ( [Full Price Sales (GBP)], [Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Sales & Margin
-		lineageTag: 9bcaeade-53b1-4ab1-bc9b-2659f9ba5575
-
-	measure 'Multi-buy Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], LEFT ( fact_sales[promo_id], 9 ) = "MULTIBUY-" )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 8b70caf7-ab7d-4b4e-8e74-fa851ce7195a
-
-	measure 'Multi-buy Mix %' = DIVIDE ( [Multi-buy Sales (GBP)], [Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Sales & Margin
-		lineageTag: d3f9e44d-4d8d-478e-bf99-81e099813359
-
-	measure 'VAT (GBP)' = SUM ( fact_sales[vat_gbp] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: f2c73f4e-e774-4c33-948d-a7c825818f88
-
-	measure 'Gross Sales inc. VAT (GBP)' = SUM ( fact_sales[gross_sales_gbp] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 66bc5a73-c9b8-4358-b9fe-12f5e6dc4f00
-
-	measure 'Net Sales LY' =
-			CALCULATE (
-			    [Net Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: efd2b77e-e632-4382-876f-26b475aba94c
-
-	measure 'Net Sales YoY %' = DIVIDE ( [Net Sales (GBP)] - [Net Sales LY], [Net Sales LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 01d3df6f-632c-471c-b17b-73bc1d45cc44
-
-	measure 'Distinct Invoices (from Sales)' = CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
-		formatString: #,0
-		displayFolder: Diagnostics
-		lineageTag: 7fcae126-a8c2-4dd8-bfa6-84580ae128d0
-
-	measure 'Retail Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Retail" )
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: 08dbee69-2fee-4945-85e0-73ff122d52bf
-
-	measure 'Concession Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Concession" )
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: e1fa45ba-b5f7-46f3-93af-471b9c14eb01
-
-	measure 'Online Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Online" )
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: f563f01e-28ac-4dcc-9bdc-e190694b2787
-
-	measure 'Net Units Sold LY' =
-			CALCULATE (
-			    [Net Units Sold],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0
-		displayFolder: Time Intelligence
-		lineageTag: 6a109c4e-0995-4e32-9d1b-45e673489fb8
-
-	measure 'Gross Margin % LY' =
-			CALCULATE (
-			    [Gross Margin %],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: bbbbe2c9-128a-45aa-ad55-167646b69e47
-
-	measure 'Retail Sales LY' =
-			CALCULATE (
-			    [Retail Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: 7d0692ff-1673-4337-b23c-2aab457bd365
-
-	measure 'Concession Sales LY' =
-			CALCULATE (
-			    [Concession Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: 3a1ea33d-cede-43b1-b452-b4cd3e210705
-
-	measure 'Online Sales LY' =
-			CALCULATE (
-			    [Online Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Channel Split
-		lineageTag: 1a6953d6-f352-4408-9735-f93f273a0a9c
-
-	measure 'Net Units Sold YoY %' = DIVIDE ( [Net Units Sold] - [Net Units Sold LY], [Net Units Sold LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 439d694f-608a-448a-bc44-50c982b50955
-
-	measure 'Gross Margin YoY (pp)' = [Gross Margin %] - [Gross Margin % LY]
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 847b3d90-590a-439e-b160-736e5f95ea47
-
-	measure 'Retail Sales YoY %' = DIVIDE ( [Retail Sales (GBP)] - [Retail Sales LY], [Retail Sales LY] )
-		formatString: 0.0%
-		displayFolder: Channel Split
-		lineageTag: 0ff6c04c-e46f-492e-a10c-2958cddd72f5
-
-	measure 'Concession Sales YoY %' = DIVIDE ( [Concession Sales (GBP)] - [Concession Sales LY], [Concession Sales LY] )
-		formatString: 0.0%
-		displayFolder: Channel Split
-		lineageTag: 98caa283-feb9-445e-8441-0854595b1ac6
-
-	measure 'Online Sales YoY %' = DIVIDE ( [Online Sales (GBP)] - [Online Sales LY], [Online Sales LY] )
-		formatString: 0.0%
-		displayFolder: Channel Split
-		lineageTag: ab4e339f-5777-4b34-afca-e5327480d5ee
-
-	measure 'Net Sales Trend Arrow' = IF ( [Net Sales YoY %] > 0, "▲", IF ( [Net Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: a0e1c1a2-35de-4f68-9f67-12f0f4f32316
-
-	measure 'Net Sales Trend Colour' = IF ( [Net Sales YoY %] > 0, "#2E7D32", IF ( [Net Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 61923fc4-63af-424a-afe9-14c3e2a2640f
-
-	measure 'Net Units Sold Trend Arrow' = IF ( [Net Units Sold YoY %] > 0, "▲", IF ( [Net Units Sold YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 944eb3c2-e1c2-4513-894b-4acb8e38e199
-
-	measure 'Net Units Sold Trend Colour' = IF ( [Net Units Sold YoY %] > 0, "#2E7D32", IF ( [Net Units Sold YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 64f43852-c4af-47a2-bc58-19f8cae534dc
-
-	measure 'Gross Margin Trend Arrow' = IF ( [Gross Margin YoY (pp)] > 0, "▲", IF ( [Gross Margin YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 588ffbb5-bb28-4b38-8789-2c72f7f57483
-
-	measure 'Gross Margin Trend Colour' = IF ( [Gross Margin YoY (pp)] > 0, "#2E7D32", IF ( [Gross Margin YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 92a0a99f-55af-432c-872b-64674af8f2a3
-
-	measure 'Retail Sales Trend Arrow' = IF ( [Retail Sales YoY %] > 0, "▲", IF ( [Retail Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 9153d067-837d-4bc8-ab3b-efdd91a731b5
-
-	measure 'Retail Sales Trend Colour' = IF ( [Retail Sales YoY %] > 0, "#2E7D32", IF ( [Retail Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 715ccef4-8aeb-4704-a34e-4491d3b12067
-
-	measure 'Concession Sales Trend Arrow' = IF ( [Concession Sales YoY %] > 0, "▲", IF ( [Concession Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 6038b60f-6b6d-40b1-bc3b-36b95d8daaef
-
-	measure 'Concession Sales Trend Colour' = IF ( [Concession Sales YoY %] > 0, "#2E7D32", IF ( [Concession Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 0b45ce90-96a4-4960-9696-13dd2ce6833e
-
-	measure 'Online Sales Trend Arrow' = IF ( [Online Sales YoY %] > 0, "▲", IF ( [Online Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 94582430-d5e4-4930-afbd-e2fe8fe14bd2
-
-	measure 'Online Sales Trend Colour' = IF ( [Online Sales YoY %] > 0, "#2E7D32", IF ( [Online Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 87d2ee58-e8fa-45d4-a280-c6c5b2e6b941
-
-	measure 'Net Sales YoY (GBP)' = [Net Sales (GBP)] - [Net Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 971f3181-8543-400c-b2f0-b5246d46bc8e
-
-	measure 'Net Units Sold YoY (Units)' = [Net Units Sold] - [Net Units Sold LY]
-		formatString: #,0
-		displayFolder: Time Intelligence
-		lineageTag: b69c4175-effe-4914-92ca-9d22351967f9
-
-	measure 'Retail Sales YoY (GBP)' = [Retail Sales (GBP)] - [Retail Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 553430a0-846e-414c-96e8-009ab039faf8
-
-	measure 'Concession Sales YoY (GBP)' = [Concession Sales (GBP)] - [Concession Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: b9315390-e2e5-483e-932e-ddc4efedbed4
-
-	measure 'Online Sales YoY (GBP)' = [Online Sales (GBP)] - [Online Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 62e3d59a-00ca-4c63-a578-d03c03a42b99
-
-	measure 'Net Sales YoY Combo' = [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 3492abb1-acc8-46dd-a656-550f60f373d9
-
-	measure 'Net Units Sold YoY Combo' = [Net Units Sold Trend Arrow] & " " & FORMAT ( ABS ( [Net Units Sold YoY (Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 69faa9fc-e794-4561-8386-f06600fbbbb2
-
-	measure 'Retail Sales YoY Combo' = [Retail Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Retail Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Retail Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 947fdd56-0111-4c33-9fdd-b284661069e6
-
-	measure 'Concession Sales YoY Combo' = [Concession Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Concession Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Concession Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: ea7ac2d9-d4d4-434d-82cb-9a6bde7ea015
-
-	measure 'Online Sales YoY Combo' = [Online Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Online Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Online Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 52c2c241-1f3c-44b8-a248-beeae31d99ae
-
-	measure 'Gross Margin YoY Combo' = [Gross Margin Trend Arrow] & " " & FORMAT ( [Gross Margin YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 06cdde71-0829-48d2-ae84-79c49813baa1
-
-	measure 'Gross Profit LY' =
-			CALCULATE (
-			    [Gross Profit (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 82cff70f-a397-4d42-830b-c4136ae97da5
-
-	measure 'Gross Profit YoY (GBP)' = [Gross Profit (GBP)] - [Gross Profit LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: df60fc19-cd63-4682-9e2f-741eef43fe75
-
-	measure 'Gross Profit YoY %' = DIVIDE ( [Gross Profit (GBP)] - [Gross Profit LY], [Gross Profit LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: a725fc4c-4e33-42d5-a2db-3e379c43d2b8
-
-	measure 'Gross Profit Trend Arrow' = IF ( [Gross Profit YoY %] > 0, "▲", IF ( [Gross Profit YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: ed16ba78-b211-4560-bc6c-a3875244a63a
-
-	measure 'Gross Profit Trend Colour' = IF ( [Gross Profit YoY %] > 0, "#2E7D32", IF ( [Gross Profit YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 3b8bb0cf-c519-42c4-a8f5-b70e3f158a0d
-
-	measure 'Gross Profit YoY Combo' = [Gross Profit Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 4861f910-090d-4e9b-8751-52d09c643003
-
-	measure 'Style Pareto Rank' = RANKX ( ALL ( dim_product[style_code] ), [Net Sales (GBP)],, DESC, Dense )
-		formatString: #,0
-		displayFolder: Pareto Analysis
-		lineageTag: 90230b81-c33d-4621-8ede-9bcc3ccbd24c
-
-	measure 'Style Pareto Cumulative Sales (GBP)' =
-			VAR CurrentRank = [Style Pareto Rank]
-			RETURN
-			    CALCULATE (
-			        [Net Sales (GBP)],
-			        FILTER (
-			            ALL ( dim_product[style_code] ),
-			            [Style Pareto Rank] <= CurrentRank
-			        )
-			    )
-		formatString: "£"#,0.00
-		displayFolder: Pareto Analysis
-		lineageTag: cf71f7b9-5bf2-44df-bc0e-f1174d2d42c1
-
-	measure 'Style Pareto Cumulative %' =
-			DIVIDE (
-			    [Style Pareto Cumulative Sales (GBP)],
-			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[style_code] ) )
-			)
-		formatString: 0.0%
-		displayFolder: Pareto Analysis
-		lineageTag: 4995ab9c-9e43-46ec-9c1b-e99113f4ac22
-
-	measure 'Style-Colour Pareto Rank' = RANKX ( ALL ( dim_product[style_code], dim_product[colour_code] ), [Net Sales (GBP)],, DESC, Dense )
-		formatString: #,0
-		displayFolder: Pareto Analysis
-		lineageTag: 09c3c1b2-2472-4f4b-a318-87d66a81d492
-
-	measure 'Style-Colour Pareto Cumulative Sales (GBP)' =
-			VAR CurrentRank = [Style-Colour Pareto Rank]
-			RETURN
-			    CALCULATE (
-			        [Net Sales (GBP)],
-			        FILTER (
-			            ALL ( dim_product[style_code], dim_product[colour_code] ),
-			            [Style-Colour Pareto Rank] <= CurrentRank
-			        )
-			    )
-		formatString: "£"#,0.00
-		displayFolder: Pareto Analysis
-		lineageTag: 2a07ff5f-d159-413a-a63b-87235dd1801c
-
-	measure 'Style-Colour Pareto Cumulative %' =
-			DIVIDE (
-			    [Style-Colour Pareto Cumulative Sales (GBP)],
-			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[style_code], dim_product[colour_code] ) )
-			)
-		formatString: 0.0%
-		displayFolder: Pareto Analysis
-		lineageTag: 8025353a-e277-49cd-a867-0e16bdfe0474
-
-	measure 'Product Group Pareto Rank' = RANKX ( ALL ( dim_product[product_group] ), [Net Sales (GBP)],, DESC, Dense )
-		formatString: #,0
-		displayFolder: Pareto Analysis
-		lineageTag: b6f55a98-c926-4ed8-bc38-3d2b3418481d
-
-	measure 'Product Group Pareto Cumulative Sales (GBP)' =
-			VAR CurrentRank = [Product Group Pareto Rank]
-			RETURN
-			    CALCULATE (
-			        [Net Sales (GBP)],
-			        FILTER (
-			            ALL ( dim_product[product_group] ),
-			            [Product Group Pareto Rank] <= CurrentRank
-			        )
-			    )
-		formatString: "£"#,0.00
-		displayFolder: Pareto Analysis
-		lineageTag: 16701a73-e205-476a-8a90-9b0f56eafdc0
-
-	measure 'Product Group Pareto Cumulative %' =
-			DIVIDE (
-			    [Product Group Pareto Cumulative Sales (GBP)],
-			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[product_group] ) )
-			)
-		formatString: 0.0%
-		displayFolder: Pareto Analysis
-		lineageTag: 55d752ac-af6d-44e7-877c-c74e37f5c113
-
-	measure 'P&L Bridge Value' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_pnl_bridge[step_name] ),
-			    "Net Sales", [Net Sales (GBP)],
-			    "Cost of Goods", -[Gross Cost (GBP)],
-			    "Gross Profit", [Gross Profit (GBP)],
-			    BLANK ()
-			)
-		formatString: "£"#,0.00
-		displayFolder: Waterfall
-		lineageTag: 26c2b661-fb26-467f-a15d-0b54a165cb6b
-
-	measure 'Full Price Sales LY' =
-			CALCULATE (
-			    [Full Price Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 9cd7e4f0-25b3-4559-8110-c32d3b63458e
-
-	measure 'Full Price Sales YoY (GBP)' = [Full Price Sales (GBP)] - [Full Price Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 80dd299d-9a6a-4b9a-96bc-bd0338e13297
-
-	measure 'Full Price Sales YoY %' = DIVIDE ( [Full Price Sales (GBP)] - [Full Price Sales LY], [Full Price Sales LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 8bc742a9-fe9e-4c4e-8c12-934e8d82fad3
-
-	measure 'Full Price Sales Trend Arrow' = IF ( [Full Price Sales YoY %] > 0, "▲", IF ( [Full Price Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: ad4912a7-4d21-4a2b-9aa1-699dd24423bf
-
-	measure 'Full Price Sales Trend Colour' = IF ( [Full Price Sales YoY %] > 0, "#2E7D32", IF ( [Full Price Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: fcfb5a85-6ce4-4077-9e54-2a4c6abd6468
-
-	measure 'Full Price Sales YoY Combo' = [Full Price Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Full Price Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Full Price Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: a588022c-54a1-4c68-b373-a7a77522c983
-
-	measure 'Multi-buy Sales LY' =
-			CALCULATE (
-			    [Multi-buy Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 2b51c0b3-557e-48b6-9f28-254fb573e24d
-
-	measure 'Multi-buy Sales YoY (GBP)' = [Multi-buy Sales (GBP)] - [Multi-buy Sales LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 70a4451a-9fc8-41b4-9a90-6d1b0a757103
-
-	measure 'Multi-buy Sales YoY %' = DIVIDE ( [Multi-buy Sales (GBP)] - [Multi-buy Sales LY], [Multi-buy Sales LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 0ed50b41-2697-4f94-96ac-9c4051141ee1
-
-	measure 'Multi-buy Sales Trend Arrow' = IF ( [Multi-buy Sales YoY %] > 0, "▲", IF ( [Multi-buy Sales YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 0a415aae-da9c-496b-a860-fd5f99548144
-
-	measure 'Multi-buy Sales Trend Colour' = IF ( [Multi-buy Sales YoY %] > 0, "#2E7D32", IF ( [Multi-buy Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: ede71e10-f6d2-4c9b-872f-ea907a50c7ac
-
-	measure 'Multi-buy Sales YoY Combo' = [Multi-buy Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Multi-buy Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Multi-buy Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: e6159350-5815-497c-934f-2c633dc752ba
-
-	measure 'Distinct Invoices LY' =
-			CALCULATE (
-			    [Distinct Invoices (from Sales)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: #,0
-		displayFolder: Time Intelligence
-		lineageTag: 6eddefb5-d8dd-452f-b97e-ef6a48826e90
-
-	measure 'Distinct Invoices YoY ()' = [Distinct Invoices (from Sales)] - [Distinct Invoices LY]
-		formatString: #,0
-		displayFolder: Time Intelligence
-		lineageTag: 84655668-0bfb-46d7-9f42-88739bf306a8
-
-	measure 'Distinct Invoices YoY %' = DIVIDE ( [Distinct Invoices (from Sales)] - [Distinct Invoices LY], [Distinct Invoices LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 9590693f-2bff-4e36-9ae4-dd6c2405fe9d
-
-	measure 'Distinct Invoices Trend Arrow' = IF ( [Distinct Invoices YoY %] > 0, "▲", IF ( [Distinct Invoices YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: f8ca0e03-08cb-4af9-ad40-52da0712b877
-
-	measure 'Distinct Invoices Trend Colour' = IF ( [Distinct Invoices YoY %] > 0, "#2E7D32", IF ( [Distinct Invoices YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: c70b19ea-30ad-4be5-bed8-f3de37d1c15a
-
-	measure 'Distinct Invoices YoY Combo' = [Distinct Invoices Trend Arrow] & " " & FORMAT ( ABS ( [Distinct Invoices YoY ()] ), "#,0" ) & " (" & FORMAT ( [Distinct Invoices YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 2f99a886-f404-43c2-8404-8e7a11a50c92
-
-	measure 'Full Price Mix LY' =
-			CALCULATE (
-			    [Full Price Mix %],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 2a54e33b-0bc1-463e-95a7-0e5bf845d2e2
-
-	measure 'Full Price Mix YoY (pp)' = [Full Price Mix %] - [Full Price Mix LY]
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 234bbb4c-9cf6-4b76-a435-f59466ee50a1
-
-	measure 'Full Price Mix Trend Arrow' = IF ( [Full Price Mix YoY (pp)] > 0, "▲", IF ( [Full Price Mix YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 4ff55679-e713-4414-8926-818bd42b8347
-
-	measure 'Full Price Mix Trend Colour' = IF ( [Full Price Mix YoY (pp)] > 0, "#2E7D32", IF ( [Full Price Mix YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 53891f5a-9fbf-4a80-846d-de4eceb3ca88
-
-	measure 'Full Price Mix YoY Combo' = [Full Price Mix Trend Arrow] & " " & FORMAT ( [Full Price Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 12c8c90a-81d3-48c6-a21a-120849eb8c55
-
-	measure 'Multi-buy Mix LY' =
-			CALCULATE (
-			    [Multi-buy Mix %],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 13f2a807-fa1c-45da-ae1a-e1d0220e758c
-
-	measure 'Multi-buy Mix YoY (pp)' = [Multi-buy Mix %] - [Multi-buy Mix LY]
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 5ccbcba9-cabe-4b27-964e-b4c569185e65
-
-	measure 'Multi-buy Mix Trend Arrow' = IF ( [Multi-buy Mix YoY (pp)] > 0, "▲", IF ( [Multi-buy Mix YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: ba608846-80c1-41f5-9ba2-7c8de78b8af6
-
-	measure 'Multi-buy Mix Trend Colour' = IF ( [Multi-buy Mix YoY (pp)] > 0, "#2E7D32", IF ( [Multi-buy Mix YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 6a77d00e-0fe3-4e99-9aee-9266eaad0007
-
-	measure 'Multi-buy Mix YoY Combo' = [Multi-buy Mix Trend Arrow] & " " & FORMAT ( [Multi-buy Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: KPI Trend Indicators
-		lineageTag: f0c9b6e5-b222-4644-9f44-75e528a0c3c8
-
-	measure 'Return Rate LY' =
-			CALCULATE (
-			    [Return Rate %],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 8f558784-8491-42c7-9375-f6c8369ee009
-
-	measure 'Return Rate YoY (pp)' = [Return Rate %] - [Return Rate LY]
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: b38809e3-ad96-4796-b376-97b20ec42250
-
-	measure 'Return Rate Trend Arrow' = IF ( [Return Rate YoY (pp)] > 0, "▲", IF ( [Return Rate YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 884ad73e-a388-4e9a-a1b4-64fd3eaaffba
-
-	measure 'Return Rate Trend Colour' = IF ( [Return Rate YoY (pp)] > 0, "#2E7D32", IF ( [Return Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 4717967f-9aa8-45cb-86c3-a2f5b0a5801a
-
-	measure 'Return Rate YoY Combo' = [Return Rate Trend Arrow] & " " & FORMAT ( [Return Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 62c36b6c-772d-4adf-ab72-c8f18ecef2b2
-
-	measure 'VAT Multiplier' = DIVIDE ( [Gross Sales inc. VAT (GBP)], [Net Sales (GBP)], 1 )
-		formatString: 0.000
-		displayFolder: VAT View
-		lineageTag: ff3def85-3db2-430b-a3c2-cc96371da71e
-
-	measure 'Net Sales (Selected VAT View)' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", [Gross Sales inc. VAT (GBP)],
-			    [Net Sales (GBP)]
-			)
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-		lineageTag: df9c871a-6f35-41a7-b270-d2bc0aa7946f
-
-	measure 'Net Sales (Selected VAT View) LY' =
-			CALCULATE (
-			    [Net Sales (Selected VAT View)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-		lineageTag: 9d3d64b9-67ce-4064-a5b4-3e04ffd89985
-
-	measure 'Net Sales (Selected VAT View) YoY (GBP)' = [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY]
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-		lineageTag: 5ca3ce8c-e9fc-44bc-87cb-d56f3aa51b24
-
-	measure 'Net Sales (Selected VAT View) YoY %' = DIVIDE ( [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY], [Net Sales (Selected VAT View) LY] )
-		formatString: 0.0%
-		displayFolder: VAT View
-		lineageTag: 5267aa22-3306-4494-9c28-f08380aa60c1
-
-	measure 'Net Sales (Selected VAT View) Trend Arrow' = IF ( [Net Sales (Selected VAT View) YoY %] > 0, "▲", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
-		displayFolder: VAT View
-		lineageTag: 4a6019b8-fef1-481c-95cd-455184d78df7
-
-	measure 'Net Sales (Selected VAT View) Trend Colour' = IF ( [Net Sales (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: VAT View
-		lineageTag: 17d4b0b1-3362-4d95-8457-726f9cf0efd3
-
-	measure 'Net Sales (Selected VAT View) YoY Combo' = [Net Sales (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: VAT View
-		lineageTag: be69e92e-dd48-4e31-b5b6-f8f06038dcd6
-
 	column date
 		dataType: dateTime
-		isHidden
 		formatString: Long Date
 		lineageTag: 0c1ab5ee-4867-4903-8045-5b86a29cd32d
+		isHidden
 		summarizeBy: none
 		sourceColumn: date
 
@@ -630,8 +15,8 @@ table fact_sales
 
 	column store_id
 		dataType: string
-		isHidden
 		lineageTag: 46363be8-4cda-4cba-9188-6db83e6fb290
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -639,8 +24,8 @@ table fact_sales
 
 	column invoice_id
 		dataType: string
-		isHidden
 		lineageTag: 3e28d0d1-cab3-4fff-8b1e-12e2f322a210
+		isHidden
 		summarizeBy: none
 		sourceColumn: invoice_id
 
@@ -648,8 +33,8 @@ table fact_sales
 
 	column sku
 		dataType: string
-		isHidden
 		lineageTag: d4ea1db7-ed83-4631-a1b5-7470b872289d
+		isHidden
 		summarizeBy: none
 		sourceColumn: sku
 
@@ -657,9 +42,9 @@ table fact_sales
 
 	column quantity
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: eb25f478-ce49-4596-b295-e2054aaec083
+		isHidden
 		summarizeBy: sum
 		sourceColumn: quantity
 
@@ -667,8 +52,8 @@ table fact_sales
 
 	column promo_id
 		dataType: string
-		isHidden
 		lineageTag: 17a61c9b-35c3-4520-b7b5-f4d0329c45f0
+		isHidden
 		summarizeBy: none
 		sourceColumn: promo_id
 
@@ -676,9 +61,9 @@ table fact_sales
 
 	column discount_pct
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: bf500bfe-c544-4176-bbc7-f86fec478ff1
+		isHidden
 		summarizeBy: sum
 		sourceColumn: discount_pct
 
@@ -686,8 +71,8 @@ table fact_sales
 
 	column unit_price_gbp
 		dataType: double
-		isHidden
 		lineageTag: b1f7380f-4719-4150-a43b-4294e55a4668
+		isHidden
 		summarizeBy: sum
 		sourceColumn: unit_price_gbp
 
@@ -697,8 +82,8 @@ table fact_sales
 
 	column net_sales_gbp
 		dataType: double
-		isHidden
 		lineageTag: b9b50741-8c72-49d8-b605-da371717a77d
+		isHidden
 		summarizeBy: sum
 		sourceColumn: net_sales_gbp
 
@@ -708,8 +93,8 @@ table fact_sales
 
 	column vat_gbp
 		dataType: double
-		isHidden
 		lineageTag: 16fc8941-4f9e-4d67-b401-930c573b12cc
+		isHidden
 		summarizeBy: sum
 		sourceColumn: vat_gbp
 
@@ -719,8 +104,8 @@ table fact_sales
 
 	column gross_sales_gbp
 		dataType: double
-		isHidden
 		lineageTag: 91d4d689-c347-4992-8db8-924cc3b60422
+		isHidden
 		summarizeBy: sum
 		sourceColumn: gross_sales_gbp
 
@@ -730,8 +115,8 @@ table fact_sales
 
 	column net_sales_local
 		dataType: double
-		isHidden
 		lineageTag: b555f3c8-57d9-44d9-a8c2-3f7fb0e27e5f
+		isHidden
 		summarizeBy: sum
 		sourceColumn: net_sales_local
 
@@ -741,8 +126,8 @@ table fact_sales
 
 	column currency
 		dataType: string
-		isHidden
 		lineageTag: 348526d9-9bfb-4dd1-9483-cbcca945f6d3
+		isHidden
 		summarizeBy: none
 		sourceColumn: currency
 
@@ -750,8 +135,8 @@ table fact_sales
 
 	column cost_gbp
 		dataType: double
-		isHidden
 		lineageTag: e703e29c-a897-4ae7-8dc9-286cd6e641bd
+		isHidden
 		summarizeBy: sum
 		sourceColumn: cost_gbp
 
@@ -770,13 +155,728 @@ table fact_sales
 
 	column line_number
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: fd404889-1738-43f3-a831-ddbe5e0dff0b
+		isHidden
 		summarizeBy: sum
 		sourceColumn: line_number
 
 		annotation SummarizationSetBy = Automatic
+
+	measure 'Net Sales (GBP)' = SUM ( fact_sales[net_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 024b0bd8-fd47-487c-ac8d-b517b530f46e
+		displayFolder: Sales & Margin
+
+	measure 'Gross Cost (GBP)' = SUM ( fact_sales[cost_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 508fbfbf-91a1-4373-8171-4fa279a7c6cd
+		displayFolder: Sales & Margin
+
+	measure 'Gross Profit (GBP)' = [Net Sales (GBP)] - [Gross Cost (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: 157d84a4-ed4b-436d-87c6-ffc8d787113a
+		displayFolder: Sales & Margin
+
+	measure 'Gross Margin %' = DIVIDE ( [Gross Profit (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 400ea95f-f6bb-4b81-a60a-28cf8ebb31ff
+		displayFolder: Sales & Margin
+
+	measure 'Gross Units Sold' = CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE )
+		formatString: #,0
+		lineageTag: e1695d36-c0ba-45ac-8d05-38c4ef2c7f7a
+		displayFolder: Sales & Margin
+
+	measure 'Units Returned' = CALCULATE ( -SUM ( fact_sales[quantity] ), fact_sales[is_return] = TRUE )
+		formatString: #,0
+		lineageTag: 1de5cd32-ab5a-4efc-b06f-289d92dbb8bd
+		displayFolder: Sales & Margin
+
+	measure 'Return Rate %' = DIVIDE ( [Units Returned], [Gross Units Sold] )
+		formatString: 0.0%
+		lineageTag: d0b36d98-965f-49e1-9d7b-ee8595317432
+		displayFolder: Sales & Margin
+
+	measure 'Net Units Sold' = SUM ( fact_sales[quantity] )
+		formatString: #,0
+		lineageTag: 1a48ea54-8db6-4310-a61e-66cb71ff1061
+		displayFolder: Sales & Margin
+
+	measure 'Full Price Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], fact_sales[promo_id] = "PROMO0000" )
+		formatString: "£"#,0.00
+		lineageTag: 384d3bdb-b44c-4b0c-b76f-a1f9bd940746
+		displayFolder: Sales & Margin
+
+	measure 'Full Price Mix %' = DIVIDE ( [Full Price Sales (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 9bcaeade-53b1-4ab1-bc9b-2659f9ba5575
+		displayFolder: Sales & Margin
+
+	measure 'Multi-buy Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], LEFT ( fact_sales[promo_id], 9 ) = "MULTIBUY-" )
+		formatString: "£"#,0.00
+		lineageTag: 8b70caf7-ab7d-4b4e-8e74-fa851ce7195a
+		displayFolder: Sales & Margin
+
+	measure 'Multi-buy Mix %' = DIVIDE ( [Multi-buy Sales (GBP)], [Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: d3f9e44d-4d8d-478e-bf99-81e099813359
+		displayFolder: Sales & Margin
+
+	measure 'VAT (GBP)' = SUM ( fact_sales[vat_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: f2c73f4e-e774-4c33-948d-a7c825818f88
+		displayFolder: Sales & Margin
+
+	measure 'Gross Sales inc. VAT (GBP)' = SUM ( fact_sales[gross_sales_gbp] )
+		formatString: "£"#,0.00
+		lineageTag: 66bc5a73-c9b8-4358-b9fe-12f5e6dc4f00
+		displayFolder: Sales & Margin
+
+	measure 'Net Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Net Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: efd2b77e-e632-4382-876f-26b475aba94c
+		displayFolder: Time Intelligence
+
+	measure 'Net Sales YoY %' = DIVIDE ( [Net Sales (GBP)] - [Net Sales LY], [Net Sales LY] )
+		formatString: 0.0%
+		lineageTag: 01d3df6f-632c-471c-b17b-73bc1d45cc44
+		displayFolder: Time Intelligence
+
+	measure 'Net Sales YoY (GBP)' = [Net Sales (GBP)] - [Net Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 971f3181-8543-400c-b2f0-b5246d46bc8e
+		displayFolder: Time Intelligence
+
+	measure 'Net Units Sold YoY (Units)' = [Net Units Sold] - [Net Units Sold LY]
+		formatString: #,0
+		lineageTag: b69c4175-effe-4914-92ca-9d22351967f9
+		displayFolder: Time Intelligence
+
+	measure 'Retail Sales YoY (GBP)' = [Retail Sales (GBP)] - [Retail Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 553430a0-846e-414c-96e8-009ab039faf8
+		displayFolder: Time Intelligence
+
+	measure 'Concession Sales YoY (GBP)' = [Concession Sales (GBP)] - [Concession Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: b9315390-e2e5-483e-932e-ddc4efedbed4
+		displayFolder: Time Intelligence
+
+	measure 'Online Sales YoY (GBP)' = [Online Sales (GBP)] - [Online Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 62e3d59a-00ca-4c63-a578-d03c03a42b99
+		displayFolder: Time Intelligence
+
+	measure 'Net Sales YoY Combo' = [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 3492abb1-acc8-46dd-a656-550f60f373d9
+		displayFolder: KPI Trend Indicators
+
+	measure 'Net Units Sold YoY Combo' = [Net Units Sold Trend Arrow] & " " & FORMAT ( ABS ( [Net Units Sold YoY (Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 69faa9fc-e794-4561-8386-f06600fbbbb2
+		displayFolder: KPI Trend Indicators
+
+	measure 'Retail Sales YoY Combo' = [Retail Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Retail Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Retail Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 947fdd56-0111-4c33-9fdd-b284661069e6
+		displayFolder: KPI Trend Indicators
+
+	measure 'Concession Sales YoY Combo' = [Concession Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Concession Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Concession Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: ea7ac2d9-d4d4-434d-82cb-9a6bde7ea015
+		displayFolder: KPI Trend Indicators
+
+	measure 'Online Sales YoY Combo' = [Online Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Online Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Online Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 52c2c241-1f3c-44b8-a248-beeae31d99ae
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Margin YoY Combo' = [Gross Margin Trend Arrow] & " " & FORMAT ( [Gross Margin YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 06cdde71-0829-48d2-ae84-79c49813baa1
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Gross Profit (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 82cff70f-a397-4d42-830b-c4136ae97da5
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit YoY (GBP)' = [Gross Profit (GBP)] - [Gross Profit LY]
+		formatString: "£"#,0.00
+		lineageTag: df60fc19-cd63-4682-9e2f-741eef43fe75
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit YoY %' = DIVIDE ( [Gross Profit (GBP)] - [Gross Profit LY], [Gross Profit LY] )
+		formatString: 0.0%
+		lineageTag: a725fc4c-4e33-42d5-a2db-3e379c43d2b8
+		displayFolder: Time Intelligence
+
+	measure 'Gross Profit Trend Arrow' = IF ( [Gross Profit YoY %] > 0, "▲", IF ( [Gross Profit YoY %] < 0, "▼", "▬" ) )
+		lineageTag: ed16ba78-b211-4560-bc6c-a3875244a63a
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit Trend Colour' = IF ( [Gross Profit YoY %] > 0, "#2E7D32", IF ( [Gross Profit YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 3b8bb0cf-c519-42c4-a8f5-b70e3f158a0d
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Profit YoY Combo' = [Gross Profit Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 4861f910-090d-4e9b-8751-52d09c643003
+		displayFolder: KPI Trend Indicators
+
+	measure 'Distinct Invoices (from Sales)' = CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
+		formatString: #,0
+		lineageTag: 7fcae126-a8c2-4dd8-bfa6-84580ae128d0
+		displayFolder: Diagnostics
+
+	measure 'Retail Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Retail" )
+		formatString: "£"#,0.00
+		lineageTag: 08dbee69-2fee-4945-85e0-73ff122d52bf
+		displayFolder: Channel Split
+
+	measure 'Concession Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Concession" )
+		formatString: "£"#,0.00
+		lineageTag: e1fa45ba-b5f7-46f3-93af-471b9c14eb01
+		displayFolder: Channel Split
+
+	measure 'Online Sales (GBP)' = CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Online" )
+		formatString: "£"#,0.00
+		lineageTag: f563f01e-28ac-4dcc-9bdc-e190694b2787
+		displayFolder: Channel Split
+
+	measure 'Net Units Sold LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Net Units Sold],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: #,0
+		lineageTag: 6a109c4e-0995-4e32-9d1b-45e673489fb8
+		displayFolder: Time Intelligence
+
+	measure 'Gross Margin % LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Gross Margin %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: 0.0%
+		lineageTag: bbbbe2c9-128a-45aa-ad55-167646b69e47
+		displayFolder: Time Intelligence
+
+	measure 'Retail Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Retail Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 7d0692ff-1673-4337-b23c-2aab457bd365
+		displayFolder: Channel Split
+
+	measure 'Concession Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Concession Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 3a1ea33d-cede-43b1-b452-b4cd3e210705
+		displayFolder: Channel Split
+
+	measure 'Online Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Online Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 1a6953d6-f352-4408-9735-f93f273a0a9c
+		displayFolder: Channel Split
+
+	measure 'Net Units Sold YoY %' = DIVIDE ( [Net Units Sold] - [Net Units Sold LY], [Net Units Sold LY] )
+		formatString: 0.0%
+		lineageTag: 439d694f-608a-448a-bc44-50c982b50955
+		displayFolder: Time Intelligence
+
+	measure 'Gross Margin YoY (pp)' = [Gross Margin %] - [Gross Margin % LY]
+		formatString: 0.0%
+		lineageTag: 847b3d90-590a-439e-b160-736e5f95ea47
+		displayFolder: Time Intelligence
+
+	measure 'Retail Sales YoY %' = DIVIDE ( [Retail Sales (GBP)] - [Retail Sales LY], [Retail Sales LY] )
+		formatString: 0.0%
+		lineageTag: 0ff6c04c-e46f-492e-a10c-2958cddd72f5
+		displayFolder: Channel Split
+
+	measure 'Concession Sales YoY %' = DIVIDE ( [Concession Sales (GBP)] - [Concession Sales LY], [Concession Sales LY] )
+		formatString: 0.0%
+		lineageTag: 98caa283-feb9-445e-8441-0854595b1ac6
+		displayFolder: Channel Split
+
+	measure 'Online Sales YoY %' = DIVIDE ( [Online Sales (GBP)] - [Online Sales LY], [Online Sales LY] )
+		formatString: 0.0%
+		lineageTag: ab4e339f-5777-4b34-afca-e5327480d5ee
+		displayFolder: Channel Split
+
+	measure 'Net Sales Trend Arrow' = IF ( [Net Sales YoY %] > 0, "▲", IF ( [Net Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: a0e1c1a2-35de-4f68-9f67-12f0f4f32316
+		displayFolder: KPI Trend Indicators
+
+	measure 'Net Sales Trend Colour' = IF ( [Net Sales YoY %] > 0, "#2E7D32", IF ( [Net Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 61923fc4-63af-424a-afe9-14c3e2a2640f
+		displayFolder: KPI Trend Indicators
+
+	measure 'Net Units Sold Trend Arrow' = IF ( [Net Units Sold YoY %] > 0, "▲", IF ( [Net Units Sold YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 944eb3c2-e1c2-4513-894b-4acb8e38e199
+		displayFolder: KPI Trend Indicators
+
+	measure 'Net Units Sold Trend Colour' = IF ( [Net Units Sold YoY %] > 0, "#2E7D32", IF ( [Net Units Sold YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 64f43852-c4af-47a2-bc58-19f8cae534dc
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Margin Trend Arrow' = IF ( [Gross Margin YoY (pp)] > 0, "▲", IF ( [Gross Margin YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 588ffbb5-bb28-4b38-8789-2c72f7f57483
+		displayFolder: KPI Trend Indicators
+
+	measure 'Gross Margin Trend Colour' = IF ( [Gross Margin YoY (pp)] > 0, "#2E7D32", IF ( [Gross Margin YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 92a0a99f-55af-432c-872b-64674af8f2a3
+		displayFolder: KPI Trend Indicators
+
+	measure 'Retail Sales Trend Arrow' = IF ( [Retail Sales YoY %] > 0, "▲", IF ( [Retail Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 9153d067-837d-4bc8-ab3b-efdd91a731b5
+		displayFolder: KPI Trend Indicators
+
+	measure 'Retail Sales Trend Colour' = IF ( [Retail Sales YoY %] > 0, "#2E7D32", IF ( [Retail Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 715ccef4-8aeb-4704-a34e-4491d3b12067
+		displayFolder: KPI Trend Indicators
+
+	measure 'Concession Sales Trend Arrow' = IF ( [Concession Sales YoY %] > 0, "▲", IF ( [Concession Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 6038b60f-6b6d-40b1-bc3b-36b95d8daaef
+		displayFolder: KPI Trend Indicators
+
+	measure 'Concession Sales Trend Colour' = IF ( [Concession Sales YoY %] > 0, "#2E7D32", IF ( [Concession Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 0b45ce90-96a4-4960-9696-13dd2ce6833e
+		displayFolder: KPI Trend Indicators
+
+	measure 'Online Sales Trend Arrow' = IF ( [Online Sales YoY %] > 0, "▲", IF ( [Online Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 94582430-d5e4-4930-afbd-e2fe8fe14bd2
+		displayFolder: KPI Trend Indicators
+
+	measure 'Online Sales Trend Colour' = IF ( [Online Sales YoY %] > 0, "#2E7D32", IF ( [Online Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 87d2ee58-e8fa-45d4-a280-c6c5b2e6b941
+		displayFolder: KPI Trend Indicators
+
+	measure 'Style Pareto Rank' =
+			RANKX ( ALL ( dim_product[style_code] ), [Net Sales (GBP)],, DESC, Dense )
+		formatString: #,0
+		lineageTag: 90230b81-c33d-4621-8ede-9bcc3ccbd24c
+		displayFolder: Pareto Analysis
+
+	measure 'Style Pareto Cumulative Sales (GBP)' =
+			VAR CurrentRank = [Style Pareto Rank]
+			RETURN
+			    CALCULATE (
+			        [Net Sales (GBP)],
+			        FILTER (
+			            ALL ( dim_product[style_code] ),
+			            [Style Pareto Rank] <= CurrentRank
+			        )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: cf71f7b9-5bf2-44df-bc0e-f1174d2d42c1
+		displayFolder: Pareto Analysis
+
+	measure 'Style Pareto Cumulative %' =
+			DIVIDE (
+			    [Style Pareto Cumulative Sales (GBP)],
+			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[style_code] ) )
+			)
+		formatString: 0.0%
+		lineageTag: 4995ab9c-9e43-46ec-9c1b-e99113f4ac22
+		displayFolder: Pareto Analysis
+
+	measure 'Style-Colour Pareto Rank' =
+			RANKX ( ALL ( dim_product[style_code], dim_product[colour_code] ), [Net Sales (GBP)],, DESC, Dense )
+		formatString: #,0
+		lineageTag: 09c3c1b2-2472-4f4b-a318-87d66a81d492
+		displayFolder: Pareto Analysis
+
+	measure 'Style-Colour Pareto Cumulative Sales (GBP)' =
+			VAR CurrentRank = [Style-Colour Pareto Rank]
+			RETURN
+			    CALCULATE (
+			        [Net Sales (GBP)],
+			        FILTER (
+			            ALL ( dim_product[style_code], dim_product[colour_code] ),
+			            [Style-Colour Pareto Rank] <= CurrentRank
+			        )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 2a07ff5f-d159-413a-a63b-87235dd1801c
+		displayFolder: Pareto Analysis
+
+	measure 'Style-Colour Pareto Cumulative %' =
+			DIVIDE (
+			    [Style-Colour Pareto Cumulative Sales (GBP)],
+			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[style_code], dim_product[colour_code] ) )
+			)
+		formatString: 0.0%
+		lineageTag: 8025353a-e277-49cd-a867-0e16bdfe0474
+		displayFolder: Pareto Analysis
+
+	measure 'Product Group Pareto Rank' =
+			RANKX ( ALL ( dim_product[product_group] ), [Net Sales (GBP)],, DESC, Dense )
+		formatString: #,0
+		lineageTag: b6f55a98-c926-4ed8-bc38-3d2b3418481d
+		displayFolder: Pareto Analysis
+
+	measure 'Product Group Pareto Cumulative Sales (GBP)' =
+			VAR CurrentRank = [Product Group Pareto Rank]
+			RETURN
+			    CALCULATE (
+			        [Net Sales (GBP)],
+			        FILTER (
+			            ALL ( dim_product[product_group] ),
+			            [Product Group Pareto Rank] <= CurrentRank
+			        )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 16701a73-e205-476a-8a90-9b0f56eafdc0
+		displayFolder: Pareto Analysis
+
+	measure 'Product Group Pareto Cumulative %' =
+			DIVIDE (
+			    [Product Group Pareto Cumulative Sales (GBP)],
+			    CALCULATE ( [Net Sales (GBP)], ALL ( dim_product[product_group] ) )
+			)
+		formatString: 0.0%
+		lineageTag: 55d752ac-af6d-44e7-877c-c74e37f5c113
+		displayFolder: Pareto Analysis
+
+	measure 'P&L Bridge Value' =
+			SWITCH (
+			    SELECTEDVALUE ( dim_pnl_bridge[step_name] ),
+			    "Net Sales", [Net Sales (GBP)],
+			    "Cost of Goods", -[Gross Cost (GBP)],
+			    "Gross Profit", [Gross Profit (GBP)],
+			    BLANK ()
+			)
+		formatString: "£"#,0.00
+		lineageTag: 26c2b661-fb26-467f-a15d-0b54a165cb6b
+		displayFolder: Waterfall
+	measure 'Full Price Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Full Price Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 9cd7e4f0-25b3-4559-8110-c32d3b63458e
+		displayFolder: Time Intelligence
+
+	measure 'Full Price Sales YoY (GBP)' = [Full Price Sales (GBP)] - [Full Price Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 80dd299d-9a6a-4b9a-96bc-bd0338e13297
+		displayFolder: Time Intelligence
+
+	measure 'Full Price Sales YoY %' = DIVIDE ( [Full Price Sales (GBP)] - [Full Price Sales LY], [Full Price Sales LY] )
+		formatString: 0.0%
+		lineageTag: 8bc742a9-fe9e-4c4e-8c12-934e8d82fad3
+		displayFolder: Time Intelligence
+
+	measure 'Full Price Sales Trend Arrow' = IF ( [Full Price Sales YoY %] > 0, "▲", IF ( [Full Price Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: ad4912a7-4d21-4a2b-9aa1-699dd24423bf
+		displayFolder: KPI Trend Indicators
+
+	measure 'Full Price Sales Trend Colour' = IF ( [Full Price Sales YoY %] > 0, "#2E7D32", IF ( [Full Price Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: fcfb5a85-6ce4-4077-9e54-2a4c6abd6468
+		displayFolder: KPI Trend Indicators
+
+	measure 'Full Price Sales YoY Combo' = [Full Price Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Full Price Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Full Price Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: a588022c-54a1-4c68-b373-a7a77522c983
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Sales LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Multi-buy Sales (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 2b51c0b3-557e-48b6-9f28-254fb573e24d
+		displayFolder: Time Intelligence
+
+	measure 'Multi-buy Sales YoY (GBP)' = [Multi-buy Sales (GBP)] - [Multi-buy Sales LY]
+		formatString: "£"#,0.00
+		lineageTag: 70a4451a-9fc8-41b4-9a90-6d1b0a757103
+		displayFolder: Time Intelligence
+
+	measure 'Multi-buy Sales YoY %' = DIVIDE ( [Multi-buy Sales (GBP)] - [Multi-buy Sales LY], [Multi-buy Sales LY] )
+		formatString: 0.0%
+		lineageTag: 0ed50b41-2697-4f94-96ac-9c4051141ee1
+		displayFolder: Time Intelligence
+
+	measure 'Multi-buy Sales Trend Arrow' = IF ( [Multi-buy Sales YoY %] > 0, "▲", IF ( [Multi-buy Sales YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 0a415aae-da9c-496b-a860-fd5f99548144
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Sales Trend Colour' = IF ( [Multi-buy Sales YoY %] > 0, "#2E7D32", IF ( [Multi-buy Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: ede71e10-f6d2-4c9b-872f-ea907a50c7ac
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Sales YoY Combo' = [Multi-buy Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Multi-buy Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Multi-buy Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: e6159350-5815-497c-934f-2c633dc752ba
+		displayFolder: KPI Trend Indicators
+
+	measure 'Distinct Invoices LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Distinct Invoices (from Sales)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: #,0
+		lineageTag: 6eddefb5-d8dd-452f-b97e-ef6a48826e90
+		displayFolder: Time Intelligence
+
+	measure 'Distinct Invoices YoY ()' = [Distinct Invoices (from Sales)] - [Distinct Invoices LY]
+		formatString: #,0
+		lineageTag: 84655668-0bfb-46d7-9f42-88739bf306a8
+		displayFolder: Time Intelligence
+
+	measure 'Distinct Invoices YoY %' = DIVIDE ( [Distinct Invoices (from Sales)] - [Distinct Invoices LY], [Distinct Invoices LY] )
+		formatString: 0.0%
+		lineageTag: 9590693f-2bff-4e36-9ae4-dd6c2405fe9d
+		displayFolder: Time Intelligence
+
+	measure 'Distinct Invoices Trend Arrow' = IF ( [Distinct Invoices YoY %] > 0, "▲", IF ( [Distinct Invoices YoY %] < 0, "▼", "▬" ) )
+		lineageTag: f8ca0e03-08cb-4af9-ad40-52da0712b877
+		displayFolder: KPI Trend Indicators
+
+	measure 'Distinct Invoices Trend Colour' = IF ( [Distinct Invoices YoY %] > 0, "#2E7D32", IF ( [Distinct Invoices YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: c70b19ea-30ad-4be5-bed8-f3de37d1c15a
+		displayFolder: KPI Trend Indicators
+
+	measure 'Distinct Invoices YoY Combo' = [Distinct Invoices Trend Arrow] & " " & FORMAT ( ABS ( [Distinct Invoices YoY ()] ), "#,0" ) & " (" & FORMAT ( [Distinct Invoices YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 2f99a886-f404-43c2-8404-8e7a11a50c92
+		displayFolder: KPI Trend Indicators
+
+	measure 'Full Price Mix LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Full Price Mix %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: 0.0%
+		lineageTag: 2a54e33b-0bc1-463e-95a7-0e5bf845d2e2
+		displayFolder: Time Intelligence
+
+	measure 'Full Price Mix YoY (pp)' = [Full Price Mix %] - [Full Price Mix LY]
+		formatString: 0.0%
+		lineageTag: 234bbb4c-9cf6-4b76-a435-f59466ee50a1
+		displayFolder: Time Intelligence
+
+	measure 'Full Price Mix Trend Arrow' = IF ( [Full Price Mix YoY (pp)] > 0, "▲", IF ( [Full Price Mix YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 4ff55679-e713-4414-8926-818bd42b8347
+		displayFolder: KPI Trend Indicators
+
+	measure 'Full Price Mix Trend Colour' = IF ( [Full Price Mix YoY (pp)] > 0, "#2E7D32", IF ( [Full Price Mix YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 53891f5a-9fbf-4a80-846d-de4eceb3ca88
+		displayFolder: KPI Trend Indicators
+
+	measure 'Full Price Mix YoY Combo' = [Full Price Mix Trend Arrow] & " " & FORMAT ( [Full Price Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 12c8c90a-81d3-48c6-a21a-120849eb8c55
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Mix LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Multi-buy Mix %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: 0.0%
+		lineageTag: 13f2a807-fa1c-45da-ae1a-e1d0220e758c
+		displayFolder: Time Intelligence
+
+	measure 'Multi-buy Mix YoY (pp)' = [Multi-buy Mix %] - [Multi-buy Mix LY]
+		formatString: 0.0%
+		lineageTag: 5ccbcba9-cabe-4b27-964e-b4c569185e65
+		displayFolder: Time Intelligence
+
+	measure 'Multi-buy Mix Trend Arrow' = IF ( [Multi-buy Mix YoY (pp)] > 0, "▲", IF ( [Multi-buy Mix YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: ba608846-80c1-41f5-9ba2-7c8de78b8af6
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Mix Trend Colour' = IF ( [Multi-buy Mix YoY (pp)] > 0, "#2E7D32", IF ( [Multi-buy Mix YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 6a77d00e-0fe3-4e99-9aee-9266eaad0007
+		displayFolder: KPI Trend Indicators
+
+	measure 'Multi-buy Mix YoY Combo' = [Multi-buy Mix Trend Arrow] & " " & FORMAT ( [Multi-buy Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: f0c9b6e5-b222-4644-9f44-75e528a0c3c8
+		displayFolder: KPI Trend Indicators
+
+	measure 'Return Rate LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Return Rate %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: 0.0%
+		lineageTag: 8f558784-8491-42c7-9375-f6c8369ee009
+		displayFolder: Time Intelligence
+
+	measure 'Return Rate YoY (pp)' = [Return Rate %] - [Return Rate LY]
+		formatString: 0.0%
+		lineageTag: b38809e3-ad96-4796-b376-97b20ec42250
+		displayFolder: Time Intelligence
+
+	measure 'Return Rate Trend Arrow' = IF ( [Return Rate YoY (pp)] > 0, "▲", IF ( [Return Rate YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 884ad73e-a388-4e9a-a1b4-64fd3eaaffba
+		displayFolder: KPI Trend Indicators
+
+	measure 'Return Rate Trend Colour' = IF ( [Return Rate YoY (pp)] > 0, "#2E7D32", IF ( [Return Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 4717967f-9aa8-45cb-86c3-a2f5b0a5801a
+		displayFolder: KPI Trend Indicators
+
+	measure 'Return Rate YoY Combo' = [Return Rate Trend Arrow] & " " & FORMAT ( [Return Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 62c36b6c-772d-4adf-ab72-c8f18ecef2b2
+		displayFolder: KPI Trend Indicators
+
+	measure 'VAT Multiplier' =
+			DIVIDE ( [Gross Sales inc. VAT (GBP)], [Net Sales (GBP)], 1 )
+		formatString: 0.000
+		lineageTag: ff3def85-3db2-430b-a3c2-cc96371da71e
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View)' =
+			SWITCH (
+			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
+			    "Including VAT", [Gross Sales inc. VAT (GBP)],
+			    [Net Sales (GBP)]
+			)
+		formatString: "£"#,0.00
+		lineageTag: df9c871a-6f35-41a7-b270-d2bc0aa7946f
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Net Sales (Selected VAT View)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) YoY (GBP)' =
+			[Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY]
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) YoY %' =
+			DIVIDE ( [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY], [Net Sales (Selected VAT View) LY] )
+		formatString: 0.0%
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Trend Arrow' =
+			IF ( [Net Sales (Selected VAT View) YoY %] > 0, "▲", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Trend Colour' =
+			IF ( [Net Sales (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) YoY Combo' =
+			[Net Sales (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: VAT View
 
 	column 'Discount Band' =
 			SWITCH (

@@ -1,6 +1,33 @@
 table fact_digital_targets
 	lineageTag: 99484c71-bf34-4c10-99fc-b058170cdb03
 
+	measure 'Target Digital Net Sales (GBP)' = SUM ( fact_digital_targets[target_digital_net_sales_gbp] )
+		formatString: "£"#,0.00
+		displayFolder: Targets
+		lineageTag: 8a225013-f515-42d2-b78f-94f4ad565a61
+
+	measure 'Digital Net Sales Target Variance (GBP)' = [Digital Net Sales (GBP)] - [Target Digital Net Sales (GBP)]
+		formatString: "£"#,0.00
+		displayFolder: Targets
+		lineageTag: 5600c63d-992a-4948-9585-a5c4820c4013
+
+	measure 'Digital Net Sales Target Variance %' = DIVIDE ( [Digital Net Sales Target Variance (GBP)], [Target Digital Net Sales (GBP)] )
+		formatString: 0.0%
+		displayFolder: Targets
+		lineageTag: 68b0e0cb-4c41-4e6e-b2fd-a4e87cd13df3
+
+	measure 'Digital Net Sales Target Trend Arrow' = IF ( [Digital Net Sales Target Variance %] > 0, "▲", IF ( [Digital Net Sales Target Variance %] < 0, "▼", "▬" ) )
+		displayFolder: Targets
+		lineageTag: 0c0ab18e-c057-4dc9-8e48-0cc30abc365d
+
+	measure 'Digital Net Sales Target Trend Colour' = IF ( [Digital Net Sales Target Variance %] > 0, "#2E7D32", IF ( [Digital Net Sales Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Targets
+		lineageTag: 752804fe-7e5c-4592-a97d-f820d5320b1c
+
+	measure 'Digital Net Sales Target Combo' = [Digital Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & " to target)"
+		displayFolder: Targets
+		lineageTag: 57abc8a7-f1b6-498f-91c0-f1f02d1da2ad
+
 	column market_code
 		dataType: string
 		lineageTag: 140ff94d-61aa-4d31-bbfe-5044e3b9cbd0
@@ -9,62 +36,35 @@ table fact_digital_targets
 
 	column business_year
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: f7fe89c6-6810-453d-967c-2f80e57cb818
-		isHidden
 		summarizeBy: none
 		sourceColumn: business_year
 
 	column business_period_number
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: ad7fc7a2-04b8-4984-a19f-d56fb374b34e
-		isHidden
 		summarizeBy: none
 		sourceColumn: business_period_number
 
 	column period_key
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: c41e4ddf-b566-48b0-a9ad-e94244421daf
-		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
 	column target_digital_net_sales_gbp
 		dataType: double
+		isHidden
 		formatString: "£"#,0.00
 		lineageTag: 70f2c271-3c4e-488f-9cd5-6da1460e5c9f
-		isHidden
 		summarizeBy: none
 		sourceColumn: target_digital_net_sales_gbp
-
-	measure 'Target Digital Net Sales (GBP)' = SUM ( fact_digital_targets[target_digital_net_sales_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: 8a225013-f515-42d2-b78f-94f4ad565a61
-		displayFolder: Targets
-
-	measure 'Digital Net Sales Target Variance (GBP)' = [Digital Net Sales (GBP)] - [Target Digital Net Sales (GBP)]
-		formatString: "£"#,0.00
-		lineageTag: 5600c63d-992a-4948-9585-a5c4820c4013
-		displayFolder: Targets
-
-	measure 'Digital Net Sales Target Variance %' = DIVIDE ( [Digital Net Sales Target Variance (GBP)], [Target Digital Net Sales (GBP)] )
-		formatString: 0.0%
-		lineageTag: 68b0e0cb-4c41-4e6e-b2fd-a4e87cd13df3
-		displayFolder: Targets
-
-	measure 'Digital Net Sales Target Trend Arrow' = IF ( [Digital Net Sales Target Variance %] > 0, "▲", IF ( [Digital Net Sales Target Variance %] < 0, "▼", "▬" ) )
-		lineageTag: 0c0ab18e-c057-4dc9-8e48-0cc30abc365d
-		displayFolder: Targets
-
-	measure 'Digital Net Sales Target Trend Colour' = IF ( [Digital Net Sales Target Variance %] > 0, "#2E7D32", IF ( [Digital Net Sales Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 752804fe-7e5c-4592-a97d-f820d5320b1c
-		displayFolder: Targets
-
-	measure 'Digital Net Sales Target Combo' = [Digital Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & " to target)"
-		lineageTag: 57abc8a7-f1b6-498f-91c0-f1f02d1da2ad
-		displayFolder: Targets
 
 	partition fact_digital_targets = m
 		mode: import
@@ -75,3 +75,4 @@ table fact_digital_targets
 				    Source
 
 	annotation PBI_ResultType = Table
+

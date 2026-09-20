@@ -2,9 +2,9 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "70da46c9c9b28a8cc8d1",
   "position": {
-    "x": 236.34854771784231,
-    "y": 350.53941908713693,
-    "z": 0,
+    "x": 225.26122823098075,
+    "y": 329.09257561869845,
+    "z": 1000,
     "height": 380.39045553145337,
     "width": 640,
     "tabOrder": 0
@@ -53,7 +53,7 @@
               },
               "queryRef": "dim_date.Business Calendar.business_quarter",
               "nativeQueryRef": "Business Calendar business_quarter",
-              "active": true
+              "active": false
             },
             {
               "field": {
@@ -73,7 +73,7 @@
               },
               "queryRef": "dim_date.Business Calendar.Business Period",
               "nativeQueryRef": "Business Calendar Business Period",
-              "active": false
+              "active": true
             },
             {
               "field": {
@@ -164,6 +164,21 @@
           ]
         }
       }
+    },
+    "objects": {
+      "lineStyles": [
+        {
+          "properties": {
+            "showMarker": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "background": [

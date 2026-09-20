@@ -394,6 +394,172 @@ table fact_targets
 		lineageTag: 87d1e373-d9a1-420f-aec5-a19eded694f9
 		displayFolder: Targets (Any Grain)
 
+	measure 'Target Net Units Sold, Any Grain' =
+			SUMX (
+			    dim_date,
+			    VAR ThisPeriodLabel = dim_date[business_period_label]
+			    VAR ThisPeriodNumber = dim_date[business_period_number]
+			    VAR ThisBusinessYear = dim_date[business_year]
+			    VAR ThisDayName = dim_date[day_name]
+			    VAR PeriodTarget =
+			        CALCULATE (
+			            [Target Net Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR PriorYearDayNameActual =
+			        CALCULATE (
+			            [Net Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR PriorYearPeriodActual =
+			        CALCULATE (
+			            [Net Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1
+			        )
+			    VAR PriorYearDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR ThisPeriodDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR DayWeight =
+			        IF (
+			            PriorYearPeriodActual > 0,
+			            DIVIDE ( PriorYearDayNameActual, PriorYearPeriodActual ),
+			            DIVIDE ( 1, ThisPeriodDayCount )
+			        )
+			    VAR AllocatedForDayName = PeriodTarget * DayWeight
+			    RETURN
+			        DIVIDE ( AllocatedForDayName, IF ( PriorYearPeriodActual > 0, PriorYearDayCount, 1 ) )
+			)
+		formatString: #,0
+		lineageTag: e182f5db-9d93-4f7c-b78e-e5a0fcab27e3
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Units Sold Target Variance (Any Grain, Units)' =
+			[Net Units Sold] - [Target Net Units Sold, Any Grain]
+		formatString: #,0
+		lineageTag: df05659c-1006-4e79-a7fe-f0c3a774f89d
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Units Sold Target Variance % (Any Grain)' =
+			DIVIDE ( [Net Units Sold Target Variance (Any Grain, Units)], [Target Net Units Sold, Any Grain] )
+		formatString: 0.0%
+		lineageTag: 191e4840-92af-400c-8d0e-085bbd7b9213
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Units Sold Target Trend Arrow (Any Grain)' =
+			IF ( [Net Units Sold Target Variance % (Any Grain)] > 0, "▲", IF ( [Net Units Sold Target Variance % (Any Grain)] < 0, "▼", "▬" ) )
+		lineageTag: 7021cfab-f179-413c-8b04-5f076cfc9d30
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Units Sold Target Trend Colour (Any Grain)' =
+			IF ( [Net Units Sold Target Variance % (Any Grain)] > 0, "#2E7D32", IF ( [Net Units Sold Target Variance % (Any Grain)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 473a1fb4-702a-41c8-ab93-a1d813d73f38
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Units Sold Target Combo (Any Grain)' =
+			[Net Units Sold Target Trend Arrow (Any Grain)] & " " & FORMAT ( ABS ( [Net Units Sold Target Variance (Any Grain, Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & " to target)"
+		lineageTag: 0dc289f6-c0a3-4ed4-acf2-4a2fae973e1e
+		displayFolder: Targets (Any Grain)
+
+	measure 'Target Total Footfall, Any Grain' =
+			SUMX (
+			    dim_date,
+			    VAR ThisPeriodLabel = dim_date[business_period_label]
+			    VAR ThisPeriodNumber = dim_date[business_period_number]
+			    VAR ThisBusinessYear = dim_date[business_year]
+			    VAR ThisDayName = dim_date[day_name]
+			    VAR PeriodTarget =
+			        CALCULATE (
+			            [Target Total Footfall],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR PriorYearDayNameActual =
+			        CALCULATE (
+			            [Total Footfall],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR PriorYearPeriodActual =
+			        CALCULATE (
+			            [Total Footfall],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1
+			        )
+			    VAR PriorYearDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR ThisPeriodDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR DayWeight =
+			        IF (
+			            PriorYearPeriodActual > 0,
+			            DIVIDE ( PriorYearDayNameActual, PriorYearPeriodActual ),
+			            DIVIDE ( 1, ThisPeriodDayCount )
+			        )
+			    VAR AllocatedForDayName = PeriodTarget * DayWeight
+			    RETURN
+			        DIVIDE ( AllocatedForDayName, IF ( PriorYearPeriodActual > 0, PriorYearDayCount, 1 ) )
+			)
+		formatString: #,0
+		lineageTag: fdac0583-2f63-4671-afaa-3ae78601e187
+		displayFolder: Targets (Any Grain)
+
+	measure 'Total Footfall Target Variance (Any Grain)' =
+			[Total Footfall] - [Target Total Footfall, Any Grain]
+		formatString: #,0
+		lineageTag: 4a7c53c4-0510-4ef7-aeda-bf0c33e30735
+		displayFolder: Targets (Any Grain)
+
+	measure 'Total Footfall Target Variance % (Any Grain)' =
+			DIVIDE ( [Total Footfall Target Variance (Any Grain)], [Target Total Footfall, Any Grain] )
+		formatString: 0.0%
+		lineageTag: 5c6bff0c-999f-4c02-ae10-c527c4c18a67
+		displayFolder: Targets (Any Grain)
+
+	measure 'Total Footfall Target Trend Arrow (Any Grain)' =
+			IF ( [Total Footfall Target Variance % (Any Grain)] > 0, "▲", IF ( [Total Footfall Target Variance % (Any Grain)] < 0, "▼", "▬" ) )
+		lineageTag: 61368eb8-8178-4500-b74c-5fb2357f34d2
+		displayFolder: Targets (Any Grain)
+
+	measure 'Total Footfall Target Trend Colour (Any Grain)' =
+			IF ( [Total Footfall Target Variance % (Any Grain)] > 0, "#2E7D32", IF ( [Total Footfall Target Variance % (Any Grain)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 75289085-024e-4711-a3e5-5a415a645a67
+		displayFolder: Targets (Any Grain)
+
+	measure 'Total Footfall Target Combo (Any Grain)' =
+			[Total Footfall Target Trend Arrow (Any Grain)] & " " & FORMAT ( ABS ( [Total Footfall Target Variance (Any Grain)] ), "#,0" ) & " (" & FORMAT ( [Total Footfall Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & " to target)"
+		lineageTag: 5f4862eb-0914-48f0-8622-b3e39f0ecc40
+		displayFolder: Targets (Any Grain)
+
 	partition fact_targets = m
 		mode: import
 		source =

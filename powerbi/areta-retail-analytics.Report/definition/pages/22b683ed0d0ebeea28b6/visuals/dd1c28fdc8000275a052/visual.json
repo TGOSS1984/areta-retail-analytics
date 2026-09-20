@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "bc398f6591330aa9051d",
+  "name": "dd1c28fdc8000275a052",
   "position": {
-    "x": 0,
-    "y": 814.28571428571433,
-    "z": 5000,
-    "height": 265.71428571428572,
-    "width": 200,
-    "tabOrder": 3000
+    "x": 468.12098991750685,
+    "y": 147.8276810265811,
+    "z": 18000,
+    "height": 79.193400549954163,
+    "width": 58.075160403299726,
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "image",
@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'ridge-shadow.png'"
+                      "Value": "'currency-pound.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "ridge-shadow08597975900248489.png"
+                      "ItemName": "currency-pound5915385751330097.png"
                     }
                   }
                 },
@@ -39,13 +39,6 @@
                       "Value": "'Normal'"
                     }
                   }
-                }
-              }
-            },
-            "fit": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Stretch'"
                 }
               }
             }

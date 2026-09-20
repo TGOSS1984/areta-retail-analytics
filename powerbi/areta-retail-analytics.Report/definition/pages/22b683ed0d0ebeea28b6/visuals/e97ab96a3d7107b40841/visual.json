@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "e97ab96a3d7107b40841",
   "position": {
-    "x": 416.85230024213075,
-    "y": 142.56658595641647,
-    "z": 12000,
-    "height": 85.230024213075069,
-    "width": 127.07021791767555,
+    "x": 418.84509624197983,
+    "y": 237.58020164986252,
+    "z": 13000,
+    "height": 84.472960586617788,
+    "width": 126.70944087992667,
     "tabOrder": 11000
   },
   "visual": {
@@ -213,37 +213,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "4aeea182402e839b0230",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f5d7b3c473cc07707306",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

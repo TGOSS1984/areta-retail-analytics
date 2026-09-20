@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "c84ead45a321040b6b05",
+  "name": "cbfa77e3153305de0672",
   "position": {
-    "x": 18.958707360861759,
-    "y": 1022.0466786355476,
-    "z": 15000,
-    "height": 37.917414721723517,
-    "width": 41.364452423698381,
-    "tabOrder": 13000
+    "x": 10.427698574338086,
+    "y": 539.63340122199588,
+    "z": 18001,
+    "height": 149.89816700611,
+    "width": 179.87780040733196,
+    "tabOrder": 17002
   },
   "visual": {
     "visualType": "shape",
@@ -46,17 +46,10 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 3,
-                      "Percent": 0
+                      "ColorId": 2,
+                      "Percent": 0.6
                     }
                   }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
                 }
               }
             }
@@ -74,51 +67,16 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                      "ColorId": 0,
+                      "Percent": -0.5
                     }
                   }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
                 }
               }
             }
           },
           "selector": {
             "id": "default"
-          }
-        }
-      ],
-      "glow": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualContainerObjects": {
-      "background": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
           }
         }
       ]

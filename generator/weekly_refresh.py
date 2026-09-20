@@ -29,6 +29,11 @@ Order matters here, not arbitrary:
      digital_traffic calibrates its session counts against digital_
      sales' orders for a realistic conversion rate, so it has to run
      after, not alongside, it
+  6. the data quality audit runs last, after the web exports, because it
+     audits the finished warehouse and also reconciles the web export
+     against it. A failing CHECK doesn't stop the run (it's data, and it
+     shows up on the Data Quality page); the audit only stops the run if
+     it can't execute at all
 
 What "refresh" actually does now: fact_sales, fact_footfall, and
 fact_stock_snapshot all stop generating actuals at date.today() (see
@@ -71,6 +76,7 @@ STEPS = [
     ("facts/build_fact_digital_targets.py", "fact_digital_targets"),
     ("facts/build_fact_digital_traffic.py", "fact_digital_traffic"),
     ("export_web_data.py", "web exports (data/exports)"),
+    ("quality/build_data_quality.py", "data quality audit (dq_check_results + dq_table_profile)"),
 ]
 
 

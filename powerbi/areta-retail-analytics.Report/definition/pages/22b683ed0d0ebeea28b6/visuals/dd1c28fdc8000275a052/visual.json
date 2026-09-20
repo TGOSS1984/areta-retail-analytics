@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "dd1c28fdc8000275a052",
   "position": {
-    "x": 431.19878603945375,
-    "y": 122.36722306525039,
+    "x": 405.24590163934431,
+    "y": 100.98360655737706,
     "z": 18000,
-    "height": 79.917780061664956,
-    "width": 72.147995889003084,
+    "height": 115.40983606557377,
+    "width": 123.27868852459017,
     "tabOrder": 17000
   },
   "visual": {
@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'currency-pound.png'"
+                      "Value": "'coin.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "currency-pound11855688807668407.png"
+                      "ItemName": "coin7405655320837555.png"
                     }
                   }
                 },

@@ -137,6 +137,7 @@ ICONS = {
     # Page navigation / buttons. "home" is the landing page button; the rest
     # are the usual bits a report needs (back, info, clear filters, and so on).
     "home": "Home",
+    "shield-check": "Data quality (page)",
     "arrow-left": "Back",
     "arrow-right": "Forward / next page",
     "info-circle": "Info / about this page",
@@ -203,6 +204,7 @@ PAGE_ICONS = {
     "Digital": "device-desktop",
     "Finance": "calculator",
     "Stock": "building-warehouse",
+    "Data Quality": "shield-check",
 }
 
 

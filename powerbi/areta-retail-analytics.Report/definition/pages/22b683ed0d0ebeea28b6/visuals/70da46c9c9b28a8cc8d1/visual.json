@@ -144,22 +144,17 @@
           "projections": [
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "fact_sales"
-                        }
-                      },
-                      "Property": "quantity"
+                    "SourceRef": {
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Function": 0
+                  "Property": "Gross Margin %"
                 }
               },
-              "queryRef": "Sum(fact_sales.quantity)",
-              "nativeQueryRef": "Sum of quantity"
+              "queryRef": "fact_sales.Gross Margin %",
+              "nativeQueryRef": "Gross Margin %"
             }
           ]
         }

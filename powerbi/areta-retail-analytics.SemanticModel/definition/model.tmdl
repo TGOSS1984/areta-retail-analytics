@@ -3,6 +3,7 @@ model Model
 	defaultPowerBIDataSourceVersion: powerBI_V3
 	sourceQueryCulture: en-GB
 	valueFilterBehavior: independent
+	discourageImplicitMeasures
 	dataAccessOptions
 		legacyRedirects
 		returnErrorValuesAsNull

@@ -32,7 +32,7 @@ table fact_digital_targets
 		displayFolder: Targets
 		lineageTag: 752804fe-7e5c-4592-a97d-f820d5320b1c
 
-	measure 'Digital Net Sales Target Combo' = [Digital Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & " to target)"
+	measure 'Digital Net Sales Target Combo' = [Digital Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets
 		lineageTag: 57abc8a7-f1b6-498f-91c0-f1f02d1da2ad
 
@@ -115,7 +115,7 @@ table fact_digital_targets
 		displayFolder: Targets (Any Grain)
 
 	measure 'Digital Net Sales Target Combo (Any Grain)' =
-			[Digital Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & " to target)"
+			[Digital Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
 		lineageTag: a9d623ef-e8d8-4a02-8064-28d45d091e77
 		displayFolder: Targets (Any Grain)
 

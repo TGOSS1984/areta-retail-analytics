@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "860ca9be90eb02ecc84d",
   "position": {
-    "x": 223.5013748854262,
-    "y": 137.26856095325388,
+    "x": 209.7723823975721,
+    "y": 115.08345978755692,
     "z": 9000,
-    "height": 177.80544747081711,
-    "width": 318.25680933852141,
+    "height": 163.15629742033386,
+    "width": 304.46130500758727,
     "tabOrder": 7000
   },
   "visual": {
@@ -612,6 +612,20 @@
             "metadata": "fact_sales.Net Sales (GBP)",
             "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241"
           }
+        },
+        {
+          "properties": {
+            "valueFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Net Sales (GBP)"
+          }
         }
       ],
       "referenceLabelTitle": [
@@ -708,6 +722,38 @@
           "selector": {
             "metadata": "fact_sales.Net Sales (GBP)",
             "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241"
+          }
+        }
+      ],
+      "referenceLabelLayout": [
+        {
+          "properties": {
+            "labelSpace": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "value": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "30D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
           }
         }
       ]

@@ -1,33 +1,33 @@
 table dq_check_results
-	lineageTag: 1a0604c6-057f-4526-b883-c815a834702a
+	lineageTag: 393b6424-0658-4cc9-8c5d-3af996210bf9
 
 	measure 'DQ Checks Run' = COALESCE ( CALCULATE ( COUNTROWS ( dq_check_results ), dq_check_results[counts_toward_score] = 1 ), 0 )
 		formatString: #,0
-		lineageTag: 3ecd781e-02c1-4205-be10-28bf97e8dc47
+		lineageTag: 64cbc075-f98f-4713-8e3a-a28bba74fe44
 		displayFolder: Data Quality
 
 	measure 'DQ Checks Passed' = COALESCE ( CALCULATE ( COUNTROWS ( dq_check_results ), dq_check_results[counts_toward_score] = 1, dq_check_results[status] = "Pass" ), 0 )
 		formatString: #,0
-		lineageTag: 64157992-7b61-4e9a-a95b-ae6e2d8a810c
+		lineageTag: cb109505-de7c-4288-b3a5-406f5626190a
 		displayFolder: Data Quality
 
 	measure 'DQ Checks Warned' = COALESCE ( CALCULATE ( COUNTROWS ( dq_check_results ), dq_check_results[counts_toward_score] = 1, dq_check_results[status] = "Warn" ), 0 )
 		formatString: #,0
-		lineageTag: cceaaa92-8955-4bbb-a5ad-75212b199358
+		lineageTag: dfa3250a-f86d-4b09-8ff7-e66841781746
 		displayFolder: Data Quality
 
 	measure 'DQ Checks Failed' = COALESCE ( CALCULATE ( COUNTROWS ( dq_check_results ), dq_check_results[counts_toward_score] = 1, dq_check_results[status] = "Fail" ), 0 )
 		formatString: #,0
-		lineageTag: b43dc82f-7dd4-434b-a74e-a5bb239c4604
+		lineageTag: dcb03789-9eb4-4c8d-a184-fb67c4a2335f
 		displayFolder: Data Quality
 
 	measure 'Data Quality Score' = DIVIDE ( [DQ Checks Passed], [DQ Checks Run] )
 		formatString: 0.0%
-		lineageTag: 155bb406-edae-49b8-b933-9499eb7f236b
+		lineageTag: 5cf7a3cd-5527-40b5-9a70-62ba91611d9b
 		displayFolder: Data Quality
 
 	measure 'DQ Checks Passed Label' = [DQ Checks Passed] & " of " & [DQ Checks Run] & " checks passed"
-		lineageTag: 6870333e-4ea4-4ae4-9b11-36c5e66f7b9f
+		lineageTag: 0bbf9839-f7ee-48b8-8c97-daa383ce747b
 		displayFolder: Data Quality
 
 	measure 'DQ Overall Status' =
@@ -43,11 +43,11 @@ table dq_check_results
 			            "All checks passed"
 			        )
 			    )
-		lineageTag: 5167dc71-c26a-490b-96bf-e34264f6e316
+		lineageTag: 1b4dce4e-2695-4407-94ff-399e1d8777e0
 		displayFolder: Data Quality
 
 	measure 'DQ Overall Status Colour' = IF ( [DQ Checks Failed] > 0, "#D32F2F", IF ( [DQ Checks Warned] > 0, "#F9A825", "#2E7D32" ) )
-		lineageTag: 2ce3200c-9023-484e-bdc3-7a6f87cf6f4e
+		lineageTag: ce3606df-a861-4e01-9e0a-92b16b77ee95
 		displayFolder: Data Quality
 
 	measure 'DQ Status Colour' =
@@ -59,67 +59,66 @@ table dq_check_results
 			    "Fixed", "#0288D1",
 			    "#8D9AA1"
 			)
-		lineageTag: 75db706f-821d-477d-a327-11930e8425ad
+		lineageTag: 1bc07b3e-33c9-4e7d-ac6e-591550416be6
 		displayFolder: Data Quality
 
 	measure 'DQ Rows Tested' = SUM ( dq_check_results[rows_tested] )
 		formatString: #,0
-		lineageTag: f9af3909-3f28-4df5-bb86-93abecbbddb2
+		lineageTag: eb4f332f-575b-4d91-83e5-4cfd6f37ff72
 		displayFolder: Data Quality
 
 	measure 'DQ Rows Failed' = SUM ( dq_check_results[rows_failed] )
 		formatString: #,0
-		lineageTag: d05cbec9-d0f8-4cfb-a100-e34017030cc5
+		lineageTag: d6848a0b-71c2-4bf0-98c9-20f125f12cc6
 		displayFolder: Data Quality
 
 	measure 'DQ Row Pass Rate %' = DIVIDE ( [DQ Rows Tested] - [DQ Rows Failed], [DQ Rows Tested] )
 		formatString: 0.00%
-		lineageTag: fc82b7ad-e84c-4fc1-8235-d6c84ce8b679
+		lineageTag: 53ca85b3-8bb7-4b60-915e-3836ea7653d8
 		displayFolder: Data Quality
 
 	measure 'DQ Scored Rows Tested' = CALCULATE ( SUM ( dq_check_results[rows_tested] ), dq_check_results[counts_toward_score] = 1 )
 		formatString: #,0
-		lineageTag: e6a0d0cc-096b-4a96-bdc6-9f89b45b78ed
+		lineageTag: ff635b06-f1be-454d-80ec-3de4706cb747
 		displayFolder: Data Quality
 
 	measure 'DQ Raw Rows Received' = CALCULATE ( MAX ( dq_check_results[rows_tested] ), dq_check_results[category] = "Cleaning" )
 		formatString: #,0
-		lineageTag: e47782ea-07da-4930-b828-e7a8e40b5bb9
+		lineageTag: fa58abda-eeac-4467-b53b-e71b5e0a7af2
 		displayFolder: Data Quality
 
 	measure 'DQ Rows Fixed in Cleaning' = CALCULATE ( SUM ( dq_check_results[rows_failed] ), dq_check_results[category] = "Cleaning" )
 		formatString: #,0
-		lineageTag: c534ca54-715b-43a7-9de6-510b0cfd40ec
+		lineageTag: f2e7cfc0-ef4a-4d86-87a3-7e044023f0e3
 		displayFolder: Data Quality
 
 	measure 'DQ Source A Value' = SUM ( dq_check_results[source_a_value] )
 		formatString: #,0.00
-		lineageTag: f4b44f77-916f-4e66-b945-c9a39d301038
+		lineageTag: d099b31a-e69b-49a6-a022-4ad5a2e48672
 		displayFolder: Data Quality
 
 	measure 'DQ Source B Value' = SUM ( dq_check_results[source_b_value] )
 		formatString: #,0.00
-		lineageTag: 1f5957b3-4147-479a-ae1e-cdd06722b453
+		lineageTag: 84275e2d-5c09-47e6-9367-dad2b06aba57
 		displayFolder: Data Quality
 
 	measure 'DQ Recon Variance' = [DQ Source A Value] - [DQ Source B Value]
 		formatString: #,0.00;-#,0.00;0.00
-		lineageTag: 876a0de0-4c4e-4196-9056-c35631fac301
+		lineageTag: 4e9ea403-a819-4407-b4aa-35f105ca5b4f
 		displayFolder: Data Quality
 
 	measure 'DQ Recon Variance %' = DIVIDE ( [DQ Recon Variance], [DQ Source B Value] )
 		formatString: 0.0000%
-		lineageTag: e993653a-2cdd-49fa-ad66-7de1b72a3aa2
+		lineageTag: bd223493-7f62-4ccb-90c0-20d4a60a37ee
 		displayFolder: Data Quality
 
-	measure 'DQ Last Audit' = MAX ( dq_check_results[run_timestamp] )
-		formatString: dd mmm yyyy hh:mm
-		lineageTag: 9f671db6-079f-4532-838d-0acb889a2b05
+	measure 'DQ Last Audit' = MAXX ( dq_check_results, dq_check_results[run_timestamp] ) & " UTC"
+		lineageTag: 1cb638b1-96e8-4a70-89cd-efa89679e07d
 		displayFolder: Data Quality
 
 	column check_id
 		dataType: string
-		lineageTag: 1dbf7a1c-2000-4ad7-8609-8fe7f4f9b762
+		lineageTag: 2224e088-fde4-46ff-88ce-542de7e44a25
 		summarizeBy: none
 		sourceColumn: check_id
 
@@ -127,7 +126,7 @@ table dq_check_results
 
 	column category
 		dataType: string
-		lineageTag: 13006dc9-689c-4d7f-b211-ccbee116a363
+		lineageTag: de96f951-ddff-41ef-b0dc-73d4f8b4a9db
 		summarizeBy: none
 		sourceColumn: category
 		sortByColumn: category_order
@@ -138,7 +137,7 @@ table dq_check_results
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: 8dee3ec5-cd61-4cb2-87d4-2a200f15c86e
+		lineageTag: 1b53bfba-7730-4931-b9ee-2d6b636e6d90
 		summarizeBy: none
 		sourceColumn: category_order
 
@@ -146,7 +145,7 @@ table dq_check_results
 
 	column table_name
 		dataType: string
-		lineageTag: 3108ec40-9765-427d-8a88-7963e2c8d4ca
+		lineageTag: d08c1a90-7431-4325-95b6-60faae9f7a0c
 		summarizeBy: none
 		sourceColumn: table_name
 
@@ -154,7 +153,7 @@ table dq_check_results
 
 	column check_name
 		dataType: string
-		lineageTag: 066ea305-26ce-4aa4-9516-ff68d218ef8a
+		lineageTag: 2eb1f0a1-0d05-4014-bbeb-44c4cf2ca6a1
 		summarizeBy: none
 		sourceColumn: check_name
 
@@ -162,7 +161,7 @@ table dq_check_results
 
 	column check_description
 		dataType: string
-		lineageTag: 144280c2-f1f1-455a-bd12-7c06749a75d3
+		lineageTag: 7ba18f33-701f-49ee-914a-ce9ba762d6b3
 		summarizeBy: none
 		sourceColumn: check_description
 
@@ -170,7 +169,7 @@ table dq_check_results
 
 	column severity
 		dataType: string
-		lineageTag: d2cca4d4-9c72-433f-bb55-e592434e2a9d
+		lineageTag: ad6fca7f-8326-4111-8b5d-d238056bbdb4
 		summarizeBy: none
 		sourceColumn: severity
 
@@ -180,7 +179,7 @@ table dq_check_results
 		dataType: int64
 		isHidden
 		formatString: #,0
-		lineageTag: 8dbd3e91-a489-4886-af8b-89a388c2ea0b
+		lineageTag: 3b627ba8-d169-4066-8d61-d9d17354bfa0
 		summarizeBy: none
 		sourceColumn: rows_tested
 
@@ -190,7 +189,7 @@ table dq_check_results
 		dataType: int64
 		isHidden
 		formatString: #,0
-		lineageTag: 3d9bb892-cee4-40ea-b37a-c833920934e3
+		lineageTag: e10b46fa-ac88-422e-a458-2ebce7a9fa3d
 		summarizeBy: none
 		sourceColumn: rows_failed
 
@@ -198,7 +197,7 @@ table dq_check_results
 
 	column status
 		dataType: string
-		lineageTag: 28eda7a0-77b7-4de5-8e41-996ca0cdaf90
+		lineageTag: a10b410c-9050-4048-a81e-36c7dfdbd1bb
 		summarizeBy: none
 		sourceColumn: status
 		sortByColumn: status_order
@@ -209,7 +208,7 @@ table dq_check_results
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: afaa0deb-ffdf-4f71-b070-d55cae85e906
+		lineageTag: 6a4020db-10ca-46df-a551-f91d67e146a3
 		summarizeBy: none
 		sourceColumn: status_order
 
@@ -219,7 +218,7 @@ table dq_check_results
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: c18e854f-a882-4042-9347-a9fdc7fa1637
+		lineageTag: bee6d871-409f-4d7c-bc95-2ab80752e714
 		summarizeBy: none
 		sourceColumn: counts_toward_score
 
@@ -227,7 +226,7 @@ table dq_check_results
 
 	column source_a_label
 		dataType: string
-		lineageTag: 5a08bff8-c8cd-43f9-904a-cf187a1a6a6a
+		lineageTag: c3ab7b30-8998-4290-9d74-73d44a3fe3cf
 		summarizeBy: none
 		sourceColumn: source_a_label
 
@@ -237,7 +236,7 @@ table dq_check_results
 		dataType: double
 		isHidden
 		formatString: #,0.00
-		lineageTag: 313d7961-5bbb-478e-8078-00ec2603aa4f
+		lineageTag: c1c25055-aac7-4e2e-b6ab-f874488353a7
 		summarizeBy: none
 		sourceColumn: source_a_value
 
@@ -245,7 +244,7 @@ table dq_check_results
 
 	column source_b_label
 		dataType: string
-		lineageTag: 23c79373-dc20-4b1a-8557-d03da043dc2a
+		lineageTag: da2e23e0-10f6-414b-9c7d-b4309c23c80b
 		summarizeBy: none
 		sourceColumn: source_b_label
 
@@ -255,16 +254,15 @@ table dq_check_results
 		dataType: double
 		isHidden
 		formatString: #,0.00
-		lineageTag: bff9933a-e95f-42f1-872f-332088a70c62
+		lineageTag: 7776823d-afc4-4310-bc92-6710153bd6ce
 		summarizeBy: none
 		sourceColumn: source_b_value
 
 		annotation SummarizationSetBy = Automatic
 
 	column run_timestamp
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 48869b34-4ee3-4968-8f09-6b07212203d6
+		dataType: string
+		lineageTag: d9a8fc22-24cc-412b-b2bb-748ff2643831
 		summarizeBy: none
 		sourceColumn: run_timestamp
 
@@ -274,7 +272,7 @@ table dq_check_results
 		dataType: double
 		isHidden
 		formatString: #,0.00
-		lineageTag: 9dfa1fc5-6e20-4ad0-a92e-631e68fbc47c
+		lineageTag: 9323d158-ab07-4897-8f0d-744cafe10997
 		summarizeBy: none
 		sourceColumn: variance
 

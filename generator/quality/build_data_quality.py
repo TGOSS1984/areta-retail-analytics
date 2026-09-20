@@ -165,7 +165,11 @@ def as_datetime(series: pd.Series) -> pd.Series:
 
 
 class Audit:
-    def __init__(self, run_timestamp: pd.Timestamp) -> None:
+    def __init__(self, run_timestamp: str) -> None:
+        # kept as text on purpose: Power BI's parquet reader choked on the
+        # nanosecond timestamp pandas writes by default ("Couldn't deserialize
+        # thrift"), and plain text sidesteps any timestamp-encoding differences
+        # between pandas / pyarrow versions. It's UTC, "YYYY-MM-DD HH:MM:SS".
         self.run_timestamp = run_timestamp
         self.rows: list[dict] = []
 
@@ -643,7 +647,7 @@ def main() -> None:
     parser.add_argument("--strict", action="store_true", help="exit 1 if any Critical check fails")
     args = parser.parse_args()
 
-    run_ts = pd.Timestamp(dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)).floor("s")
+    run_ts = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     run_date = dt.date.today()
     audit = Audit(run_ts)
 

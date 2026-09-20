@@ -1,0 +1,24 @@
+table 'Currency Conversion'
+	lineageTag: 880e9f95-4c3c-4fd5-8170-514648921420
+
+	calculationGroup
+		precedence: 10
+
+		calculationItem 'Local Currency (GBP)' = SELECTEDMEASURE ( )
+
+		calculationItem 'Selected Currency' =
+				SELECTEDMEASURE ( ) * [FX Rate (Selected)]
+
+	column 'Currency Conversion'
+		dataType: string
+		lineageTag: 2833ad9d-a1d9-4004-9c0d-6546d87dc9e8
+		sourceColumn: Name
+		summarizeBy: none
+
+	partition 'Currency Conversion' = calculated
+		mode: import
+		source = ```
+			{"Local Currency (GBP)", "Selected Currency"}
+			```
+
+	annotation PBI_ResultType = Table

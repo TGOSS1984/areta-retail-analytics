@@ -28,6 +28,25 @@ table fx_rate_monthly
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'FX Rate (Selected)' =
+			VAR SelectedCcy = SELECTEDVALUE ( dim_currency_view[currency_code], "GBP" )
+			VAR RangeStart = MIN ( dim_date[full_date] )
+			VAR RangeEnd = MAX ( dim_date[full_date] )
+			RETURN
+			    IF (
+			        SelectedCcy = "GBP",
+			        1.0,
+			        CALCULATE (
+			            AVERAGE ( fx_rate_monthly[gbp_rate] ),
+			            fx_rate_monthly[currency_code] = SelectedCcy,
+			            fx_rate_monthly[month_start] >= DATE ( YEAR ( RangeStart ), MONTH ( RangeStart ), 1 ),
+			            fx_rate_monthly[month_start] <= RangeEnd
+			        )
+			    )
+		formatString: 0.0000
+		lineageTag: c857bdd4-4140-4af2-a017-b9d2adf4c117
+		displayFolder: Currency View
+
 	partition fx_rate_monthly = m
 		mode: import
 		source =

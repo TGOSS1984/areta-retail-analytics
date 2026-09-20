@@ -1,12 +1,142 @@
 table fact_digital_sales
 	lineageTag: 2ad09c39-2870-45e4-bb1f-20a71fa69675
 
+	measure 'Digital Orders' = SUM ( fact_digital_sales[orders] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 5baee575-c310-43da-91bc-99975746ce52
+
+	measure 'Digital Units' = SUM ( fact_digital_sales[units] )
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: df12ab4d-d8e8-49a1-b9f6-7d26b297487c
+
+	measure 'Digital Net Sales (GBP)' = SUM ( fact_digital_sales[net_sales_gbp] )
+		formatString: "£"#,0.00
+		displayFolder: Digital
+		lineageTag: be573ac3-36a8-4a43-8c12-361b2db0dd6b
+
+	measure 'Average Basket Value (GBP)' = DIVIDE ( [Digital Net Sales (GBP)], [Digital Orders] )
+		formatString: "£"#,0.00
+		displayFolder: Digital
+		lineageTag: 7d9fd329-9b3e-4611-bacf-b5c2f758e3b1
+
+	measure 'Digital Net Sales LY' =
+			CALCULATE (
+			    [Digital Net Sales (GBP)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 7c6d7b79-0e79-4fd3-ba0d-94b8b1679d6d
+
+	measure 'Digital Net Sales YoY (GBP)' = [Digital Net Sales (GBP)] - [Digital Net Sales LY]
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 0571a404-0d89-4981-b044-c98b8c469f9e
+
+	measure 'Digital Net Sales YoY %' = DIVIDE ( [Digital Net Sales (GBP)] - [Digital Net Sales LY], [Digital Net Sales LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: c75a8a4f-ac1f-48ca-8605-94f03c415acb
+
+	measure 'Digital Net Sales Trend Arrow' = IF ( [Digital Net Sales YoY %] > 0, "▲", IF ( [Digital Net Sales YoY %] < 0, "▼", "▬" ) )
+		formatString: Time Intelligence
+		displayFolder: Time Intelligence
+		lineageTag: 2b7840e0-9486-4e8b-9724-ff15f29b45cd
+
+	measure 'Digital Net Sales Trend Colour' = IF ( [Digital Net Sales YoY %] > 0, "#2E7D32", IF ( [Digital Net Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		formatString: Time Intelligence
+		displayFolder: Time Intelligence
+		lineageTag: 34e6f695-e4a2-4d80-b77e-1b57b491671a
+
+	measure 'Digital Net Sales YoY Combo' = [Digital Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Time Intelligence
+		lineageTag: b1a28ce7-86e2-4646-800e-0405b7ac58c8
+
+	measure 'Average Basket Value LY' =
+			CALCULATE (
+			    [Average Basket Value (GBP)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: e3e5ef6d-da93-462c-8112-cc95911aa332
+
+	measure 'Average Basket Value YoY (GBP)' = [Average Basket Value (GBP)] - [Average Basket Value LY]
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: a95b3cc2-47bc-42a9-83a5-b8fb899a7657
+
+	measure 'Average Basket Value YoY %' = DIVIDE ( [Average Basket Value (GBP)] - [Average Basket Value LY], [Average Basket Value LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 4fe594a7-b113-4c40-9746-d153e4542a2f
+
+	measure 'Average Basket Value Trend Arrow' = IF ( [Average Basket Value YoY %] > 0, "▲", IF ( [Average Basket Value YoY %] < 0, "▼", "▬" ) )
+		formatString: Time Intelligence
+		displayFolder: Time Intelligence
+		lineageTag: a63f6cd1-cd03-4ba0-981a-a80842f18d3f
+
+	measure 'Average Basket Value Trend Colour' = IF ( [Average Basket Value YoY %] > 0, "#2E7D32", IF ( [Average Basket Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		formatString: Time Intelligence
+		displayFolder: Time Intelligence
+		lineageTag: 29fa1120-5974-4cb4-8e85-bdf0a78292f8
+
+	measure 'Average Basket Value YoY Combo' = [Average Basket Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Basket Value YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Basket Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Time Intelligence
+		lineageTag: 6e5f4de8-f48c-4096-a487-be01134f22b2
+
+	measure 'Average Basket Value (Selected VAT View)' =
+			SWITCH (
+			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
+			    "Including VAT", [Average Basket Value (GBP)] * [VAT Multiplier],
+			    [Average Basket Value (GBP)]
+			)
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+		lineageTag: 3c27d0c5-a74d-4f9d-b656-1855c3539319
+
+	measure 'Average Basket Value (Selected VAT View) LY' =
+			CALCULATE (
+			    [Average Basket Value (Selected VAT View)],
+			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+		lineageTag: d21c6673-0620-4041-8f37-b71b7516f26e
+
+	measure 'Average Basket Value (Selected VAT View) YoY (GBP)' = [Average Basket Value (Selected VAT View)] - [Average Basket Value (Selected VAT View) LY]
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+		lineageTag: ff4e972b-d40d-4f71-84de-a1d14cfd40d5
+
+	measure 'Average Basket Value (Selected VAT View) YoY %' = DIVIDE ( [Average Basket Value (Selected VAT View)] - [Average Basket Value (Selected VAT View) LY], [Average Basket Value (Selected VAT View) LY] )
+		formatString: 0.0%
+		displayFolder: VAT View
+		lineageTag: 4c20ce21-3dca-4171-950a-a1c56b7a85d8
+
+	measure 'Average Basket Value (Selected VAT View) Trend Arrow' = IF ( [Average Basket Value (Selected VAT View) YoY %] > 0, "▲", IF ( [Average Basket Value (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
+		displayFolder: VAT View
+		lineageTag: edac7387-357a-4583-8d01-af09bd7af58e
+
+	measure 'Average Basket Value (Selected VAT View) Trend Colour' = IF ( [Average Basket Value (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Average Basket Value (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: VAT View
+		lineageTag: 8f69906f-7213-4842-92d7-070fe49c6474
+
+	measure 'Average Basket Value (Selected VAT View) YoY Combo' = [Average Basket Value (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Average Basket Value (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Basket Value (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: VAT View
+		lineageTag: 219f11e2-7201-4452-845b-7f637a2ed731
+
 	column date
 		dataType: dateTime
 		isHidden
+		formatString: Long Date
 		lineageTag: f07e7591-bd39-4e3b-92c7-ccad63f47958
 		summarizeBy: none
 		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column market_code
 		dataType: string
@@ -48,132 +178,6 @@ table fact_digital_sales
 		summarizeBy: none
 		sourceColumn: basket_value_gbp
 
-	measure 'Digital Orders' = SUM ( fact_digital_sales[orders] )
-		formatString: #,0
-		lineageTag: 5baee575-c310-43da-91bc-99975746ce52
-		displayFolder: Digital
-
-	measure 'Digital Units' = SUM ( fact_digital_sales[units] )
-		formatString: #,0
-		lineageTag: df12ab4d-d8e8-49a1-b9f6-7d26b297487c
-		displayFolder: Digital
-
-	measure 'Digital Net Sales (GBP)' = SUM ( fact_digital_sales[net_sales_gbp] )
-		formatString: "£"#,0.00
-		lineageTag: be573ac3-36a8-4a43-8c12-361b2db0dd6b
-		displayFolder: Digital
-
-	measure 'Average Basket Value (GBP)' = DIVIDE ( [Digital Net Sales (GBP)], [Digital Orders] )
-		formatString: "£"#,0.00
-		lineageTag: 7d9fd329-9b3e-4611-bacf-b5c2f758e3b1
-		displayFolder: Digital
-
-	measure 'Digital Net Sales LY' =
-			CALCULATE (
-			    [Digital Net Sales (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		lineageTag: 7c6d7b79-0e79-4fd3-ba0d-94b8b1679d6d
-		displayFolder: Time Intelligence
-
-	measure 'Digital Net Sales YoY (GBP)' = [Digital Net Sales (GBP)] - [Digital Net Sales LY]
-		formatString: "£"#,0.00
-		lineageTag: 0571a404-0d89-4981-b044-c98b8c469f9e
-		displayFolder: Time Intelligence
-
-	measure 'Digital Net Sales YoY %' = DIVIDE ( [Digital Net Sales (GBP)] - [Digital Net Sales LY], [Digital Net Sales LY] )
-		formatString: 0.0%
-		lineageTag: c75a8a4f-ac1f-48ca-8605-94f03c415acb
-		displayFolder: Time Intelligence
-
-	measure 'Digital Net Sales Trend Arrow' = IF ( [Digital Net Sales YoY %] > 0, "▲", IF ( [Digital Net Sales YoY %] < 0, "▼", "▬" ) )
-		formatString: Time Intelligence
-		lineageTag: 2b7840e0-9486-4e8b-9724-ff15f29b45cd
-		displayFolder: Time Intelligence
-
-	measure 'Digital Net Sales Trend Colour' = IF ( [Digital Net Sales YoY %] > 0, "#2E7D32", IF ( [Digital Net Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		formatString: Time Intelligence
-		lineageTag: 34e6f695-e4a2-4d80-b77e-1b57b491671a
-		displayFolder: Time Intelligence
-
-	measure 'Digital Net Sales YoY Combo' = [Digital Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Digital Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: b1a28ce7-86e2-4646-800e-0405b7ac58c8
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value LY' =
-			CALCULATE (
-			    [Average Basket Value (GBP)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		lineageTag: e3e5ef6d-da93-462c-8112-cc95911aa332
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value YoY (GBP)' = [Average Basket Value (GBP)] - [Average Basket Value LY]
-		formatString: "£"#,0.00
-		lineageTag: a95b3cc2-47bc-42a9-83a5-b8fb899a7657
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value YoY %' = DIVIDE ( [Average Basket Value (GBP)] - [Average Basket Value LY], [Average Basket Value LY] )
-		formatString: 0.0%
-		lineageTag: 4fe594a7-b113-4c40-9746-d153e4542a2f
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value Trend Arrow' = IF ( [Average Basket Value YoY %] > 0, "▲", IF ( [Average Basket Value YoY %] < 0, "▼", "▬" ) )
-		formatString: Time Intelligence
-		lineageTag: a63f6cd1-cd03-4ba0-981a-a80842f18d3f
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value Trend Colour' = IF ( [Average Basket Value YoY %] > 0, "#2E7D32", IF ( [Average Basket Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		formatString: Time Intelligence
-		lineageTag: 29fa1120-5974-4cb4-8e85-bdf0a78292f8
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value YoY Combo' = [Average Basket Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Basket Value YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Basket Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 6e5f4de8-f48c-4096-a487-be01134f22b2
-		displayFolder: Time Intelligence
-
-	measure 'Average Basket Value (Selected VAT View)' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", [Average Basket Value (GBP)] * [VAT Multiplier],
-			    [Average Basket Value (GBP)]
-			)
-		formatString: "£"#,0.00
-		lineageTag: 3c27d0c5-a74d-4f9d-b656-1855c3539319
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) LY' =
-			CALCULATE (
-			    [Average Basket Value (Selected VAT View)],
-			    FILTER ( ALL ( dim_date[business_year] ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) YoY (GBP)' =
-			[Average Basket Value (Selected VAT View)] - [Average Basket Value (Selected VAT View) LY]
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) YoY %' =
-			DIVIDE ( [Average Basket Value (Selected VAT View)] - [Average Basket Value (Selected VAT View) LY], [Average Basket Value (Selected VAT View) LY] )
-		formatString: 0.0%
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) Trend Arrow' =
-			IF ( [Average Basket Value (Selected VAT View) YoY %] > 0, "▲", IF ( [Average Basket Value (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) Trend Colour' =
-			IF ( [Average Basket Value (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Average Basket Value (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: VAT View
-
-	measure 'Average Basket Value (Selected VAT View) YoY Combo' =
-			[Average Basket Value (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Average Basket Value (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Basket Value (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: VAT View
-
 	partition fact_digital_sales = m
 		mode: import
 		source =
@@ -183,3 +187,4 @@ table fact_digital_sales
 				    Source
 
 	annotation PBI_ResultType = Table
+

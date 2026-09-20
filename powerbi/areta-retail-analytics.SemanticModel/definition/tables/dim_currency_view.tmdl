@@ -1,0 +1,35 @@
+table dim_currency_view
+	lineageTag: fabf4e1d-beef-4d02-a3d0-2f190d8e3069
+
+	column currency_code
+		dataType: string
+		lineageTag: 2f7b0966-d785-4ec2-9841-120da4d82ace
+		summarizeBy: none
+		sourceColumn: currency_code
+		sortByColumn: sort_order
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 051f5433-a669-445d-be57-d9662e39999c
+		isHidden
+		summarizeBy: none
+		sourceColumn: sort_order
+
+	partition dim_currency_view = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        {"currency_code", "sort_order"},
+				        {
+				    {"GBP", 1},
+				    {"EUR", 2},
+				    {"PLN", 3},
+				    {"CZK", 4}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

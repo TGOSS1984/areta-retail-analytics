@@ -311,6 +311,89 @@ table fact_targets
 			[Net Sales (Selected VAT View) Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) Target Variance %], "+0.0%;-0.0%;0.0%" ) & " to target)"
 		displayFolder: VAT View
 
+	measure 'Target Net Sales (GBP), Any Grain' =
+			SUMX (
+			    VALUES ( dim_date[full_date] ),
+			    VAR ThisPeriodLabel = dim_date[business_period_label]
+			    VAR ThisPeriodNumber = dim_date[business_period_number]
+			    VAR ThisBusinessYear = dim_date[business_year]
+			    VAR ThisDayName = dim_date[day_name]
+			    VAR PeriodTarget =
+			        CALCULATE (
+			            [Target Net Sales (GBP)],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR PriorYearDayNameActual =
+			        CALCULATE (
+			            [Net Sales (GBP)],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR PriorYearPeriodActual =
+			        CALCULATE (
+			            [Net Sales (GBP)],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1
+			        )
+			    VAR PriorYearDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_number] = ThisPeriodNumber,
+			            dim_date[business_year] = ThisBusinessYear - 1,
+			            dim_date[day_name] = ThisDayName
+			        )
+			    VAR ThisPeriodDayCount =
+			        CALCULATE (
+			            DISTINCTCOUNT ( dim_date[full_date] ),
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[business_period_label] = ThisPeriodLabel
+			        )
+			    VAR DayWeight =
+			        IF (
+			            PriorYearPeriodActual > 0,
+			            DIVIDE ( PriorYearDayNameActual, PriorYearPeriodActual ),
+			            DIVIDE ( 1, ThisPeriodDayCount )
+			        )
+			    VAR AllocatedForDayName = PeriodTarget * DayWeight
+			    RETURN
+			        DIVIDE ( AllocatedForDayName, IF ( PriorYearPeriodActual > 0, PriorYearDayCount, 1 ) )
+			)
+		formatString: "£"#,0.00
+		lineageTag: 0a03efe2-7c9a-4ebc-b7d7-5b97ac36cd70
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Sales Target Variance (Any Grain, GBP)' =
+			[Net Sales (GBP)] - [Target Net Sales (GBP), Any Grain]
+		formatString: "£"#,0.00
+		lineageTag: 14c9ea3b-5294-4622-a7b4-e4966f251494
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Sales Target Variance % (Any Grain)' =
+			DIVIDE ( [Net Sales Target Variance (Any Grain, GBP)], [Target Net Sales (GBP), Any Grain] )
+		formatString: 0.0%
+		lineageTag: 964ac92e-5401-4436-8287-7d8965415aed
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Sales Target Trend Arrow (Any Grain)' =
+			IF ( [Net Sales Target Variance % (Any Grain)] > 0, "▲", IF ( [Net Sales Target Variance % (Any Grain)] < 0, "▼", "▬" ) )
+		lineageTag: 1db3a2cc-14dc-4c0f-bf6c-814c46bb167c
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Sales Target Trend Colour (Any Grain)' =
+			IF ( [Net Sales Target Variance % (Any Grain)] > 0, "#2E7D32", IF ( [Net Sales Target Variance % (Any Grain)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 3501716e-bf50-4463-8b33-8b947ccbf459
+		displayFolder: Targets (Any Grain)
+
+	measure 'Net Sales Target Combo (Any Grain)' =
+			[Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & " to target)"
+		lineageTag: 87d1e373-d9a1-420f-aec5-a19eded694f9
+		displayFolder: Targets (Any Grain)
+
 	partition fact_targets = m
 		mode: import
 		source =

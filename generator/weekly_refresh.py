@@ -19,12 +19,16 @@ Order matters here, not arbitrary:
      targets footfall and net contribution too, not just net sales, so
      it reads both of those facts' actuals directly rather than
      re-deriving them
-  5. fact_digital_sales, then fact_digital_traffic — digital_sales
-     derives its device-level split from the real Online-channel totals
-     in fact_sales (so digital sales figures reconcile exactly, see that
-     script's own docstring); digital_traffic then calibrates its
-     session counts against digital_sales' orders for a realistic
-     conversion rate, so it has to run after, not alongside, it
+  5. fact_digital_sales, then fact_digital_targets, then
+     fact_digital_traffic — digital_sales derives its device-level
+     split from the real Online-channel totals in fact_sales (so
+     digital sales figures reconcile exactly, see that script's own
+     docstring); digital_targets just needs digital_sales' actuals to
+     set targets against (same prior-year-growth pattern as the
+     store-grain targets, market grain instead of store grain);
+     digital_traffic calibrates its session counts against digital_
+     sales' orders for a realistic conversion rate, so it has to run
+     after, not alongside, it
 
 What "refresh" actually does now: fact_sales, fact_footfall, and
 fact_stock_snapshot all stop generating actuals at date.today() (see
@@ -64,6 +68,7 @@ STEPS = [
     ("facts/build_fact_store_finance.py", "fact_store_finance"),
     ("facts/build_fact_targets.py", "fact_targets"),
     ("facts/build_fact_digital_sales.py", "fact_digital_sales"),
+    ("facts/build_fact_digital_targets.py", "fact_digital_targets"),
     ("facts/build_fact_digital_traffic.py", "fact_digital_traffic"),
     ("export_web_data.py", "web exports (data/exports)"),
 ]

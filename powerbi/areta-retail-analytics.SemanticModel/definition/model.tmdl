@@ -1,9 +1,9 @@
 model Model
 	culture: en-GB
 	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
 	sourceQueryCulture: en-GB
 	valueFilterBehavior: independent
-	discourageImplicitMeasures
 	dataAccessOptions
 		legacyRedirects
 		returnErrorValuesAsNull
@@ -12,7 +12,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["dim_date","dim_period","dim_product","dim_promo","dim_currency","fact_sales","fact_footfall","fact_stock_snapshot","fact_targets","fact_store_finance","fx_rate_monthly","dim_store","dim_market","fact_digital_sales","fact_digital_traffic","dim_browser","dim_pnl_bridge","dim_report_metadata","dim_vat_view","dim_currency_view","Currency Conversion"]
+annotation PBI_QueryOrder = ["dim_date","dim_period","dim_product","dim_promo","dim_currency","fact_sales","fact_footfall","fact_stock_snapshot","fact_targets","fact_store_finance","fx_rate_monthly","dim_store","dim_market","fact_digital_sales","fact_digital_traffic","dim_browser","dim_pnl_bridge","dim_report_metadata","dim_vat_view","dim_currency_view"]
 
 ref table dim_date
 ref table dim_period

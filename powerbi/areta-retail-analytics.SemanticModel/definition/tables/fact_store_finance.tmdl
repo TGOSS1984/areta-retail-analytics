@@ -1,250 +1,10 @@
 table fact_store_finance
 	lineageTag: ad649f07-56ab-4a9b-8642-fa17a5de633c
 
-	measure 'Cost of Goods (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[cogs_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 0472e30d-00fd-4561-b99b-04bf30d65d2b
-
-	measure 'Rent (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[rent_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 652bffd0-6210-4d19-9cab-f1c9c8b7dc67
-
-	measure 'Staff Costs (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[staff_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 9850dd08-dcf6-4245-ab65-003b456e104c
-
-	measure 'Utilities (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[utilities_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: c132cf14-fe92-4f2a-a585-ae3b62033699
-
-	measure 'Marketing (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[marketing_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 94d10f07-8e03-4ebf-837a-ae1ff799c5cf
-
-	measure 'Store Operating Costs (GBP)' = [Rent (GBP)] + [Staff Costs (GBP)] + [Utilities (GBP)] + [Marketing (GBP)]
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: c5ee857b-8b32-48de-bcd1-a065243f94e4
-
-	measure 'Gross Contribution (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[gross_contribution_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 492bcbdd-b5af-4478-ae6c-9d8bfd80d863
-
-	measure 'Gross Contribution %' =
-			CALCULATE (
-			    DIVIDE ( [Gross Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: d704bc3c-2193-43cb-9bba-0fac26edc764
-
-	measure 'Head Office Allocation (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[head_office_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: da9be2f5-ad3b-495a-b31c-18d69d2592d0
-
-	measure 'Net Contribution (GBP)' =
-			CALCULATE (
-			    SUM ( fact_store_finance[net_contribution_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: a2da6bdb-0b07-41c2-837b-280513ac1cf5
-
-	measure 'Net Contribution %' =
-			CALCULATE (
-			    DIVIDE ( [Net Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: 1346e55f-183f-423f-af22-a98fc27169bd
-
-	measure 'Net Contribution LY' =
-			CALCULATE (
-			    [Net Contribution (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: b0a4dab3-2f93-4047-922f-18b5fcf768de
-
-	measure 'Net Contribution YoY (GBP)' = [Net Contribution (GBP)] - [Net Contribution LY]
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: ae481c5c-ac3c-463f-834f-64df421cfc37
-
-	measure 'Net Contribution YoY %' = DIVIDE ( [Net Contribution (GBP)] - [Net Contribution LY], [Net Contribution LY] )
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: 9922ed4f-4b12-4879-be0e-c314209163c7
-
-	measure 'Net Contribution Trend Arrow' = IF ( [Net Contribution YoY %] > 0, "▲", IF ( [Net Contribution YoY %] < 0, "▼", "▬" ) )
-		displayFolder: Contribution
-		lineageTag: 454045ee-a413-4ab8-83d6-95c2132ab3ba
-
-	measure 'Net Contribution Trend Colour' = IF ( [Net Contribution YoY %] > 0, "#2E7D32", IF ( [Net Contribution YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Contribution
-		lineageTag: 0a1e6db1-c282-48c2-bcf6-10dc86fde39a
-
-	measure 'Net Contribution YoY Combo' = [Net Contribution Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Contribution
-		lineageTag: 2708d09f-bb2c-4c0a-abb5-d745a8073def
-
-	measure 'Gross Contribution LY' =
-			CALCULATE (
-			    [Gross Contribution %],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: ac19d75b-97c6-44dc-9ad1-bbb2ac3dfcd0
-
-	measure 'Gross Contribution YoY (pp)' = [Gross Contribution %] - [Gross Contribution LY]
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: e0111c3a-9a93-4813-b6eb-5c2c51961fda
-
-	measure 'Gross Contribution Trend Arrow' = IF ( [Gross Contribution YoY (pp)] > 0, "▲", IF ( [Gross Contribution YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: Contribution
-		lineageTag: 49716b39-0f7d-430a-8826-a22d2d5380fa
-
-	measure 'Gross Contribution Trend Colour' = IF ( [Gross Contribution YoY (pp)] > 0, "#2E7D32", IF ( [Gross Contribution YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Contribution
-		lineageTag: 095911f0-bc5c-45fe-87a1-f6c71ee398a8
-
-	measure 'Gross Contribution YoY Combo' = [Gross Contribution Trend Arrow] & " " & FORMAT ( [Gross Contribution YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: Contribution
-		lineageTag: 187620f6-ded9-4e02-9b69-4913608756d6
-
-	measure 'Net Contribution Pct LY' =
-			CALCULATE (
-			    [Net Contribution %],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: 50b1f682-b87f-48b3-9e23-103c5828f963
-
-	measure 'Net Contribution Pct YoY (pp)' = [Net Contribution %] - [Net Contribution Pct LY]
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: c3cd8266-bf48-4f8a-a0c5-27103d3e59cb
-
-	measure 'Net Contribution Pct Trend Arrow' = IF ( [Net Contribution Pct YoY (pp)] > 0, "▲", IF ( [Net Contribution Pct YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: Contribution
-		lineageTag: 20e07024-0015-4c15-8886-133e94da9dd2
-
-	measure 'Net Contribution Pct Trend Colour' = IF ( [Net Contribution Pct YoY (pp)] > 0, "#2E7D32", IF ( [Net Contribution Pct YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Contribution
-		lineageTag: 931cf527-bc41-40c5-90a6-b876006fdda7
-
-	measure 'Net Contribution Pct YoY Combo' = [Net Contribution Pct Trend Arrow] & " " & FORMAT ( [Net Contribution Pct YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: Contribution
-		lineageTag: 41cc80dd-c967-4124-ae2a-3c05e726e291
-
-	measure 'Store Operating Costs LY' =
-			CALCULATE (
-			    [Store Operating Costs (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 3a6772c5-2b8e-4971-92b9-a566bc3a88cd
-
-	measure 'Store Operating Costs YoY (GBP)' = [Store Operating Costs (GBP)] - [Store Operating Costs LY]
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: f28b904c-f17e-4b5c-9b6d-3d5573bb4d43
-
-	measure 'Store Operating Costs YoY %' = DIVIDE ( [Store Operating Costs (GBP)] - [Store Operating Costs LY], [Store Operating Costs LY] )
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: d200b507-9b20-4ba9-87a1-f5f01c4217c7
-
-	measure 'Store Operating Costs Trend Arrow' = IF ( [Store Operating Costs YoY %] > 0, "▲", IF ( [Store Operating Costs YoY %] < 0, "▼", "▬" ) )
-		displayFolder: Contribution
-		lineageTag: 764e708e-1eae-48ba-baca-04ed877ba3ef
-
-	measure 'Store Operating Costs Trend Colour' = IF ( [Store Operating Costs YoY %] > 0, "#2E7D32", IF ( [Store Operating Costs YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Contribution
-		lineageTag: 65b54964-aa27-4d9b-bfeb-59ed3cf4dcbf
-
-	measure 'Store Operating Costs YoY Combo' = [Store Operating Costs Trend Arrow] & " £" & FORMAT ( ABS ( [Store Operating Costs YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Store Operating Costs YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Contribution
-		lineageTag: 46d42ef3-27f1-459e-9834-4c7ab38602b7
-
-	measure 'Head Office Allocation LY' =
-			CALCULATE (
-			    [Head Office Allocation (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: 7d911a8a-2492-4728-b811-0d86f1162ff8
-
-	measure 'Head Office Allocation YoY (GBP)' = [Head Office Allocation (GBP)] - [Head Office Allocation LY]
-		formatString: "£"#,0.00
-		displayFolder: Contribution
-		lineageTag: f6f56dd3-dc12-466c-adb2-e4915e41f5d8
-
-	measure 'Head Office Allocation YoY %' = DIVIDE ( [Head Office Allocation (GBP)] - [Head Office Allocation LY], [Head Office Allocation LY] )
-		formatString: 0.0%
-		displayFolder: Contribution
-		lineageTag: 114dedb6-e9e9-4515-b667-2c2b7cb4d42c
-
-	measure 'Head Office Allocation Trend Arrow' = IF ( [Head Office Allocation YoY %] > 0, "▲", IF ( [Head Office Allocation YoY %] < 0, "▼", "▬" ) )
-		displayFolder: Contribution
-		lineageTag: 892ae984-1d7f-4d95-87dc-419ef3b3c805
-
-	measure 'Head Office Allocation Trend Colour' = IF ( [Head Office Allocation YoY %] > 0, "#2E7D32", IF ( [Head Office Allocation YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Contribution
-		lineageTag: 3df60e90-e38e-43dc-9264-1c5d1adc7b20
-
-	measure 'Head Office Allocation YoY Combo' = [Head Office Allocation Trend Arrow] & " £" & FORMAT ( ABS ( [Head Office Allocation YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Head Office Allocation YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Contribution
-		lineageTag: aa70827e-f408-42c8-99af-3447d6185921
-
 	column store_id
 		dataType: string
-		isHidden
 		lineageTag: 395af86a-e711-468f-85da-64db2dc9fb6e
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -252,9 +12,9 @@ table fact_store_finance
 
 	column business_year
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 29a2a4e5-0f80-4370-a982-ad19d320b381
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_year
 
@@ -262,9 +22,9 @@ table fact_store_finance
 
 	column business_period_number
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 80cff02c-0c19-483d-85de-7cc2ad45248b
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_period_number
 
@@ -272,9 +32,9 @@ table fact_store_finance
 
 	column period_key
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 906a34f4-052c-462b-8e3c-08a485ccaa1a
+		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
@@ -282,8 +42,8 @@ table fact_store_finance
 
 	column net_sales_gbp
 		dataType: double
-		isHidden
 		lineageTag: 33795aa8-bd28-465f-bb88-1d5b1b420dfd
+		isHidden
 		summarizeBy: sum
 		sourceColumn: net_sales_gbp
 
@@ -293,8 +53,8 @@ table fact_store_finance
 
 	column cogs_gbp
 		dataType: double
-		isHidden
 		lineageTag: 522d766e-d3d7-40a2-a6cd-682fa5d6f444
+		isHidden
 		summarizeBy: sum
 		sourceColumn: cogs_gbp
 
@@ -304,8 +64,8 @@ table fact_store_finance
 
 	column gross_profit_gbp
 		dataType: double
-		isHidden
 		lineageTag: 87f95c45-e1a2-4bae-a5cd-2fef899d3a63
+		isHidden
 		summarizeBy: sum
 		sourceColumn: gross_profit_gbp
 
@@ -315,8 +75,8 @@ table fact_store_finance
 
 	column rent_gbp
 		dataType: double
-		isHidden
 		lineageTag: d7ffddf2-0d77-43d0-8c02-efc09c271932
+		isHidden
 		summarizeBy: sum
 		sourceColumn: rent_gbp
 
@@ -326,8 +86,8 @@ table fact_store_finance
 
 	column staff_gbp
 		dataType: double
-		isHidden
 		lineageTag: 96272d45-4dd8-4aab-b3a5-a50c4db20629
+		isHidden
 		summarizeBy: sum
 		sourceColumn: staff_gbp
 
@@ -337,8 +97,8 @@ table fact_store_finance
 
 	column utilities_gbp
 		dataType: double
-		isHidden
 		lineageTag: bbda6e8a-1b64-44c8-b49e-60487d28a6e6
+		isHidden
 		summarizeBy: sum
 		sourceColumn: utilities_gbp
 
@@ -348,8 +108,8 @@ table fact_store_finance
 
 	column marketing_gbp
 		dataType: double
-		isHidden
 		lineageTag: ddbc00fc-7b9a-4c6d-a528-e5d5d0073df6
+		isHidden
 		summarizeBy: sum
 		sourceColumn: marketing_gbp
 
@@ -359,8 +119,8 @@ table fact_store_finance
 
 	column gross_contribution_gbp
 		dataType: double
-		isHidden
 		lineageTag: eedd4329-c8b0-4b22-8ef4-6d4ce7a0aa88
+		isHidden
 		summarizeBy: sum
 		sourceColumn: gross_contribution_gbp
 
@@ -370,8 +130,8 @@ table fact_store_finance
 
 	column gross_contribution_pct
 		dataType: double
-		isHidden
 		lineageTag: 0c4aa0fa-9050-45de-8c98-eedc6785d181
+		isHidden
 		summarizeBy: sum
 		sourceColumn: gross_contribution_pct
 
@@ -381,8 +141,8 @@ table fact_store_finance
 
 	column head_office_gbp
 		dataType: double
-		isHidden
 		lineageTag: 7f556436-3501-43eb-b012-2b7fe481da60
+		isHidden
 		summarizeBy: sum
 		sourceColumn: head_office_gbp
 
@@ -392,8 +152,8 @@ table fact_store_finance
 
 	column net_contribution_gbp
 		dataType: double
-		isHidden
 		lineageTag: 8726c4e3-c40e-4a88-85bf-260f6c304f02
+		isHidden
 		summarizeBy: sum
 		sourceColumn: net_contribution_gbp
 
@@ -403,14 +163,274 @@ table fact_store_finance
 
 	column net_contribution_pct
 		dataType: double
-		isHidden
 		lineageTag: ab1f44fe-ee85-4e26-b111-0f0ed78c7292
+		isHidden
 		summarizeBy: sum
 		sourceColumn: net_contribution_pct
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cost of Goods (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[cogs_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 0472e30d-00fd-4561-b99b-04bf30d65d2b
+		displayFolder: Contribution
+
+	measure 'Rent (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[rent_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 652bffd0-6210-4d19-9cab-f1c9c8b7dc67
+		displayFolder: Contribution
+
+	measure 'Staff Costs (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[staff_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 9850dd08-dcf6-4245-ab65-003b456e104c
+		displayFolder: Contribution
+
+	measure 'Utilities (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[utilities_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: c132cf14-fe92-4f2a-a585-ae3b62033699
+		displayFolder: Contribution
+
+	measure 'Marketing (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[marketing_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 94d10f07-8e03-4ebf-837a-ae1ff799c5cf
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs (GBP)' = [Rent (GBP)] + [Staff Costs (GBP)] + [Utilities (GBP)] + [Marketing (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: c5ee857b-8b32-48de-bcd1-a065243f94e4
+		displayFolder: Contribution
+
+	measure 'Gross Contribution (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[gross_contribution_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 492bcbdd-b5af-4478-ae6c-9d8bfd80d863
+		displayFolder: Contribution
+
+	measure 'Gross Contribution %' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    DIVIDE ( [Gross Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: 0.0%
+		lineageTag: d704bc3c-2193-43cb-9bba-0fac26edc764
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[head_office_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: da9be2f5-ad3b-495a-b31c-18d69d2592d0
+		displayFolder: Contribution
+
+	measure 'Net Contribution (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[net_contribution_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: a2da6bdb-0b07-41c2-837b-280513ac1cf5
+		displayFolder: Contribution
+
+	measure 'Net Contribution %' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    DIVIDE ( [Net Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: 0.0%
+		lineageTag: 1346e55f-183f-423f-af22-a98fc27169bd
+		displayFolder: Contribution
+
+	measure 'Net Contribution LY' =
+			CALCULATE (
+			    [Net Contribution (GBP)],
+			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: b0a4dab3-2f93-4047-922f-18b5fcf768de
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY (GBP)' = [Net Contribution (GBP)] - [Net Contribution LY]
+		formatString: "£"#,0.00
+		lineageTag: ae481c5c-ac3c-463f-834f-64df421cfc37
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY %' = DIVIDE ( [Net Contribution (GBP)] - [Net Contribution LY], [Net Contribution LY] )
+		formatString: 0.0%
+		lineageTag: 9922ed4f-4b12-4879-be0e-c314209163c7
+		displayFolder: Contribution
+
+	measure 'Net Contribution Trend Arrow' = IF ( [Net Contribution YoY %] > 0, "▲", IF ( [Net Contribution YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 454045ee-a413-4ab8-83d6-95c2132ab3ba
+		displayFolder: Contribution
+
+	measure 'Net Contribution Trend Colour' = IF ( [Net Contribution YoY %] > 0, "#2E7D32", IF ( [Net Contribution YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 0a1e6db1-c282-48c2-bcf6-10dc86fde39a
+		displayFolder: Contribution
+
+	measure 'Net Contribution YoY Combo' = [Net Contribution Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 2708d09f-bb2c-4c0a-abb5-d745a8073def
+		displayFolder: Contribution
+
+	measure 'Gross Contribution LY' =
+			CALCULATE (
+			    [Gross Contribution %],
+			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: 0.0%
+		lineageTag: ac19d75b-97c6-44dc-9ad1-bbb2ac3dfcd0
+		displayFolder: Contribution
+
+	measure 'Gross Contribution YoY (pp)' = [Gross Contribution %] - [Gross Contribution LY]
+		formatString: 0.0%
+		lineageTag: e0111c3a-9a93-4813-b6eb-5c2c51961fda
+		displayFolder: Contribution
+
+	measure 'Gross Contribution Trend Arrow' = IF ( [Gross Contribution YoY (pp)] > 0, "▲", IF ( [Gross Contribution YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 49716b39-0f7d-430a-8826-a22d2d5380fa
+		displayFolder: Contribution
+
+	measure 'Gross Contribution Trend Colour' = IF ( [Gross Contribution YoY (pp)] > 0, "#2E7D32", IF ( [Gross Contribution YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 095911f0-bc5c-45fe-87a1-f6c71ee398a8
+		displayFolder: Contribution
+
+	measure 'Gross Contribution YoY Combo' = [Gross Contribution Trend Arrow] & " " & FORMAT ( [Gross Contribution YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 187620f6-ded9-4e02-9b69-4913608756d6
+		displayFolder: Contribution
+
+	measure 'Net Contribution Pct LY' =
+			CALCULATE (
+			    [Net Contribution %],
+			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: 0.0%
+		lineageTag: 50b1f682-b87f-48b3-9e23-103c5828f963
+		displayFolder: Contribution
+
+	measure 'Net Contribution Pct YoY (pp)' = [Net Contribution %] - [Net Contribution Pct LY]
+		formatString: 0.0%
+		lineageTag: c3cd8266-bf48-4f8a-a0c5-27103d3e59cb
+		displayFolder: Contribution
+
+	measure 'Net Contribution Pct Trend Arrow' = IF ( [Net Contribution Pct YoY (pp)] > 0, "▲", IF ( [Net Contribution Pct YoY (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 20e07024-0015-4c15-8886-133e94da9dd2
+		displayFolder: Contribution
+
+	measure 'Net Contribution Pct Trend Colour' = IF ( [Net Contribution Pct YoY (pp)] > 0, "#2E7D32", IF ( [Net Contribution Pct YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 931cf527-bc41-40c5-90a6-b876006fdda7
+		displayFolder: Contribution
+
+	measure 'Net Contribution Pct YoY Combo' = [Net Contribution Pct Trend Arrow] & " " & FORMAT ( [Net Contribution Pct YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 41cc80dd-c967-4124-ae2a-3c05e726e291
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs LY' =
+			CALCULATE (
+			    [Store Operating Costs (GBP)],
+			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: 3a6772c5-2b8e-4971-92b9-a566bc3a88cd
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs YoY (GBP)' = [Store Operating Costs (GBP)] - [Store Operating Costs LY]
+		formatString: "£"#,0.00
+		lineageTag: f28b904c-f17e-4b5c-9b6d-3d5573bb4d43
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs YoY %' = DIVIDE ( [Store Operating Costs (GBP)] - [Store Operating Costs LY], [Store Operating Costs LY] )
+		formatString: 0.0%
+		lineageTag: d200b507-9b20-4ba9-87a1-f5f01c4217c7
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs Trend Arrow' = IF ( [Store Operating Costs YoY %] > 0, "▲", IF ( [Store Operating Costs YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 764e708e-1eae-48ba-baca-04ed877ba3ef
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs Trend Colour' = IF ( [Store Operating Costs YoY %] > 0, "#2E7D32", IF ( [Store Operating Costs YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 65b54964-aa27-4d9b-bfeb-59ed3cf4dcbf
+		displayFolder: Contribution
+
+	measure 'Store Operating Costs YoY Combo' = [Store Operating Costs Trend Arrow] & " £" & FORMAT ( ABS ( [Store Operating Costs YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Store Operating Costs YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: 46d42ef3-27f1-459e-9834-4c7ab38602b7
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation LY' =
+			CALCULATE (
+			    [Head Office Allocation (GBP)],
+			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
+			)
+		formatString: "£"#,0.00
+		lineageTag: 7d911a8a-2492-4728-b811-0d86f1162ff8
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation YoY (GBP)' = [Head Office Allocation (GBP)] - [Head Office Allocation LY]
+		formatString: "£"#,0.00
+		lineageTag: f6f56dd3-dc12-466c-adb2-e4915e41f5d8
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation YoY %' = DIVIDE ( [Head Office Allocation (GBP)] - [Head Office Allocation LY], [Head Office Allocation LY] )
+		formatString: 0.0%
+		lineageTag: 114dedb6-e9e9-4515-b667-2c2b7cb4d42c
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation Trend Arrow' = IF ( [Head Office Allocation YoY %] > 0, "▲", IF ( [Head Office Allocation YoY %] < 0, "▼", "▬" ) )
+		lineageTag: 892ae984-1d7f-4d95-87dc-419ef3b3c805
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation Trend Colour' = IF ( [Head Office Allocation YoY %] > 0, "#2E7D32", IF ( [Head Office Allocation YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 3df60e90-e38e-43dc-9264-1c5d1adc7b20
+		displayFolder: Contribution
+
+	measure 'Head Office Allocation YoY Combo' = [Head Office Allocation Trend Arrow] & " £" & FORMAT ( ABS ( [Head Office Allocation YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Head Office Allocation YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		lineageTag: aa70827e-f408-42c8-99af-3447d6185921
+		displayFolder: Contribution
 
 	partition fact_store_finance = m
 		mode: import

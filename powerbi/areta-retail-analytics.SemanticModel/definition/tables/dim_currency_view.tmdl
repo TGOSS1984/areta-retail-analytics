@@ -9,12 +9,13 @@ table dim_currency_view
 		sortByColumn: sort_order
 
 	column sort_order
-		dataType: int64
-		formatString: 0
-		lineageTag: 051f5433-a669-445d-be57-d9662e39999c
+		dataType: string
 		isHidden
+		lineageTag: 051f5433-a669-445d-be57-d9662e39999c
 		summarizeBy: none
 		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
 
 	partition dim_currency_view = m
 		mode: import
@@ -33,3 +34,4 @@ table dim_currency_view
 				    Source
 
 	annotation PBI_ResultType = Table
+

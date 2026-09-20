@@ -1,217 +1,10 @@
 table fact_targets
 	lineageTag: 9e876f8d-e369-44ed-9f8d-20225e05a20c
 
-	measure 'Target Net Sales (GBP)' =
-			CALCULATE (
-			    SUM ( fact_targets[target_net_sales_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
-
-	measure 'Net Sales Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
-
-	measure 'Net Sales Target Variance %' = DIVIDE ( [Net Sales Target Variance (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
-
-	measure 'Net Sales Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
-
-	measure 'Net Sales Target Trend Arrow' = IF ( [Net Sales Target Variance %] > 0, "▲", IF ( [Net Sales Target Variance %] < 0, "▼", "▬" ) )
-		displayFolder: Targets
-		lineageTag: e2714a93-de28-4255-a231-931a3da9724c
-
-	measure 'Net Sales Target Trend Colour' = IF ( [Net Sales Target Variance %] > 0, "#2E7D32", IF ( [Net Sales Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Targets
-		lineageTag: 405c756a-2aa6-4c75-a421-d8d048fbaa70
-
-	measure 'Net Sales Target Combo' = [Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Achievement %], "0.0%" ) & " of target)"
-		displayFolder: Targets
-		lineageTag: 862c75b2-cf00-409a-a79a-144f51ce29a6
-
-	measure 'Target Net Units Sold' =
-			CALCULATE (
-			    SUM ( fact_targets[target_net_units_sold] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: #,0
-		displayFolder: Targets
-		lineageTag: 4dff2936-1919-4b18-8a91-4ae9500ffe58
-
-	measure 'Net Units Sold Target Variance (Units)' = [Net Units Sold] - [Target Net Units Sold]
-		formatString: #,0
-		displayFolder: Targets
-		lineageTag: 0d03d630-1190-4ad8-b98b-69cb393ce783
-
-	measure 'Net Units Sold Target Variance %' = DIVIDE ( [Net Units Sold Target Variance (Units)], [Target Net Units Sold] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: f67022be-be30-48a8-982f-dac7c1a23906
-
-	measure 'Net Units Sold Target Achievement %' = DIVIDE ( [Net Units Sold], [Target Net Units Sold] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: a4a1ed98-3636-4fd9-9b27-8a418b4532c0
-
-	measure 'Net Units Sold Target Trend Arrow' = IF ( [Net Units Sold Target Variance %] > 0, "▲", IF ( [Net Units Sold Target Variance %] < 0, "▼", "▬" ) )
-		displayFolder: Targets
-		lineageTag: 6bfcac58-e111-4a19-85ca-9c1632048e06
-
-	measure 'Net Units Sold Target Trend Colour' = IF ( [Net Units Sold Target Variance %] > 0, "#2E7D32", IF ( [Net Units Sold Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Targets
-		lineageTag: fa5eb542-18e8-4989-8f3e-d4d8b36711a7
-
-	measure 'Net Units Sold Target Combo' = [Net Units Sold Target Trend Arrow] & " " & FORMAT ( ABS ( [Net Units Sold Target Variance (Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold Target Achievement %], "0.0%" ) & " of target)"
-		displayFolder: Targets
-		lineageTag: d200ef12-5ace-4eb0-963c-b3d78132c82c
-
-	measure 'Target Gross Margin %' =
-			CALCULATE (
-			    AVERAGE ( fact_targets[target_gross_margin_pct] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 76185994-909e-4229-b2a9-25989cbf92fd
-
-	measure 'Gross Margin Target Variance (pp)' = [Gross Margin %] - [Target Gross Margin %]
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 05ef2402-20ab-4622-b54f-805472178522
-
-	measure 'Gross Margin Target Trend Arrow' = IF ( [Gross Margin Target Variance (pp)] > 0, "▲", IF ( [Gross Margin Target Variance (pp)] < 0, "▼", "▬" ) )
-		displayFolder: Targets
-		lineageTag: 21949c96-2146-47a7-810f-5a7a00dc7555
-
-	measure 'Gross Margin Target Trend Colour' = IF ( [Gross Margin Target Variance (pp)] > 0, "#2E7D32", IF ( [Gross Margin Target Variance (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Targets
-		lineageTag: dd333f73-d6b8-48ee-a6c7-459c46035388
-
-	measure 'Gross Margin Target Combo' = [Gross Margin Target Trend Arrow] & " " & FORMAT ( [Gross Margin Target Variance (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: Targets
-		lineageTag: 9aa2c689-7cf7-4b95-b3d0-629d8d7cb235
-
-	measure 'Target Total Footfall' =
-			CALCULATE (
-			    SUM ( fact_targets[target_footfall] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: #,0
-		displayFolder: Targets
-		lineageTag: 3b2baba8-3ad6-4aef-8917-8e6a0f6dfca0
-
-	measure 'Total Footfall Target Variance' = [Total Footfall] - [Target Total Footfall]
-		formatString: #,0
-		displayFolder: Targets
-		lineageTag: 9c174bca-c9fe-47de-9f8c-101f5e47c308
-
-	measure 'Total Footfall Target Variance %' = DIVIDE ( [Total Footfall Target Variance], [Target Total Footfall] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: b1028540-4b48-4482-97fb-5aaaf4e4d8e7
-
-	measure 'Total Footfall Target Achievement %' = DIVIDE ( [Total Footfall], [Target Total Footfall] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 1f1de5b0-3ba5-4675-9853-7f94f75cba2c
-
-	measure 'Total Footfall Target Trend Arrow' = IF ( [Total Footfall Target Variance %] > 0, "▲", IF ( [Total Footfall Target Variance %] < 0, "▼", "▬" ) )
-		displayFolder: Targets
-		lineageTag: 9a11ef29-97cd-4d0d-baaa-01ecf701ac59
-
-	measure 'Total Footfall Target Trend Colour' = IF ( [Total Footfall Target Variance %] > 0, "#2E7D32", IF ( [Total Footfall Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Targets
-		lineageTag: 3cc78ff8-e54e-4c91-b2ac-8119242df445
-
-	measure 'Total Footfall Target Combo' = [Total Footfall Target Trend Arrow] & " " & FORMAT ( ABS ( [Total Footfall Target Variance] ), "#,0" ) & " (" & FORMAT ( [Total Footfall Target Achievement %], "0.0%" ) & " of target)"
-		displayFolder: Targets
-		lineageTag: 95a33503-7ce6-465c-9429-f20fc4b78532
-
-	measure 'Target Net Contribution (GBP)' =
-			CALCULATE (
-			    SUM ( fact_targets[target_net_contribution_gbp] ),
-			    USERELATIONSHIP ( dim_date[business_period_label], dim_period[business_period_label] )
-			)
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: e124d41f-9ac6-43ac-b01f-ffb9b4fda235
-
-	measure 'Net Contribution Target Variance (GBP)' = [Net Contribution (GBP)] - [Target Net Contribution (GBP)]
-		formatString: "£"#,0.00
-		displayFolder: Targets
-		lineageTag: 2458f2fa-4ed1-4ef8-860b-c43843f9a323
-
-	measure 'Net Contribution Target Variance %' = DIVIDE ( [Net Contribution Target Variance (GBP)], [Target Net Contribution (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: e4172915-1806-4823-949a-7828c0fe357a
-
-	measure 'Net Contribution Target Achievement %' = DIVIDE ( [Net Contribution (GBP)], [Target Net Contribution (GBP)] )
-		formatString: 0.0%
-		displayFolder: Targets
-		lineageTag: 05cb55f8-8259-495e-8fec-bbbba4b1910d
-
-	measure 'Net Contribution Target Trend Arrow' = IF ( [Net Contribution Target Variance %] > 0, "▲", IF ( [Net Contribution Target Variance %] < 0, "▼", "▬" ) )
-		displayFolder: Targets
-		lineageTag: a9589ba8-ebe5-489e-91d9-bf417d84c494
-
-	measure 'Net Contribution Target Trend Colour' = IF ( [Net Contribution Target Variance %] > 0, "#2E7D32", IF ( [Net Contribution Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: Targets
-		lineageTag: 32a0a01e-f7d0-433f-a954-874444a6304b
-
-	measure 'Net Contribution Target Combo' = [Net Contribution Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution Target Achievement %], "0.0%" ) & " of target)"
-		displayFolder: Targets
-		lineageTag: 6b14097c-f045-4d1d-8788-3a19636e33c3
-
-	measure 'Net Sales (Selected VAT View) Target' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", [Target Net Sales (GBP)] * [VAT Multiplier],
-			    [Target Net Sales (GBP)]
-			)
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-		lineageTag: a39b50a3-ff71-4d12-adde-0340afcfd2bb
-
-	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' = [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) Target]
-		formatString: "£"#,0.00
-		displayFolder: VAT View
-		lineageTag: 40ac40d5-b7c2-460c-b777-65597ef6ad9f
-
-	measure 'Net Sales (Selected VAT View) Target Variance %' = DIVIDE ( [Net Sales (Selected VAT View) Target Variance (GBP)], [Net Sales (Selected VAT View) Target] )
-		formatString: 0.0%
-		displayFolder: VAT View
-		lineageTag: 8fb84363-83d2-4c35-b796-4de42f23fae1
-
-	measure 'Net Sales (Selected VAT View) Target Achievement %' = DIVIDE ( [Net Sales (Selected VAT View)], [Net Sales (Selected VAT View) Target] )
-		formatString: 0.0%
-		displayFolder: VAT View
-		lineageTag: 16ceee53-241c-4db0-926b-dbf1221fe95b
-
-	measure 'Net Sales (Selected VAT View) Target Trend Arrow' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "▲", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "▼", "▬" ) )
-		displayFolder: VAT View
-		lineageTag: 2d95de3b-427f-4de7-a235-e66a53d60bbc
-
-	measure 'Net Sales (Selected VAT View) Target Trend Colour' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: VAT View
-		lineageTag: 97b04399-d172-44a4-91d5-2daadb4ebcb4
-
-	measure 'Net Sales (Selected VAT View) Target Combo' = [Net Sales (Selected VAT View) Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) Target Achievement %], "0.0%" ) & " of target)"
-		displayFolder: VAT View
-		lineageTag: 64c06e18-5a28-4344-a058-a480ac8ba59f
-
 	column store_id
 		dataType: string
-		isHidden
 		lineageTag: 42226a5d-0714-4f5e-9119-86b5fb285809
+		isHidden
 		summarizeBy: none
 		sourceColumn: store_id
 
@@ -219,9 +12,9 @@ table fact_targets
 
 	column business_year
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: 299465af-186e-42c2-84a2-8be0edeb43eb
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_year
 
@@ -229,9 +22,9 @@ table fact_targets
 
 	column business_period_number
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: b2fa3823-321a-44b0-a23f-a0977195dad1
+		isHidden
 		summarizeBy: sum
 		sourceColumn: business_period_number
 
@@ -239,9 +32,9 @@ table fact_targets
 
 	column period_key
 		dataType: int64
-		isHidden
 		formatString: 0
 		lineageTag: b9e084e2-9ab6-4022-a7ab-7ef4c0ee2bdd
+		isHidden
 		summarizeBy: none
 		sourceColumn: period_key
 
@@ -249,8 +42,8 @@ table fact_targets
 
 	column target_net_sales_gbp
 		dataType: double
-		isHidden
 		lineageTag: 1de27905-b288-4c79-8a8e-17a67541fccd
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_net_sales_gbp
 
@@ -260,8 +53,8 @@ table fact_targets
 
 	column target_net_units_sold
 		dataType: double
-		isHidden
 		lineageTag: 9f5d647c-e400-4280-a804-7029f7deb549
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_net_units_sold
 
@@ -271,8 +64,8 @@ table fact_targets
 
 	column target_gross_margin_pct
 		dataType: double
-		isHidden
 		lineageTag: 21fd1a76-f5f4-4ff2-81aa-995e384e091f
+		isHidden
 		summarizeBy: none
 		sourceColumn: target_gross_margin_pct
 
@@ -282,8 +75,8 @@ table fact_targets
 
 	column target_footfall
 		dataType: double
-		isHidden
 		lineageTag: e760cb79-2312-4c00-941c-558f70fffadb
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_footfall
 
@@ -293,14 +86,230 @@ table fact_targets
 
 	column target_net_contribution_gbp
 		dataType: double
-		isHidden
 		lineageTag: ddf95394-1c16-44d0-b545-5f7ce942e611
+		isHidden
 		summarizeBy: sum
 		sourceColumn: target_net_contribution_gbp
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Target Net Sales (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_targets[target_net_sales_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: 6ab59825-d060-4288-91db-bbb63856f8f9
+		displayFolder: Targets
+
+	measure 'Net Sales Target Variance (GBP)' = [Net Sales (GBP)] - [Target Net Sales (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: e6219f0c-8754-45d2-beab-8aa0ae7a02f3
+		displayFolder: Targets
+
+	measure 'Net Sales Target Variance %' = DIVIDE ( [Net Sales Target Variance (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: da62a7ec-ae77-45ae-8585-a50fad21fe2e
+		displayFolder: Targets
+
+	measure 'Net Sales Target Achievement %' = DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
+		formatString: 0.0%
+		lineageTag: 7f5a3098-4691-434a-92e1-fa2c1da78941
+		displayFolder: Targets
+
+	measure 'Net Sales Target Trend Arrow' = IF ( [Net Sales Target Variance %] > 0, "▲", IF ( [Net Sales Target Variance %] < 0, "▼", "▬" ) )
+		lineageTag: e2714a93-de28-4255-a231-931a3da9724c
+		displayFolder: Targets
+
+	measure 'Net Sales Target Trend Colour' = IF ( [Net Sales Target Variance %] > 0, "#2E7D32", IF ( [Net Sales Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 405c756a-2aa6-4c75-a421-d8d048fbaa70
+		displayFolder: Targets
+
+	measure 'Net Sales Target Combo' = [Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Achievement %], "0.0%" ) & " of target)"
+		lineageTag: 862c75b2-cf00-409a-a79a-144f51ce29a6
+		displayFolder: Targets
+
+	measure 'Target Net Units Sold' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_targets[target_net_units_sold] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: #,0
+		lineageTag: 4dff2936-1919-4b18-8a91-4ae9500ffe58
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Variance (Units)' = [Net Units Sold] - [Target Net Units Sold]
+		formatString: #,0
+		lineageTag: 0d03d630-1190-4ad8-b98b-69cb393ce783
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Variance %' = DIVIDE ( [Net Units Sold Target Variance (Units)], [Target Net Units Sold] )
+		formatString: 0.0%
+		lineageTag: f67022be-be30-48a8-982f-dac7c1a23906
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Achievement %' = DIVIDE ( [Net Units Sold], [Target Net Units Sold] )
+		formatString: 0.0%
+		lineageTag: a4a1ed98-3636-4fd9-9b27-8a418b4532c0
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Trend Arrow' = IF ( [Net Units Sold Target Variance %] > 0, "▲", IF ( [Net Units Sold Target Variance %] < 0, "▼", "▬" ) )
+		lineageTag: 6bfcac58-e111-4a19-85ca-9c1632048e06
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Trend Colour' = IF ( [Net Units Sold Target Variance %] > 0, "#2E7D32", IF ( [Net Units Sold Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: fa5eb542-18e8-4989-8f3e-d4d8b36711a7
+		displayFolder: Targets
+
+	measure 'Net Units Sold Target Combo' = [Net Units Sold Target Trend Arrow] & " " & FORMAT ( ABS ( [Net Units Sold Target Variance (Units)] ), "#,0" ) & " (" & FORMAT ( [Net Units Sold Target Achievement %], "0.0%" ) & " of target)"
+		lineageTag: d200ef12-5ace-4eb0-963c-b3d78132c82c
+		displayFolder: Targets
+
+	measure 'Target Gross Margin %' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    AVERAGE ( fact_targets[target_gross_margin_pct] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: 0.0%
+		lineageTag: 76185994-909e-4229-b2a9-25989cbf92fd
+		displayFolder: Targets
+
+	measure 'Gross Margin Target Variance (pp)' = [Gross Margin %] - [Target Gross Margin %]
+		formatString: 0.0%
+		lineageTag: 05ef2402-20ab-4622-b54f-805472178522
+		displayFolder: Targets
+
+	measure 'Gross Margin Target Trend Arrow' = IF ( [Gross Margin Target Variance (pp)] > 0, "▲", IF ( [Gross Margin Target Variance (pp)] < 0, "▼", "▬" ) )
+		lineageTag: 21949c96-2146-47a7-810f-5a7a00dc7555
+		displayFolder: Targets
+
+	measure 'Gross Margin Target Trend Colour' = IF ( [Gross Margin Target Variance (pp)] > 0, "#2E7D32", IF ( [Gross Margin Target Variance (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: dd333f73-d6b8-48ee-a6c7-459c46035388
+		displayFolder: Targets
+
+	measure 'Gross Margin Target Combo' = [Gross Margin Target Trend Arrow] & " " & FORMAT ( [Gross Margin Target Variance (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 9aa2c689-7cf7-4b95-b3d0-629d8d7cb235
+		displayFolder: Targets
+
+	measure 'Target Total Footfall' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_targets[target_footfall] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: #,0
+		lineageTag: 3b2baba8-3ad6-4aef-8917-8e6a0f6dfca0
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Variance' = [Total Footfall] - [Target Total Footfall]
+		formatString: #,0
+		lineageTag: 9c174bca-c9fe-47de-9f8c-101f5e47c308
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Variance %' = DIVIDE ( [Total Footfall Target Variance], [Target Total Footfall] )
+		formatString: 0.0%
+		lineageTag: b1028540-4b48-4482-97fb-5aaaf4e4d8e7
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Achievement %' = DIVIDE ( [Total Footfall], [Target Total Footfall] )
+		formatString: 0.0%
+		lineageTag: 1f1de5b0-3ba5-4675-9853-7f94f75cba2c
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Trend Arrow' = IF ( [Total Footfall Target Variance %] > 0, "▲", IF ( [Total Footfall Target Variance %] < 0, "▼", "▬" ) )
+		lineageTag: 9a11ef29-97cd-4d0d-baaa-01ecf701ac59
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Trend Colour' = IF ( [Total Footfall Target Variance %] > 0, "#2E7D32", IF ( [Total Footfall Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 3cc78ff8-e54e-4c91-b2ac-8119242df445
+		displayFolder: Targets
+
+	measure 'Total Footfall Target Combo' = [Total Footfall Target Trend Arrow] & " " & FORMAT ( ABS ( [Total Footfall Target Variance] ), "#,0" ) & " (" & FORMAT ( [Total Footfall Target Achievement %], "0.0%" ) & " of target)"
+		lineageTag: 95a33503-7ce6-465c-9429-f20fc4b78532
+		displayFolder: Targets
+
+	measure 'Target Net Contribution (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_targets[target_net_contribution_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		lineageTag: e124d41f-9ac6-43ac-b01f-ffb9b4fda235
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Variance (GBP)' = [Net Contribution (GBP)] - [Target Net Contribution (GBP)]
+		formatString: "£"#,0.00
+		lineageTag: 2458f2fa-4ed1-4ef8-860b-c43843f9a323
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Variance %' = DIVIDE ( [Net Contribution Target Variance (GBP)], [Target Net Contribution (GBP)] )
+		formatString: 0.0%
+		lineageTag: e4172915-1806-4823-949a-7828c0fe357a
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Achievement %' = DIVIDE ( [Net Contribution (GBP)], [Target Net Contribution (GBP)] )
+		formatString: 0.0%
+		lineageTag: 05cb55f8-8259-495e-8fec-bbbba4b1910d
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Trend Arrow' = IF ( [Net Contribution Target Variance %] > 0, "▲", IF ( [Net Contribution Target Variance %] < 0, "▼", "▬" ) )
+		lineageTag: a9589ba8-ebe5-489e-91d9-bf417d84c494
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Trend Colour' = IF ( [Net Contribution Target Variance %] > 0, "#2E7D32", IF ( [Net Contribution Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 32a0a01e-f7d0-433f-a954-874444a6304b
+		displayFolder: Targets
+
+	measure 'Net Contribution Target Combo' = [Net Contribution Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution Target Achievement %], "0.0%" ) & " of target)"
+		lineageTag: 6b14097c-f045-4d1d-8788-3a19636e33c3
+		displayFolder: Targets
+
+	measure 'Net Sales (Selected VAT View) Target' =
+			SWITCH (
+			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
+			    "Including VAT", [Target Net Sales (GBP)] * [VAT Multiplier],
+			    [Target Net Sales (GBP)]
+			)
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' =
+			[Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) Target]
+		formatString: "£"#,0.00
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Variance %' =
+			DIVIDE ( [Net Sales (Selected VAT View) Target Variance (GBP)], [Net Sales (Selected VAT View) Target] )
+		formatString: 0.0%
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Achievement %' =
+			DIVIDE ( [Net Sales (Selected VAT View)], [Net Sales (Selected VAT View) Target] )
+		formatString: 0.0%
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Trend Arrow' =
+			IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "▲", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "▼", "▬" ) )
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Trend Colour' =
+			IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: VAT View
+
+	measure 'Net Sales (Selected VAT View) Target Combo' =
+			[Net Sales (Selected VAT View) Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) Target Achievement %], "0.0%" ) & " of target)"
+		displayFolder: VAT View
 
 	partition fact_targets = m
 		mode: import

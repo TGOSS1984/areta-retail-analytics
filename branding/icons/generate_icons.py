@@ -8,13 +8,14 @@ the app and these PNG tiles for Power BI are guaranteed to match because
 they're literally the same icon files, not separate hand-matched sets that
 could drift apart.
 
-Three variations of the same set come out of one run, all from the same
+Four variations of the same set come out of one run, all from the same
 ICONS list and the same tile geometry, so they're drop-in swaps for each
 other in Power BI (change the image source and nothing shifts or resizes):
 
     png/                     summit gold glyph on a deep terrain tile (the original)
     png-teal-on-white/       deep terrain teal glyph on a white tile
     png-gold-transparent/    summit gold glyph, no tile, transparent background
+    png-teal-transparent/    deep terrain teal glyph, no tile, transparent background
 
 One-time asset generation script, not part of the generator pipeline —
 lives in branding/, not generator/.
@@ -48,6 +49,7 @@ STYLES = [
     {"folder": "png",                  "bg": DEEP_TERRAIN, "glyph": SUMMIT_GOLD},
     {"folder": "png-teal-on-white",    "bg": WHITE,        "glyph": DEEP_TERRAIN},
     {"folder": "png-gold-transparent", "bg": None,         "glyph": SUMMIT_GOLD},
+    {"folder": "png-teal-transparent", "bg": None,         "glyph": DEEP_TERRAIN},
 ]
 
 TILE_SIZE = 256

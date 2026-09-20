@@ -89,35 +89,30 @@ table fact_digital_targets
 			        DIVIDE ( AllocatedForDayName, IF ( PriorYearPeriodActual > 0, PriorYearDayCount, 1 ) )
 			)
 		formatString: "£"#,0.00
+		displayFolder: Targets (Any Grain)
 		lineageTag: fa1e763e-bedc-4785-9b44-4c7a55377d5d
-		displayFolder: Targets (Any Grain)
 
-	measure 'Digital Net Sales Target Variance (Any Grain, GBP)' =
-			[Digital Net Sales (GBP)] - [Target Digital Net Sales (GBP), Any Grain]
+	measure 'Digital Net Sales Target Variance (Any Grain, GBP)' = [Digital Net Sales (GBP)] - [Target Digital Net Sales (GBP), Any Grain]
 		formatString: "£"#,0.00
+		displayFolder: Targets (Any Grain)
 		lineageTag: 475da167-de12-411d-aaec-bea55b5b987d
-		displayFolder: Targets (Any Grain)
 
-	measure 'Digital Net Sales Target Variance % (Any Grain)' =
-			DIVIDE ( [Digital Net Sales Target Variance (Any Grain, GBP)], [Target Digital Net Sales (GBP), Any Grain] )
+	measure 'Digital Net Sales Target Variance % (Any Grain)' = DIVIDE ( [Digital Net Sales Target Variance (Any Grain, GBP)], [Target Digital Net Sales (GBP), Any Grain] )
 		formatString: 0.0%
+		displayFolder: Targets (Any Grain)
 		lineageTag: c9f3305e-a017-4f95-b2d1-544cf901e480
-		displayFolder: Targets (Any Grain)
 
-	measure 'Digital Net Sales Target Trend Arrow (Any Grain)' =
-			IF ( [Digital Net Sales Target Variance % (Any Grain)] > 0, "▲", IF ( [Digital Net Sales Target Variance % (Any Grain)] < 0, "▼", "▬" ) )
+	measure 'Digital Net Sales Target Trend Arrow (Any Grain)' = IF ( [Digital Net Sales Target Variance % (Any Grain)] > 0, "▲", IF ( [Digital Net Sales Target Variance % (Any Grain)] < 0, "▼", "▬" ) )
+		displayFolder: Targets (Any Grain)
 		lineageTag: 6355e33f-911a-43c1-a7b1-43d985917bfd
-		displayFolder: Targets (Any Grain)
 
-	measure 'Digital Net Sales Target Trend Colour (Any Grain)' =
-			IF ( [Digital Net Sales Target Variance % (Any Grain)] > 0, "#2E7D32", IF ( [Digital Net Sales Target Variance % (Any Grain)] < 0, "#D32F2F", "#8D9AA1" ) )
+	measure 'Digital Net Sales Target Trend Colour (Any Grain)' = IF ( [Digital Net Sales Target Variance % (Any Grain)] > 0, "#2E7D32", IF ( [Digital Net Sales Target Variance % (Any Grain)] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Targets (Any Grain)
 		lineageTag: 15bcc2fc-71a9-4e53-a532-e21156d4845a
-		displayFolder: Targets (Any Grain)
 
-	measure 'Digital Net Sales Target Combo (Any Grain)' =
-			[Digital Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: a9d623ef-e8d8-4a02-8064-28d45d091e77
+	measure 'Digital Net Sales Target Combo (Any Grain)' = [Digital Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Digital Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Digital Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets (Any Grain)
+		lineageTag: a9d623ef-e8d8-4a02-8064-28d45d091e77
 
 	column market_code
 		dataType: string

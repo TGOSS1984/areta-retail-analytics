@@ -204,6 +204,13 @@
                   "Value": "'Cards'"
                 }
               }
+            },
+            "cellPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "8L"
+                }
+              }
             }
           }
         }
@@ -748,6 +755,22 @@
               "expr": {
                 "Literal": {
                   "Value": "30D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "outline": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

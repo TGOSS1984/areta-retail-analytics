@@ -154,9 +154,12 @@ table fact_digital_traffic
 	column date
 		dataType: dateTime
 		isHidden
+		formatString: Long Date
 		lineageTag: decc9e82-d60d-440e-94ce-e6f67817026b
 		summarizeBy: none
 		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column market_code
 		dataType: string

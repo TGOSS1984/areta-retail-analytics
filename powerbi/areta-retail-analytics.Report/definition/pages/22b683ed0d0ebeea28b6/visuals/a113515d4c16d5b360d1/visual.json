@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "a113515d4c16d5b360d1",
   "position": {
-    "x": 876.936170212766,
-    "y": 268.25531914893617,
+    "x": 1230.8514190317196,
+    "y": 269.24874791318865,
     "z": 12000,
-    "height": 400.34042553191489,
-    "width": 1024,
+    "height": 400.66777963272125,
+    "width": 669.91652754591,
     "tabOrder": 10000
   },
   "visual": {
@@ -15,20 +15,6 @@
       "queryState": {
         "Values": {
           "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "dim_product"
-                    }
-                  },
-                  "Property": "style_code"
-                }
-              },
-              "queryRef": "dim_product.style_code",
-              "nativeQueryRef": "style_code"
-            },
             {
               "field": {
                 "Column": {
@@ -56,20 +42,6 @@
               },
               "queryRef": "dim_product.colour",
               "nativeQueryRef": "colour"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "dim_product"
-                    }
-                  },
-                  "Property": "colour_code"
-                }
-              },
-              "queryRef": "dim_product.colour_code",
-              "nativeQueryRef": "colour_code"
             },
             {
               "field": {
@@ -134,6 +106,43 @@
         ],
         "isDefaultSort": true
       }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "138.13855740567564D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_product.product_group"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "198.3839726858449D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_product.style_name"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

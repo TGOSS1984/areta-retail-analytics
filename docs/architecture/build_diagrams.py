@@ -198,7 +198,7 @@ def pipeline_overview() -> None:
 
     # consumers, one row each so the arrows run straight across
     c.boundary(1060, 162, 310, 242, "Power BI", "chart-bar")
-    c.node(1215, row1, "cube", "Semantic model", "367 measures", tile=76, title_size=17, sub_size=13)
+    c.node(1215, row1, "cube", "Semantic model", "380 measures", tile=76, title_size=17, sub_size=13)
     c.boundary(1060, 425, 310, 242, "SQL suite", "terminal-2")
     c.node(1215, row2, "database-search", "DuckDB", "147 queries + exercises", tile=76, title_size=17, sub_size=13)
     c.boundary(1060, 688, 310, 242, "Web app", "brand-nextjs")
@@ -277,7 +277,7 @@ def warehouse_detail() -> None:
 
     # right: consumers
     c.boundary(1090, 162, 280, 250, "Power BI", "chart-bar")
-    c.node(1230, 262, "cube", "Semantic model", "24 tables, 367 measures", tile=72, title_size=17, sub_size=13)
+    c.node(1230, 262, "cube", "Semantic model", "24 tables, 380 measures", tile=72, title_size=17, sub_size=13)
     c.boundary(1090, 432, 280, 250, "SQL suite", "terminal-2")
     c.node(1230, 532, "database-search", "DuckDB", "147 queries", tile=72, title_size=17, sub_size=13)
     c.boundary(1090, 702, 280, 270, "Web app", "brand-nextjs")

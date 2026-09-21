@@ -38,6 +38,18 @@ The 5 metrics, and why each one:
                             fact_store_finance itself (no physical
                             rent/staff cost model for online)
 
+Plus one DERIVED column, not a sixth independent target:
+  - Gross Profit (GBP)   — target net sales x target gross margin %, row
+                            by row. Deliberately derived rather than given
+                            its own growth assumption, so the margin VALUE
+                            and the margin RATE targets can never disagree
+                            with each other or with the sales target.
+                            It also means the margin % target at any level
+                            of aggregation is simply target gross profit
+                            divided by target net sales (sales-weighted),
+                            not an average of per-store percentages, which
+                            is what the Power BI measure now does.
+
 Each metric gets its own independent per-store growth assumption
 (different random seed offset) — not tied to that store's actual
 future performance, which is the whole point: it's what lets some
@@ -193,6 +205,12 @@ def build() -> pd.DataFrame:
 
     result["period_key"] = result["business_year"] * 100 + result["business_period_number"]
 
+    # Margin value target = sales target x margin % target (see docstring).
+    # Rounded to pennies like the other £ targets.
+    result["target_gross_profit_gbp"] = (
+        result["target_net_sales_gbp"] * result["target_gross_margin_pct"]
+    ).round(2)
+
     # keep actual net sales alongside for the sanity-check print below,
     # same as before — dropped from the final parquet output
     result = result.merge(
@@ -207,7 +225,7 @@ def build() -> pd.DataFrame:
         [
             "store_id", "business_year", "business_period_number", "period_key",
             "target_net_sales_gbp", "target_net_units_sold", "target_gross_margin_pct",
-            "target_footfall", "target_net_contribution_gbp",
+            "target_gross_profit_gbp", "target_footfall", "target_net_contribution_gbp",
             "actual_net_sales_gbp",
         ]
     ]
@@ -227,6 +245,12 @@ def main() -> None:
         f"(expect well short of 100%, well above 0%)"
     )
     print(f"{n_future:,} store-periods have a target but no actual yet — the future ones, as intended")
+
+    implied = df["target_gross_profit_gbp"].sum() / df["target_net_sales_gbp"].sum()
+    print(
+        f"gross profit target: {df['target_gross_profit_gbp'].sum():,.0f} across all periods, "
+        f"implied sales-weighted margin target {implied:.2%}"
+    )
 
     n_no_footfall_target = df["target_footfall"].isna().sum()
     print(

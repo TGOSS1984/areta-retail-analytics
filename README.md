@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" />
   <img alt="Power BI" src="https://img.shields.io/badge/Power%20BI-PBIP%20%2B%20TMDL-F2C811?logo=powerbi&logoColor=black" />
-  <img alt="DAX" src="https://img.shields.io/badge/DAX-367%20measures-1F7486" />
+  <img alt="DAX" src="https://img.shields.io/badge/DAX-380%20measures-1F7486" />
   <img alt="SQL" src="https://img.shields.io/badge/SQL-DuckDB-FFF000?logo=duckdb&logoColor=black" />
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
@@ -74,7 +74,7 @@ One Python pipeline feeds all three, so the numbers agree wherever you look.
 |---|---|
 | **The data** | About 3.9 million invoice lines, 361 stores (202 retail, 148 concession, 11 online), 12,151 SKUs across 907 styles, 4 brands, 11 markets. History starts 5 March 2023 and runs up to the day the pipeline last ran |
 | **The pipeline** | 17 steps in Python, about two minutes end to end, scheduled weekly with GitHub Actions |
-| **Power BI** | 24 tables, 367 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
+| **Power BI** | 24 tables, 380 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
 | **The web app** | Next.js 16, DuckDB-wasm, ECharts, one dashboard page with six charts |
 | **SQL** | 147 queries in 11 files plus 30 practice exercises |
 | **Data quality** | 78 automated checks that run at the end of every refresh |
@@ -202,7 +202,7 @@ Dashed lines are the three relationships I left inactive on purpose. The reasons
 | `fact_sales` | an invoice line (returns are negative lines) | 3.9M rows |
 | `fact_footfall` | a store on a day | 454k rows |
 | `fact_stock_snapshot` | a store, style and colour at a week ending | 6.8M rows |
-| `fact_targets` | a store in a business period, for five metrics | 17,328 rows |
+| `fact_targets` | a store in a business period, for five metrics plus a gross profit value derived from sales and margin targets | 17,328 rows |
 | `fact_store_finance` | a store's P&L for a business period | 15,050 rows |
 | `fact_digital_sales`, `fact_digital_traffic`, `fact_digital_targets` | the website by market and device, browser or period | 43k, 214k and 528 rows |
 | `dim_date`, `dim_period` | a day, and a 4-4-5 business period | 1,456 and 48 rows |
@@ -267,9 +267,9 @@ The report is saved as a Power BI Project (`.pbip`), so the model is text (TMDL)
 
 **The model**
 
-- 24 tables and 367 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
+- 24 tables and 380 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
 - **The KPI suite.** For about 30 metrics there's a full set: the value, last year, YoY change, YoY %, an arrow, a colour and a combined text line (`▼ £1,790,345 (-4.4%)`). On the report those drive the cards.
-- **Targets**, in their own suite for the five targetable metrics and digital sales, plus **Any-Grain** versions that work at day and week level.
+- **Targets**, in their own suite for the five targetable metrics, gross profit (value and rate) and digital sales, plus **Any-Grain** versions of the value targets that work at day and week level.
 - **Pareto** (at three grains), a **P&L waterfall**, a **VAT toggle** and a **Currency calculation group** that converts every monetary measure through one mechanism instead of duplicating measures.
 - Two hierarchies on the date table: a Calendar Date one and a **Business Calendar** one (Year, Period, Week, Day). Year-on-year always uses the Business Calendar, because the LY measures swap the business year.
 
@@ -379,23 +379,25 @@ Separately, the same error showed up once on a refresh when nothing had changed.
 
 **9. Small ones that each cost me an evening:** a calculated column with the wrong `columnType`, measure names that collided with column names, and conditional formatting that never went red because I'd based the rule on `Net Sales (GBP)`, which is always positive, rather than on the variance.
 
+**10. A margin target that was an average of percentages.** For a long time the model had a target margin *rate* but no target margin *value*, and the rate was an average of each store's percentage, so a small store with a few thousand pounds of sales in a period counted the same as one selling over £100k. That's about 0.15 points out. The fix was to add a gross profit target that's simply target sales times target margin % for each store and period, and then define the margin % target as target gross profit divided by target net sales. Now the rate and the value can't disagree, and the rate is right at every level of aggregation. I also tried allocating the value target down to days using last year's weekday pattern of gross profit, and it summed back correctly but made the implied daily margin swing by up to about 2 points from weekday to weekday. Following the sales curve instead keeps the margin target flat within a period, which is how a real margin target behaves. The general lesson: never average a ratio, build it from its two parts.
+
 ### Data and pipeline
 
-**10. Two colours became one SKU.** `colour[:3]` gave "Storm Blue" and "Stone" the same code, `STO`, which quietly created duplicate SKUs until I ran the pipeline and checked. The colour codes are now explicit, and the build refuses to write a product table with duplicate SKUs.
+**11. Two colours became one SKU.** `colour[:3]` gave "Storm Blue" and "Stone" the same code, `STO`, which quietly created duplicate SKUs until I ran the pipeline and checked. The colour codes are now explicit, and the build refuses to write a product table with duplicate SKUs.
 
-**11. The stock table ran my machine out of memory.** The first version worked out every style and colour a store could stock and rolled it out across all 208 weeks, about 83,600 combinations with the text repeated on every row, and the process was killed. Three things fixed it: dropping size from the grain (stock gets analysed by product group, not by size run), capping each store to a couple of hundred lines, which is also more realistic because no store carries 500 lines at once, and building the repeated text columns from integer codes instead of tiled strings. The lesson was about grain: pick the coarsest grain that still answers the question, before the table exists.
+**12. The stock table ran my machine out of memory.** The first version worked out every style and colour a store could stock and rolled it out across all 208 weeks, about 83,600 combinations with the text repeated on every row, and the process was killed. Three things fixed it: dropping size from the grain (stock gets analysed by product group, not by size run), capping each store to a couple of hundred lines, which is also more realistic because no store carries 500 lines at once, and building the repeated text columns from integer codes instead of tiled strings. The lesson was about grain: pick the coarsest grain that still answers the question, before the table exists.
 
-**12. Parquet that Power BI wouldn't read.** The Data Quality table failed to load with "Couldn't deserialize thrift". The culprit was almost certainly a nanosecond timestamp column that pandas writes by default. The run time is now stored as UTC text, so those files only use column types my other tables already use. I'll never put a datetime column in a Parquet file for Power BI without checking first.
+**13. Parquet that Power BI wouldn't read.** The Data Quality table failed to load with "Couldn't deserialize thrift". The culprit was almost certainly a nanosecond timestamp column that pandas writes by default. The run time is now stored as UTC text, so those files only use column types my other tables already use. I'll never put a datetime column in a Parquet file for Power BI without checking first.
 
-**13. Power BI can't check whether an image exists.** I wanted product photos at style-and-colour level with a placeholder for anything without one. A calculated column can't make an HTTP request, so it can't test a URL. The fix was to move the decision into the generator: it looks at which image files really exist and writes the best path into the table (own photo, then product group placeholder, then major group placeholder, then an icon tile). Two things caught me out. GitHub's raw URLs are case sensitive, so `Outerwear.webp` would work on Windows and fail once pushed. And the image is chosen when the script runs, not when Power BI refreshes, so when my own placeholders didn't show up at first it was because the script needed re-running after I'd added the files.
+**14. Power BI can't check whether an image exists.** I wanted product photos at style-and-colour level with a placeholder for anything without one. A calculated column can't make an HTTP request, so it can't test a URL. The fix was to move the decision into the generator: it looks at which image files really exist and writes the best path into the table (own photo, then product group placeholder, then major group placeholder, then an icon tile). Two things caught me out. GitHub's raw URLs are case sensitive, so `Outerwear.webp` would work on Windows and fail once pushed. And the image is chosen when the script runs, not when Power BI refreshes, so when my own placeholders didn't show up at first it was because the script needed re-running after I'd added the files.
 
-**14. The data wasn't as realistic as I thought.** Querying it in SQL showed Black Friday sales at almost exactly 1.00 times a normal day and return rates of about 3% everywhere. Both are things a real retailer wouldn't have. It's a limitation of the generator and I've noted it rather than hidden it.
+**15. The data wasn't as realistic as I thought.** Querying it in SQL showed Black Friday sales at almost exactly 1.00 times a normal day and return rates of about 3% everywhere. Both are things a real retailer wouldn't have. It's a limitation of the generator and I've noted it rather than hidden it.
 
 ### The web app and tooling
 
-**15. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
+**16. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
 
-**16. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
+**17. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
 
 **Overall, what I'd tell myself at the start:** get the relationship graph right before writing any DAX, test with a filter applied every time, keep numbers reconcilable against a second source (the web app and SQL both did that job), and write the audit before you need it.
 
@@ -527,7 +529,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 
 **To finish**
 - [ ] Build the remaining report pages in Power BI Desktop, then take the screenshots and export the PDF
-- [ ] Confirm the latest round of DAX changes in Desktop: the Any-Grain targets, the closing-balance stock measures, and the digital traffic and target fixes. They're tested against the real data, but I haven't seen them run in Desktop yet
+- [ ] Confirm the latest round of DAX changes in Desktop: the Any-Grain targets, the gross profit targets, the closing-balance stock measures, and the digital traffic and target fixes. They're tested against the real data, but I haven't seen them run in Desktop yet
 - [ ] Trigger the GitHub Actions workflow for real and fix whatever falls over
 - [ ] Deploy the web app and add the link at the top
 - [ ] Fill in `docs/data-dictionary.md`
@@ -535,7 +537,6 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 **Improvements I want to make**
 - [ ] Model a promotional demand uplift in the generator (Black Friday is currently about 1.00 times a normal day)
 - [ ] Turn the hard-coded data path and image URL in the Power BI project into parameters
-- [ ] A weighted margin target (the plain average is about 0.15 points below the sales-weighted figure)
 - [ ] A closing-rate currency convention for point-in-time measures like stock value
 - [ ] Web app: mobile layout, more pages, and the digital metrics
 - [ ] A GitHub project board

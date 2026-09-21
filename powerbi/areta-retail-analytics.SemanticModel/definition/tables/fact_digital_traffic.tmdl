@@ -1,6 +1,156 @@
 table fact_digital_traffic
 	lineageTag: 3b85a639-6220-498b-a588-fd4141a0c4fa
 
+	measure 'Total Visitors' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[visitors] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: e38632e0-6b8e-4f64-8c77-2e3a5dd76b92
+
+	measure 'Total Sessions' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[sessions] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 30c38724-bda5-454c-9a4e-9e755230fdbd
+
+	measure 'Page Views' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[page_views] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 9a904f96-ed0f-465e-8e75-fe3584aa99d2
+
+	measure 'Pages per Session' = DIVIDE ( [Page Views], [Total Sessions] )
+		formatString: #,0.00
+		displayFolder: Digital
+		lineageTag: 4a4adea2-a93a-4a8d-909c-429e02476bb0
+
+	measure 'Digital Conversion Rate %' =
+			CALCULATE (
+			    DIVIDE ( [Digital Orders], [Total Sessions] ),
+			    USERELATIONSHIP ( fact_digital_traffic[market_code], dim_market[market_code] )
+			)
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: f09432b5-ab08-4543-9fa5-7473c486fcbf
+
+	measure 'Total Visitors LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Total Visitors],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: #,0
+		displayFolder: Time Intelligence
+		lineageTag: 9fe5b77a-833b-4690-b5d0-b59f8a21016a
+
+	measure 'Total Visitors YoY' = [Total Visitors] - [Total Visitors LY]
+		formatString: #,0
+		displayFolder: Time Intelligence
+		lineageTag: e89804c3-9e45-41fd-b2a7-db1d0bfc7c32
+
+	measure 'Total Visitors YoY %' = DIVIDE ( [Total Visitors] - [Total Visitors LY], [Total Visitors LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 4806ff64-6e03-4255-af18-ac1d59382393
+
+	measure 'Total Visitors Trend Arrow' = IF ( [Total Visitors YoY %] > 0, "▲", IF ( [Total Visitors YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 60316427-a36e-4988-a418-f2ce1d8c8121
+
+	measure 'Total Visitors Trend Colour' = IF ( [Total Visitors YoY %] > 0, "#2E7D32", IF ( [Total Visitors YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 8d8218d3-1a1c-48ec-9417-9d13e71efd15
+
+	measure 'Total Visitors YoY Combo' = [Total Visitors Trend Arrow] & " " & FORMAT ( ABS ( [Total Visitors YoY] ), "#,0" ) & " (" & FORMAT ( [Total Visitors YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Time Intelligence
+		lineageTag: 251d981d-ceea-4816-adf7-ea8bff4db5cd
+
+	measure 'Total Sessions LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Total Sessions],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: #,0
+		displayFolder: Time Intelligence
+		lineageTag: 6e62ef7c-20d4-4aeb-929a-e86a5ddb32ec
+
+	measure 'Total Sessions YoY' = [Total Sessions] - [Total Sessions LY]
+		formatString: #,0
+		displayFolder: Time Intelligence
+		lineageTag: 2c5d533b-9c2a-45d1-8184-479e779a4bd1
+
+	measure 'Total Sessions YoY %' = DIVIDE ( [Total Sessions] - [Total Sessions LY], [Total Sessions LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 63e9d784-359b-4947-b067-786f715b2c54
+
+	measure 'Total Sessions Trend Arrow' = IF ( [Total Sessions YoY %] > 0, "▲", IF ( [Total Sessions YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 162dbb5a-6b29-41f4-8504-0855c044dfcd
+
+	measure 'Total Sessions Trend Colour' = IF ( [Total Sessions YoY %] > 0, "#2E7D32", IF ( [Total Sessions YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 1eb447bc-92e8-4494-ae4f-6213b8644e62
+
+	measure 'Total Sessions YoY Combo' = [Total Sessions Trend Arrow] & " " & FORMAT ( ABS ( [Total Sessions YoY] ), "#,0" ) & " (" & FORMAT ( [Total Sessions YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Time Intelligence
+		lineageTag: a1476293-7ba2-4afa-a075-d2c2b823d804
+
+	measure 'Digital Conversion Rate LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Digital Conversion Rate %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 8eb89ffb-d6ef-4ee7-b2a0-d1b5732d93f1
+
+	measure 'Digital Conversion Rate YoY (pp)' = [Digital Conversion Rate %] - [Digital Conversion Rate LY]
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: a2ecd70b-03ce-471a-b670-3a5fb6630209
+
+	measure 'Digital Conversion Rate Trend Arrow' = IF ( [Digital Conversion Rate YoY (pp)] > 0, "▲", IF ( [Digital Conversion Rate YoY (pp)] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 30236708-09f1-4f0e-af4d-09eb3e83077a
+
+	measure 'Digital Conversion Rate Trend Colour' = IF ( [Digital Conversion Rate YoY (pp)] > 0, "#2E7D32", IF ( [Digital Conversion Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 5957d5b9-be06-430e-9903-6554b63d43bc
+
+	measure 'Digital Conversion Rate YoY Combo' = [Digital Conversion Rate Trend Arrow] & " " & FORMAT ( [Digital Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+		displayFolder: Time Intelligence
+		lineageTag: 2c7868f5-6bea-4745-ab55-eb702fe1938c
+
 	column date
 		dataType: dateTime
 		isHidden
@@ -47,156 +197,6 @@ table fact_digital_traffic
 		summarizeBy: none
 		sourceColumn: page_views
 
-	measure 'Total Visitors' =
-			CALCULATE (
-			    SUM ( fact_digital_traffic[visitors] ),
-			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
-			)
-		formatString: #,0
-		lineageTag: e38632e0-6b8e-4f64-8c77-2e3a5dd76b92
-		displayFolder: Digital
-
-	measure 'Total Sessions' =
-			CALCULATE (
-			    SUM ( fact_digital_traffic[sessions] ),
-			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
-			)
-		formatString: #,0
-		lineageTag: 30c38724-bda5-454c-9a4e-9e755230fdbd
-		displayFolder: Digital
-
-	measure 'Page Views' =
-			CALCULATE (
-			    SUM ( fact_digital_traffic[page_views] ),
-			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
-			)
-		formatString: #,0
-		lineageTag: 9a904f96-ed0f-465e-8e75-fe3584aa99d2
-		displayFolder: Digital
-
-	measure 'Pages per Session' = DIVIDE ( [Page Views], [Total Sessions] )
-		formatString: #,0.00
-		lineageTag: 4a4adea2-a93a-4a8d-909c-429e02476bb0
-		displayFolder: Digital
-
-	measure 'Digital Conversion Rate %' =
-			CALCULATE (
-			    DIVIDE ( [Digital Orders], [Total Sessions] ),
-			    USERELATIONSHIP ( fact_digital_traffic[market_code], dim_market[market_code] )
-			)
-		formatString: 0.0%
-		lineageTag: f09432b5-ab08-4543-9fa5-7473c486fcbf
-		displayFolder: Digital
-
-	measure 'Total Visitors LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Total Visitors],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
-		formatString: #,0
-		lineageTag: 9fe5b77a-833b-4690-b5d0-b59f8a21016a
-		displayFolder: Time Intelligence
-
-	measure 'Total Visitors YoY' = [Total Visitors] - [Total Visitors LY]
-		formatString: #,0
-		lineageTag: e89804c3-9e45-41fd-b2a7-db1d0bfc7c32
-		displayFolder: Time Intelligence
-
-	measure 'Total Visitors YoY %' = DIVIDE ( [Total Visitors] - [Total Visitors LY], [Total Visitors LY] )
-		formatString: 0.0%
-		lineageTag: 4806ff64-6e03-4255-af18-ac1d59382393
-		displayFolder: Time Intelligence
-
-	measure 'Total Visitors Trend Arrow' = IF ( [Total Visitors YoY %] > 0, "▲", IF ( [Total Visitors YoY %] < 0, "▼", "▬" ) )
-		lineageTag: 60316427-a36e-4988-a418-f2ce1d8c8121
-		displayFolder: Time Intelligence
-
-	measure 'Total Visitors Trend Colour' = IF ( [Total Visitors YoY %] > 0, "#2E7D32", IF ( [Total Visitors YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 8d8218d3-1a1c-48ec-9417-9d13e71efd15
-		displayFolder: Time Intelligence
-
-	measure 'Total Visitors YoY Combo' = [Total Visitors Trend Arrow] & " " & FORMAT ( ABS ( [Total Visitors YoY] ), "#,0" ) & " (" & FORMAT ( [Total Visitors YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 251d981d-ceea-4816-adf7-ea8bff4db5cd
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Total Sessions],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
-		formatString: #,0
-		lineageTag: 6e62ef7c-20d4-4aeb-929a-e86a5ddb32ec
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions YoY' = [Total Sessions] - [Total Sessions LY]
-		formatString: #,0
-		lineageTag: 2c5d533b-9c2a-45d1-8184-479e779a4bd1
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions YoY %' = DIVIDE ( [Total Sessions] - [Total Sessions LY], [Total Sessions LY] )
-		formatString: 0.0%
-		lineageTag: 63e9d784-359b-4947-b067-786f715b2c54
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions Trend Arrow' = IF ( [Total Sessions YoY %] > 0, "▲", IF ( [Total Sessions YoY %] < 0, "▼", "▬" ) )
-		lineageTag: 162dbb5a-6b29-41f4-8504-0855c044dfcd
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions Trend Colour' = IF ( [Total Sessions YoY %] > 0, "#2E7D32", IF ( [Total Sessions YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 1eb447bc-92e8-4494-ae4f-6213b8644e62
-		displayFolder: Time Intelligence
-
-	measure 'Total Sessions YoY Combo' = [Total Sessions Trend Arrow] & " " & FORMAT ( ABS ( [Total Sessions YoY] ), "#,0" ) & " (" & FORMAT ( [Total Sessions YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: a1476293-7ba2-4afa-a075-d2c2b823d804
-		displayFolder: Time Intelligence
-
-	measure 'Digital Conversion Rate LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Digital Conversion Rate %],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
-		formatString: 0.0%
-		lineageTag: 8eb89ffb-d6ef-4ee7-b2a0-d1b5732d93f1
-		displayFolder: Time Intelligence
-
-	measure 'Digital Conversion Rate YoY (pp)' = [Digital Conversion Rate %] - [Digital Conversion Rate LY]
-		formatString: 0.0%
-		lineageTag: a2ecd70b-03ce-471a-b670-3a5fb6630209
-		displayFolder: Time Intelligence
-
-	measure 'Digital Conversion Rate Trend Arrow' = IF ( [Digital Conversion Rate YoY (pp)] > 0, "▲", IF ( [Digital Conversion Rate YoY (pp)] < 0, "▼", "▬" ) )
-		lineageTag: 30236708-09f1-4f0e-af4d-09eb3e83077a
-		displayFolder: Time Intelligence
-
-	measure 'Digital Conversion Rate Trend Colour' = IF ( [Digital Conversion Rate YoY (pp)] > 0, "#2E7D32", IF ( [Digital Conversion Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 5957d5b9-be06-430e-9903-6554b63d43bc
-		displayFolder: Time Intelligence
-
-	measure 'Digital Conversion Rate YoY Combo' = [Digital Conversion Rate Trend Arrow] & " " & FORMAT ( [Digital Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
-		lineageTag: 2c7868f5-6bea-4745-ab55-eb702fe1938c
-		displayFolder: Time Intelligence
-
 	partition fact_digital_traffic = m
 		mode: import
 		source =
@@ -206,3 +206,4 @@ table fact_digital_traffic
 				    Source
 
 	annotation PBI_ResultType = Table
+

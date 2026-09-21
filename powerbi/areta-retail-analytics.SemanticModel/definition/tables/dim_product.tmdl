@@ -150,7 +150,29 @@ table dim_product
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column image_url = "https://raw.githubusercontent.com/TGOSS1984/areta-retail-analytics/main/web/public/images/products/" & dim_product[style_code] & "-" & dim_product[colour_code] & ".webp"
+	column image_file
+		dataType: string
+		isHidden
+		lineageTag: 3b6eb3dd-2fd2-4f6e-ae57-ca4fd3d829f5
+		summarizeBy: none
+		sourceColumn: image_file
+
+		annotation SummarizationSetBy = Automatic
+
+	column image_source
+		dataType: string
+		lineageTag: 534e86ed-79f3-4a41-9011-e884238a8491
+		summarizeBy: none
+		sourceColumn: image_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column image_url =
+			IF (
+			    dim_product[image_file] = "",
+			    BLANK (),
+			    "https://raw.githubusercontent.com/TGOSS1984/areta-retail-analytics/main/web/public/images/" & dim_product[image_file]
+			)
 		dataType: string
 		lineageTag: 884a9692-8753-4d3c-9094-3be70db4595a
 		dataCategory: ImageUrl
@@ -165,4 +187,5 @@ table dim_product
 				    Source
 
 	annotation PBI_ResultType = Table
+
 

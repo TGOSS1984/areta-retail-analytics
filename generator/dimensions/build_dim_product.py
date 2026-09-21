@@ -19,6 +19,11 @@ split into "Mens" and "Womens" versions isn't how that category actually
 works in the real hierarchy this was modelled on, so it's forced to Unisex
 regardless of what the brand's gender list says.
 
+Also works out, for every SKU, which image file Power BI should show. Power
+BI can't check whether a URL exists (a calculated column can't make an HTTP
+request), so this script decides at build time by looking at what's actually
+in web/public/images/. See resolve_image() for the fallback order.
+
 Straight to data/warehouse, same as dim_store — no raw/staging pass needed
 for a generated hierarchy like this.
 
@@ -28,7 +33,10 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import random
+import re
+import subprocess
 from pathlib import Path
 
 import pandas as pd
@@ -36,6 +44,22 @@ import yaml
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "brands.yml"
 OUTPUT_PATH = Path(__file__).resolve().parents[2] / "data" / "warehouse" / "dim_product.parquet"
+
+# product photography and the placeholder images live in the web app's public
+# folder so the web app and Power BI (via raw.githubusercontent.com) share one
+# set of files
+IMAGES_DIR = Path(__file__).resolve().parents[2] / "web" / "public" / "images"
+PRODUCT_IMAGES_DIR = IMAGES_DIR / "products"
+PLACEHOLDER_DIR = PRODUCT_IMAGES_DIR / "categories"
+IMAGE_EXTENSIONS = (".webp", ".png", ".jpg", ".jpeg")
+
+# the original one-tile-per-major-group set (see categories/README.md). Kept as
+# the last resort so nothing that already worked stops working.
+LEGACY_CATEGORY_ICONS = {
+    "Outerwear": "jacket", "Midlayer": "hanger-2", "Legwear": "hanger",
+    "Tops": "shirt", "Accessories": "sock", "Footwear": "shoe",
+    "Camping & Equipment": "backpack",
+}
 
 RANDOM_SEED = 7
 
@@ -241,11 +265,111 @@ def build() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def slugify(text: str) -> str:
+    """'Knitwear, Hoodies & Sweatshirts' -> 'knitwear-hoodies-and-sweatshirts'."""
+    return re.sub(r"[^a-z0-9]+", "-", text.lower().replace("&", " and ")).strip("-")
+
+
+def list_files(folder: Path) -> set[str]:
+    # exact-case names straight from the directory listing. GitHub's raw URLs
+    # are case-sensitive but Windows isn't, so Path.exists() would happily
+    # match "Outerwear.webp" locally and then 404 once it's on GitHub.
+    if not folder.is_dir():
+        return set()
+    with os.scandir(folder) as entries:
+        return {e.name for e in entries if e.is_file()}
+
+
+def find_image(stem: str, available: set[str], prefix: str) -> str | None:
+    for ext in IMAGE_EXTENSIONS:
+        if f"{stem}{ext}" in available:
+            return f"{prefix}{stem}{ext}"
+    return None
+
+
+def resolve_image(row, photos: set[str], placeholders: set[str]) -> tuple[str, str]:
+    """Best available image for one style/colour, as a path under web/public/images/.
+
+    Order: the style/colour photo, then a placeholder for its product group,
+    then one for its major product group, then the original icon tile for the
+    major group, then a general default. The first file that exists wins.
+    """
+    hit = find_image(f"{row.style_code}-{row.colour_code}", photos, "products/")
+    if hit:
+        return hit, "Style-colour photo"
+    prefix = "products/categories/"
+    hit = find_image(slugify(row.product_group), placeholders, prefix)
+    if hit:
+        return hit, "Product group placeholder"
+    hit = find_image(slugify(row.major_product_group), placeholders, prefix)
+    if hit:
+        return hit, "Major group placeholder"
+    icon = LEGACY_CATEGORY_ICONS.get(row.major_product_group)
+    if icon and f"{icon}.png" in placeholders:
+        return f"{prefix}{icon}.png", "Category icon tile"
+    hit = find_image("default", placeholders, prefix)
+    if hit:
+        return hit, "Default placeholder"
+    return "", "No image"
+
+
+def add_image_columns(df: pd.DataFrame) -> pd.DataFrame:
+    photos = list_files(PRODUCT_IMAGES_DIR)
+    placeholders = list_files(PLACEHOLDER_DIR)
+
+    pairs = df[["style_code", "colour_code", "product_group", "major_product_group"]].drop_duplicates(
+        ["style_code", "colour_code"]
+    )
+    resolved = {(r.style_code, r.colour_code): resolve_image(r, photos, placeholders) for r in pairs.itertuples(index=False)}
+    keys = list(zip(df["style_code"], df["colour_code"]))
+    df = df.copy()
+    df["image_file"] = [resolved[k][0] for k in keys]
+    df["image_source"] = [resolved[k][1] for k in keys]
+
+    counts = pd.Series([v[1] for v in resolved.values()]).value_counts()
+    print(f"images: {len(resolved):,} style-colours -> " + ", ".join(f"{n:,} {label.lower()}" for label, n in counts.items()))
+
+    # tidy-up warnings, because a typo in a filename fails silently otherwise
+    groups = sorted(df["product_group"].unique())
+    have_group = [g for g in groups if find_image(slugify(g), placeholders, "")]
+    print(f"images: product-group placeholders found for {len(have_group)} of {len(groups)} product groups")
+    expected = {slugify(g) for g in groups} | {slugify(m) for m in df["major_product_group"].unique()}
+    expected |= set(LEGACY_CATEGORY_ICONS.values()) | {"default"}
+    strays = sorted(f for f in placeholders if Path(f).suffix in IMAGE_EXTENSIONS and Path(f).stem not in expected)
+    if strays:
+        print(f"images: {len(strays)} file(s) in categories/ don't match any product group, major group or default (typo?): {', '.join(strays)}")
+    return df
+
+
+def warn_if_not_on_github() -> None:
+    # Power BI loads these from raw.githubusercontent.com, so a photo that
+    # exists locally but isn't committed and pushed shows as a broken image
+    try:
+        repo = IMAGES_DIR.parents[2]
+        pending = subprocess.run(
+            ["git", "status", "--porcelain", "--", str(IMAGES_DIR)], cwd=repo,
+            capture_output=True, text=True, timeout=20, check=True,
+        ).stdout.strip().splitlines()
+        unpushed = subprocess.run(
+            ["git", "log", "--oneline", "@{u}..HEAD", "--", str(IMAGES_DIR)], cwd=repo,
+            capture_output=True, text=True, timeout=20,
+        ).stdout.strip().splitlines()
+    except (OSError, subprocess.SubprocessError):
+        return
+    if pending:
+        print(f"images: {len(pending)} image file(s) changed locally but not committed - Power BI can't see them until they're committed and pushed")
+    if unpushed:
+        print(f"images: {len(unpushed)} commit(s) touching images haven't been pushed yet")
+
+
 def main() -> None:
     df = build()
     dupes = df["sku"].duplicated().sum()
     if dupes:
         raise ValueError(f"{dupes} duplicate SKUs — check COLOUR_CODES for a clash before writing output")
+
+    df = add_image_columns(df)
+    warn_if_not_on_github()
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUTPUT_PATH, index=False)

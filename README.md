@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" />
   <img alt="Power BI" src="https://img.shields.io/badge/Power%20BI-PBIP%20%2B%20TMDL-F2C811?logo=powerbi&logoColor=black" />
-  <img alt="DAX" src="https://img.shields.io/badge/DAX-380%20measures-1F7486" />
+  <img alt="DAX" src="https://img.shields.io/badge/DAX-385%20measures-1F7486" />
   <img alt="SQL" src="https://img.shields.io/badge/SQL-DuckDB-FFF000?logo=duckdb&logoColor=black" />
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
@@ -74,7 +74,7 @@ One Python pipeline feeds all three, so the numbers agree wherever you look.
 |---|---|
 | **The data** | About 3.9 million invoice lines, 361 stores (202 retail, 148 concession, 11 online), 12,151 SKUs across 907 styles, 4 brands, 11 markets. History starts 5 March 2023 and runs up to the day the pipeline last ran |
 | **The pipeline** | 17 steps in Python, about two minutes end to end, scheduled weekly with GitHub Actions |
-| **Power BI** | 24 tables, 380 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
+| **Power BI** | 24 tables, 385 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
 | **The web app** | Next.js 16, DuckDB-wasm, ECharts, one dashboard page with six charts |
 | **SQL** | 147 queries in 11 files plus 30 practice exercises |
 | **Data quality** | 78 automated checks that run at the end of every refresh |
@@ -267,9 +267,9 @@ The report is saved as a Power BI Project (`.pbip`), so the model is text (TMDL)
 
 **The model**
 
-- 24 tables and 380 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
+- 24 tables and 385 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
 - **The KPI suite.** For about 30 metrics there's a full set: the value, last year, YoY change, YoY %, an arrow, a colour and a combined text line (`▼ £1,790,345 (-4.4%)`). On the report those drive the cards.
-- **Targets**, in their own suite for the five targetable metrics, gross profit (value and rate) and digital sales, plus **Any-Grain** versions of the value targets that work at day and week level.
+- **Targets**, in their own suite for the five targetable metrics, gross profit (value and rate) and digital sales, plus **Any-Grain** versions that work at day and week level.
 - **Pareto** (at three grains), a **P&L waterfall**, a **VAT toggle** and a **Currency calculation group** that converts every monetary measure through one mechanism instead of duplicating measures.
 - Two hierarchies on the date table: a Calendar Date one and a **Business Calendar** one (Year, Period, Week, Day). Year-on-year always uses the Business Calendar, because the LY measures swap the business year.
 

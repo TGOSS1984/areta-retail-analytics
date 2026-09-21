@@ -688,6 +688,35 @@ table fact_targets
 		lineageTag: d1da6428-adba-4de0-b0b5-204d0d6cc97b
 		displayFolder: Targets (Any Grain)
 
+	measure 'Target Gross Margin %, Any Grain' =
+			// The margin target is a rate for the period, so it is the same on every day of that period.
+			// Same as the plain measure (checked: identical at day, week, period and year), kept here so the Any Grain set is complete.
+			[Target Gross Margin %]
+		formatString: 0.0%
+		lineageTag: 6f9ab33c-fc75-4e4c-b12c-fe4aaf966004
+		displayFolder: Targets (Any Grain)
+
+	measure 'Gross Margin Target Variance (Any Grain, pp)' =
+			[Gross Margin %] - [Target Gross Margin %, Any Grain]
+		formatString: 0.0%
+		lineageTag: 99175531-efa4-4223-af58-fb9b483c3ee5
+		displayFolder: Targets (Any Grain)
+
+	measure 'Gross Margin Target Trend Arrow (Any Grain)' =
+			IF ( [Gross Margin Target Variance (Any Grain, pp)] > 0, "▲", IF ( [Gross Margin Target Variance (Any Grain, pp)] < 0, "▼", "▬" ) )
+		lineageTag: 7d733586-3952-4a1b-af45-b93c5b741137
+		displayFolder: Targets (Any Grain)
+
+	measure 'Gross Margin Target Trend Colour (Any Grain)' =
+			IF ( [Gross Margin Target Variance (Any Grain, pp)] > 0, "#2E7D32", IF ( [Gross Margin Target Variance (Any Grain, pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		lineageTag: 54b9c542-eacb-4e5c-9d15-3634055b43c0
+		displayFolder: Targets (Any Grain)
+
+	measure 'Gross Margin Target Combo (Any Grain)' =
+			[Gross Margin Target Trend Arrow (Any Grain)] & " " & FORMAT ( [Gross Margin Target Variance (Any Grain, pp)], "+0.0pp;-0.0pp;0.0pp" )
+		lineageTag: 95564ae9-487e-46d1-bd71-9c0553d7d1b7
+		displayFolder: Targets (Any Grain)
+
 	partition fact_targets = m
 		mode: import
 		source =

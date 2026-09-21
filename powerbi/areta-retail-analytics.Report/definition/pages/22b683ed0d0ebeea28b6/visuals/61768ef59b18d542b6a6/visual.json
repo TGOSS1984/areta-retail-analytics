@@ -226,6 +226,21 @@
           }
         },
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Units Sold",
+            "id": "field-bf098f1d-ee40-3ec0-9700-9df243f5f66a",
+            "order": 1
+          }
+        },
+        {
           "properties": {
             "value": {
               "expr": {
@@ -235,7 +250,7 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Sales YoY Combo"
+                  "Property": "Net Units Sold YoY Combo"
                 }
               }
             }
@@ -249,7 +264,7 @@
               }
             ],
             "metadata": "fact_sales.Net Units Sold",
-            "id": "field-bf098f1d-ee40-3ec0-9700-9df243f5f66a",
+            "id": "field-1e06a512-54f6-6158-2f7e-a8585d7e975a",
             "order": 1
           }
         }
@@ -297,6 +312,28 @@
           "selector": {
             "metadata": "fact_sales.Net Units Sold",
             "id": "field-bf098f1d-ee40-3ec0-9700-9df243f5f66a"
+          }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Net Units Sold",
+            "id": "field-1e06a512-54f6-6158-2f7e-a8585d7e975a"
           }
         }
       ],
@@ -505,6 +542,109 @@
             ],
             "metadata": "fact_sales.Net Units Sold",
             "id": "field-f54dfaa9-ea97-bbbc-0ba2-fdc1293c5959"
+          }
+        },
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Net Units Sold",
+            "id": "field-1e06a512-54f6-6158-2f7e-a8585d7e975a"
+          }
+        },
+        {
+          "properties": {
+            "valueFontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_sales"
+                                    }
+                                  },
+                                  "Property": "Net Units Sold YoY (Units)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_sales"
+                                    }
+                                  },
+                                  "Property": "Net Units Sold YoY (Units)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Units Sold",
+            "id": "field-1e06a512-54f6-6158-2f7e-a8585d7e975a"
           }
         }
       ]

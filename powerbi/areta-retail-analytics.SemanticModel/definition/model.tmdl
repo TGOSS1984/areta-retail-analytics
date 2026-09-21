@@ -38,6 +38,7 @@ ref table 'Currency Conversion'
 ref table fact_digital_targets
 ref table dq_check_results
 ref table dq_table_profile
+ref table 'VAT View'
 
 ref cultureInfo en-GB
 

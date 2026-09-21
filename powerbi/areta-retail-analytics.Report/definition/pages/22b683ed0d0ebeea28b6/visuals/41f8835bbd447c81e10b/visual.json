@@ -225,6 +225,47 @@
             "order": 1
           }
         }
+      ],
+      "referenceLabelTitle": [
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_stock_snapshot.Stock Value (Retail, GBP)",
+            "id": "field-a8c58bdd-9bfe-0021-326a-a049342d08b0"
+          }
+        }
+      ],
+      "referenceLabelValue": [
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_stock_snapshot.Stock Value (Retail, GBP)",
+            "id": "field-a8c58bdd-9bfe-0021-326a-a049342d08b0"
+          }
+        }
       ]
     },
     "visualContainerObjects": {

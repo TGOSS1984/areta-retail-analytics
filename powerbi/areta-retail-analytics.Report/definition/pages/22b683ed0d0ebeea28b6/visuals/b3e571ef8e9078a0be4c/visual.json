@@ -76,7 +76,7 @@
             "mapTheme": {
               "expr": {
                 "Literal": {
-                  "Value": "'aerial'"
+                  "Value": "'canvasLight'"
                 }
               }
             }

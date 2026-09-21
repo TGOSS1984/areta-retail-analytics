@@ -1,0 +1,42 @@
+table 'VAT View'
+	lineageTag: a148f4b8-d446-43b1-ae0d-05d640ba636d
+
+	calculationGroup
+		precedence: 20
+
+		calculationItem 'Excluding VAT' = SELECTEDMEASURE ( )
+
+		calculationItem 'Including VAT' =
+				IF (
+				    ISSELECTEDMEASURE (
+				        [Net Sales (GBP)],
+				        [Net Sales LY],
+				        [Net Sales YoY (GBP)],
+				        [Target Net Sales (GBP)],
+				        [Net Sales Target Variance (GBP)],
+				        [Target Net Sales (GBP), Any Grain],
+				        [Net Sales Target Variance (Any Grain, GBP)]
+				    ),
+				    SELECTEDMEASURE ( )
+				        * DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    SELECTEDMEASURE ( )
+				)
+
+	column 'VAT View'
+		dataType: string
+		lineageTag: 9b3d4f43-62a4-497a-a11e-c0c2e95b8a03
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: af19c239-2b34-400d-afda-7de5afd14998
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

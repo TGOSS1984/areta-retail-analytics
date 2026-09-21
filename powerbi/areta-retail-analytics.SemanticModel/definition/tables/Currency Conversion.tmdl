@@ -6,7 +6,12 @@ table 'Currency Conversion'
 
 		calculationItem 'Local Currency (GBP)' = SELECTEDMEASURE ( )
 
-		calculationItem 'Selected Currency' = SELECTEDMEASURE ( ) * [FX Rate (Selected)]
+		calculationItem 'Selected Currency' =
+				IF (
+				    CONTAINSSTRING ( SELECTEDMEASUREFORMATSTRING ( ), "£" ),
+				    SELECTEDMEASURE ( ) * [FX Rate (Selected)],
+				    SELECTEDMEASURE ( )
+				)
 
 	column 'Currency Conversion'
 		dataType: string

@@ -207,6 +207,34 @@
             ],
             "metadata": "fact_sales.Gross Margin %",
             "id": "field-c839e49d-c7f6-09e8-4d1b-64833718ea83",
+            "order": 1
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_targets"
+                    }
+                  },
+                  "Property": "Gross Margin Target Combo (Any Grain)"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Gross Margin %",
+            "id": "field-155ed859-4de4-8251-a6c9-43b1bfedba97",
             "order": 0
           }
         }
@@ -246,6 +274,28 @@
           "selector": {
             "metadata": "fact_sales.Gross Margin %",
             "id": "field-c839e49d-c7f6-09e8-4d1b-64833718ea83"
+          }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs Target'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Gross Margin %",
+            "id": "field-155ed859-4de4-8251-a6c9-43b1bfedba97"
           }
         }
       ],
@@ -344,6 +394,102 @@
             ],
             "metadata": "fact_sales.Gross Margin %",
             "id": "field-c839e49d-c7f6-09e8-4d1b-64833718ea83"
+          }
+        },
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Gross Margin %",
+            "id": "field-155ed859-4de4-8251-a6c9-43b1bfedba97"
+          }
+        },
+        {
+          "properties": {
+            "valueFontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_targets"
+                                    }
+                                  },
+                                  "Property": "Gross Margin Target Variance (Any Grain, pp)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_targets"
+                                    }
+                                  },
+                                  "Property": "Gross Margin Target Variance (Any Grain, pp)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Gross Margin %",
+            "id": "field-155ed859-4de4-8251-a6c9-43b1bfedba97"
           }
         }
       ]

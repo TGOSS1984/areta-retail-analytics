@@ -131,7 +131,7 @@ table fact_footfall
 		displayFolder: Footfall & Conversion
 		lineageTag: 9cb15783-b45c-46d8-be3d-c923d5e97555
 
-	measure 'Conversion Rate YoY Combo' = [Conversion Rate Trend Arrow] & " " & FORMAT ( [Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Conversion Rate YoY Combo' = [Conversion Rate Trend Arrow] & " " & FORMAT ( [Conversion Rate YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Footfall & Conversion
 		lineageTag: 96c7a8f7-5b7c-451a-bc25-efd4958b7b17
 

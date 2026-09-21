@@ -169,7 +169,7 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 095911f0-bc5c-45fe-87a1-f6c71ee398a8
 
-	measure 'Gross Contribution YoY Combo' = [Gross Contribution Trend Arrow] & " " & FORMAT ( [Gross Contribution YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Gross Contribution YoY Combo' = [Gross Contribution Trend Arrow] & " " & FORMAT ( [Gross Contribution YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Contribution
 		lineageTag: 187620f6-ded9-4e02-9b69-4913608756d6
 
@@ -195,7 +195,7 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 931cf527-bc41-40c5-90a6-b876006fdda7
 
-	measure 'Net Contribution Pct YoY Combo' = [Net Contribution Pct Trend Arrow] & " " & FORMAT ( [Net Contribution Pct YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Net Contribution Pct YoY Combo' = [Net Contribution Pct Trend Arrow] & " " & FORMAT ( [Net Contribution Pct YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Contribution
 		lineageTag: 41cc80dd-c967-4124-ae2a-3c05e726e291
 

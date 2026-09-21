@@ -147,7 +147,7 @@ table fact_digital_traffic
 		displayFolder: Time Intelligence
 		lineageTag: 5957d5b9-be06-430e-9903-6554b63d43bc
 
-	measure 'Digital Conversion Rate YoY Combo' = [Digital Conversion Rate Trend Arrow] & " " & FORMAT ( [Digital Conversion Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Digital Conversion Rate YoY Combo' = [Digital Conversion Rate Trend Arrow] & " " & FORMAT ( [Digital Conversion Rate YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Time Intelligence
 		lineageTag: 2c7868f5-6bea-4745-ab55-eb702fe1938c
 

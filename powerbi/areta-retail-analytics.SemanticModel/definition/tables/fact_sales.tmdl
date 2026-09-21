@@ -310,7 +310,7 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 52c2c241-1f3c-44b8-a248-beeae31d99ae
 
-	measure 'Gross Margin YoY Combo' = [Gross Margin Trend Arrow] & " " & FORMAT ( [Gross Margin YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Gross Margin YoY Combo' = [Gross Margin Trend Arrow] & " " & FORMAT ( [Gross Margin YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: KPI Trend Indicators
 		lineageTag: 06cdde71-0829-48d2-ae84-79c49813baa1
 
@@ -591,7 +591,7 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 53891f5a-9fbf-4a80-846d-de4eceb3ca88
 
-	measure 'Full Price Mix YoY Combo' = [Full Price Mix Trend Arrow] & " " & FORMAT ( [Full Price Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Full Price Mix YoY Combo' = [Full Price Mix Trend Arrow] & " " & FORMAT ( [Full Price Mix YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: KPI Trend Indicators
 		lineageTag: 12c8c90a-81d3-48c6-a21a-120849eb8c55
 
@@ -624,7 +624,7 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 6a77d00e-0fe3-4e99-9aee-9266eaad0007
 
-	measure 'Multi-buy Mix YoY Combo' = [Multi-buy Mix Trend Arrow] & " " & FORMAT ( [Multi-buy Mix YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Multi-buy Mix YoY Combo' = [Multi-buy Mix Trend Arrow] & " " & FORMAT ( [Multi-buy Mix YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: KPI Trend Indicators
 		lineageTag: f0c9b6e5-b222-4644-9f44-75e528a0c3c8
 
@@ -657,7 +657,7 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 4717967f-9aa8-45cb-86c3-a2f5b0a5801a
 
-	measure 'Return Rate YoY Combo' = [Return Rate Trend Arrow] & " " & FORMAT ( [Return Rate YoY (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Return Rate YoY Combo' = [Return Rate Trend Arrow] & " " & FORMAT ( [Return Rate YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: KPI Trend Indicators
 		lineageTag: 62c36b6c-772d-4adf-ab72-c8f18ecef2b2
 

@@ -189,27 +189,34 @@ table fact_targets
 			)
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 7edd78dd-b7ff-4e5a-8cf5-305a4336b818
 
 	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' = [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) Target]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 4b8b6e4e-022a-43d9-96bd-cce4b618a4c5
 
 	measure 'Net Sales (Selected VAT View) Target Variance %' = DIVIDE ( [Net Sales (Selected VAT View) Target Variance (GBP)], [Net Sales (Selected VAT View) Target] )
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: 43da880f-eb13-488d-8414-1b56c2464df0
 
 	measure 'Net Sales (Selected VAT View) Target Achievement %' = DIVIDE ( [Net Sales (Selected VAT View)], [Net Sales (Selected VAT View) Target] )
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: 0e3bc1b8-c170-4b0f-84e0-c61ea09cd724
 
 	measure 'Net Sales (Selected VAT View) Target Trend Arrow' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "▲", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "▼", "▬" ) )
 		displayFolder: VAT View
+		lineageTag: a5f57efe-6fef-411e-847e-aaa34fe829d4
 
 	measure 'Net Sales (Selected VAT View) Target Trend Colour' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
 		displayFolder: VAT View
+		lineageTag: 50f09443-3b29-4695-a18d-a52e4ee9226e
 
 	measure 'Net Sales (Selected VAT View) Target Combo' = [Net Sales (Selected VAT View) Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: VAT View
+		lineageTag: 6ebbdf0b-52de-4f8f-8d0d-24162e6155de
 
 	measure 'Target Net Sales (GBP), Any Grain' =
 			SUMX (

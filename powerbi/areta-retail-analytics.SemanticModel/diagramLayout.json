@@ -11,7 +11,7 @@
         {
           "location": {
             "x": 125.78083100000002,
-            "y": 2462.155235011719
+            "y": 3199.9164119589846
           },
           "nodeIndex": "dim_date",
           "nodeLineageTag": "bad117fa-83bb-47ba-a4c8-006645ca8c7f",
@@ -24,7 +24,7 @@
         {
           "location": {
             "x": 1013.8831320000002,
-            "y": 2481.6424060117192
+            "y": 3219.4035829589848
           },
           "nodeIndex": "dim_period",
           "nodeLineageTag": "d48ae802-f1e9-47f6-a933-a36e79c84829",
@@ -37,7 +37,7 @@
         {
           "location": {
             "x": 1.7715609999999913,
-            "y": 2930.7846010117191
+            "y": 3668.5457779589847
           },
           "nodeIndex": "dim_product",
           "nodeLineageTag": "70764168-160e-4843-a8a3-9080d4fa314a",
@@ -50,7 +50,7 @@
         {
           "location": {
             "x": 491.48717099999993,
-            "y": 3520.7005090117191
+            "y": 4258.4616859589842
           },
           "nodeIndex": "dim_promo",
           "nodeLineageTag": "06796264-7885-4fa1-a881-8472838282a0",
@@ -63,7 +63,7 @@
         {
           "location": {
             "x": 900.02814099999978,
-            "y": 3696.9332520117187
+            "y": 4434.6944289589846
           },
           "nodeIndex": "dim_currency",
           "nodeLineageTag": "a085256c-b2f6-489b-a792-acd22cc89c49",
@@ -76,7 +76,7 @@
         {
           "location": {
             "x": 368.16354899999982,
-            "y": 2872.4652830117193
+            "y": 3610.2264599589848
           },
           "nodeIndex": "fact_sales",
           "nodeLineageTag": "ccce2880-e748-4240-9429-05ffb06b0406",
@@ -89,7 +89,7 @@
         {
           "location": {
             "x": 1598,
-            "y": 2746.1762580117193
+            "y": 3483.9374349589848
           },
           "nodeIndex": "fact_footfall",
           "nodeLineageTag": "0a1f02ad-fb55-4f6e-b8a1-c31be2d00ec5",
@@ -102,7 +102,7 @@
         {
           "location": {
             "x": 727.19880799999964,
-            "y": 2683.6003600117192
+            "y": 3421.3615369589847
           },
           "nodeIndex": "fact_stock_snapshot",
           "nodeLineageTag": "8239be0c-cd4d-423b-b258-d6e9493c8c6b",
@@ -115,7 +115,7 @@
         {
           "location": {
             "x": 1636.5598410000002,
-            "y": 3038.308852011719
+            "y": 3776.0700289589845
           },
           "nodeIndex": "fact_targets",
           "nodeLineageTag": "9e876f8d-e369-44ed-9f8d-20225e05a20c",
@@ -128,7 +128,7 @@
         {
           "location": {
             "x": 696.33885099999941,
-            "y": 3154.6726990117195
+            "y": 3892.433875958985
           },
           "nodeIndex": "fact_store_finance",
           "nodeLineageTag": "ad649f07-56ab-4a9b-8642-fa17a5de633c",
@@ -141,7 +141,7 @@
         {
           "location": {
             "x": 1224.8866620637514,
-            "y": 3730.5929110117186
+            "y": 4468.3540879589837
           },
           "nodeIndex": "fx_rate_monthly",
           "nodeLineageTag": "a0815869-d969-44ad-934c-433db59fec4c",
@@ -154,7 +154,7 @@
         {
           "location": {
             "x": 1918.7882800000002,
-            "y": 2928.5652665117195
+            "y": 3666.3264434589851
           },
           "nodeIndex": "dim_store",
           "nodeLineageTag": "5ec73946-9ca3-4dbf-8788-516bbd092908",
@@ -167,7 +167,7 @@
         {
           "location": {
             "x": 2535.20147018063,
-            "y": 2892.8807271068281
+            "y": 3630.6419040540936
           },
           "nodeIndex": "dim_market",
           "nodeLineageTag": "a2ed69c1-ba36-45e4-a9fe-ca556b8689e6",
@@ -180,7 +180,7 @@
         {
           "location": {
             "x": 2819.37835841536,
-            "y": 2844.205719739266
+            "y": 3581.9668966865315
           },
           "nodeIndex": "fact_digital_sales",
           "nodeLineageTag": "2ad09c39-2870-45e4-bb1f-20a71fa69675",
@@ -193,7 +193,7 @@
         {
           "location": {
             "x": 2251.016719,
-            "y": 2811.9458362841733
+            "y": 3549.7070132314389
           },
           "nodeIndex": "fact_digital_traffic",
           "nodeLineageTag": "3b85a639-6220-498b-a588-fd4141a0c4fa",
@@ -206,7 +206,7 @@
         {
           "location": {
             "x": 3101.60679741536,
-            "y": 2851.3415452617191
+            "y": 3589.1027222089847
           },
           "nodeIndex": "dim_browser",
           "nodeLineageTag": "b6d1b7d0-9108-4728-9278-be6426c32547",
@@ -219,7 +219,7 @@
         {
           "location": {
             "x": 3383.8352364153598,
-            "y": 2725.2401961367195
+            "y": 3463.0013730839851
           },
           "nodeIndex": "dim_pnl_bridge",
           "nodeLineageTag": "9c8fb69f-3afd-47b9-bee1-5ec678b19fa3",
@@ -232,7 +232,7 @@
         {
           "location": {
             "x": 3666.0636754153597,
-            "y": 2548.0881724492192
+            "y": 3285.8493493964847
           },
           "nodeIndex": "dim_report_metadata",
           "nodeLineageTag": "6258432f-ba01-4fe0-b389-51d25ca1a194",
@@ -245,7 +245,7 @@
         {
           "location": {
             "x": 3948.2921144153597,
-            "y": 2264.3601369179687
+            "y": 3002.1213138652342
           },
           "nodeIndex": "dim_vat_view",
           "nodeLineageTag": "5895eea1-27ed-491d-9693-0bf0d803c6a3",
@@ -258,7 +258,7 @@
         {
           "location": {
             "x": 4230.52055341536,
-            "y": 1937.6656326679688
+            "y": 2675.4268096152346
           },
           "nodeIndex": "Currency Conversion",
           "nodeLineageTag": "880e9f95-4c3c-4fd5-8170-514648921420",
@@ -271,7 +271,7 @@
         {
           "location": {
             "x": 4514.52055341536,
-            "y": 1937.6656326679688
+            "y": 2675.4268096152346
           },
           "nodeIndex": "dim_currency_view",
           "nodeLineageTag": "fabf4e1d-beef-4d02-a3d0-2f190d8e3069",
@@ -284,10 +284,36 @@
         {
           "location": {
             "x": 4796.7489924153606,
-            "y": 1475.5223538945313
+            "y": 2213.2835308417971
           },
           "nodeIndex": "fact_digital_targets",
           "nodeLineageTag": "99484c71-bf34-4c10-99fc-b058170cdb03",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5078.977431415361,
+            "y": 1798.4666260058593
+          },
+          "nodeIndex": "dq_check_results",
+          "nodeLineageTag": "393b6424-0658-4cc9-8c5d-3af996210bf9",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5362.977431415361,
+            "y": 1798.4666260058593
+          },
+          "nodeIndex": "dq_table_profile",
+          "nodeLineageTag": "0e7da5cd-0bd5-475a-ae18-f9c5e49abc30",
           "size": {
             "height": 300,
             "width": 234

@@ -3,51 +3,51 @@ table dq_table_profile
 
 	measure 'DQ Tables Profiled' = COUNTROWS ( dq_table_profile )
 		formatString: #,0
-		lineageTag: 2973ce50-6173-4fe8-b1b0-31c95212a838
 		displayFolder: Data Quality
+		lineageTag: 2973ce50-6173-4fe8-b1b0-31c95212a838
 
 	measure 'DQ Total Rows' = SUM ( dq_table_profile[row_count] )
 		formatString: #,0
-		lineageTag: c49c5e49-023e-491d-bf44-52376024bece
 		displayFolder: Data Quality
+		lineageTag: c49c5e49-023e-491d-bf44-52376024bece
 
 	measure 'DQ Column Count' = SUM ( dq_table_profile[column_count] )
 		formatString: #,0
-		lineageTag: 83de5102-b336-4148-aa8b-d2219f71cc15
 		displayFolder: Data Quality
+		lineageTag: 83de5102-b336-4148-aa8b-d2219f71cc15
 
 	measure 'DQ Null Cells' = SUM ( dq_table_profile[null_cells] )
 		formatString: #,0
-		lineageTag: 7bcdfd39-4cbe-4bc2-a2b6-102d58f32f61
 		displayFolder: Data Quality
+		lineageTag: 7bcdfd39-4cbe-4bc2-a2b6-102d58f32f61
 
 	measure 'DQ Null %' = DIVIDE ( [DQ Null Cells], SUM ( dq_table_profile[cell_count] ) )
 		formatString: 0.000%
-		lineageTag: a77159de-6238-4ad0-ae6c-ecbc83b1779c
 		displayFolder: Data Quality
+		lineageTag: a77159de-6238-4ad0-ae6c-ecbc83b1779c
 
 	measure 'DQ Latest Data Date' = MAX ( dq_table_profile[latest_data_date] )
 		formatString: dd mmm yyyy
-		lineageTag: a27afa5a-6020-48e4-b273-eef3ebd6ce27
 		displayFolder: Data Quality
+		lineageTag: a27afa5a-6020-48e4-b273-eef3ebd6ce27
 
 	measure 'DQ Days Behind' = MAX ( dq_table_profile[days_behind_run] )
 		formatString: 0
-		lineageTag: a86214ee-fc73-40ed-812c-f689b66e4c4d
 		displayFolder: Data Quality
+		lineageTag: a86214ee-fc73-40ed-812c-f689b66e4c4d
 
 	measure 'DQ Stale Tables' = COALESCE ( CALCULATE ( COUNTROWS ( dq_table_profile ), dq_table_profile[freshness_status] = "Stale" ), 0 )
 		formatString: #,0
-		lineageTag: 5e548b07-60d1-45b7-914a-c32ac3f85a7a
 		displayFolder: Data Quality
+		lineageTag: 5e548b07-60d1-45b7-914a-c32ac3f85a7a
 
 	measure 'DQ Freshness Summary' = IF ( [DQ Stale Tables] > 0, [DQ Stale Tables] & " stale", "All actuals up to date" )
-		lineageTag: 1678e79f-17fd-405b-9255-fcdee368a3b1
 		displayFolder: Data Quality
+		lineageTag: 1678e79f-17fd-405b-9255-fcdee368a3b1
 
 	measure 'DQ Freshness Overall Colour' = IF ( [DQ Stale Tables] > 0, "#D32F2F", "#2E7D32" )
-		lineageTag: 40e4bbf5-362d-41e0-94a6-4ae26dffe805
 		displayFolder: Data Quality
+		lineageTag: 40e4bbf5-362d-41e0-94a6-4ae26dffe805
 
 	measure 'DQ Freshness Colour' =
 			SWITCH (
@@ -56,8 +56,8 @@ table dq_table_profile
 			    "Stale", "#D32F2F",
 			    "#8D9AA1"
 			)
-		lineageTag: b77e691c-ba30-494e-8721-271aae3c05c9
 		displayFolder: Data Quality
+		lineageTag: b77e691c-ba30-494e-8721-271aae3c05c9
 
 	column table_name
 		dataType: string
@@ -193,3 +193,4 @@ table dq_table_profile
 				    Source
 
 	annotation PBI_ResultType = Table
+

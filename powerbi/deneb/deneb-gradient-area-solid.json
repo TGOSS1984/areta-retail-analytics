@@ -1,0 +1,119 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "EDIT ONLY the 'transform' block at the top: point 'category' and 'value' (and 'sort_key' on the line charts) at your own fields, and change the number format in 'label' if the measure isn't money. Everything else refers to those generic names.",
+  "background": "transparent",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "labelColor": "#5B6A72",
+      "titleColor": "#5B6A72",
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "titleFont": "Segoe UI, Arial, sans-serif",
+      "labelFontSize": 11,
+      "gridColor": "#E8E1D6"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum['business_period_label']",
+      "as": "category"
+    },
+    {
+      "calculate": "datum['Net Sales (GBP)']",
+      "as": "value"
+    },
+    {
+      "calculate": "datum['period_key']",
+      "as": "sort_key"
+    },
+    {
+      "calculate": "'£' + format(datum.value, '.3~s')",
+      "as": "label"
+    },
+    {
+      "calculate": "datum.category + ': ' + datum.label",
+      "as": "tip"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "category",
+      "type": "ordinal",
+      "sort": {
+        "field": "sort_key",
+        "op": "min"
+      },
+      "title": null,
+      "axis": {
+        "grid": false,
+        "labelAngle": 0,
+        "labelOverlap": "parity",
+        "labelPadding": 8
+      }
+    },
+    "y": {
+      "field": "value",
+      "type": "quantitative",
+      "title": null,
+      "axis": {
+        "format": "~s",
+        "tickCount": 4
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "fill": {
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "gradient": "linear",
+          "stops": [
+            {
+              "offset": 0,
+              "color": "#B1CED5"
+            },
+            {
+              "offset": 1,
+              "color": "#1F7486"
+            }
+          ]
+        },
+        "line": false
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "color": "#1F7486",
+        "strokeWidth": 2.5
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 180,
+        "opacity": 0
+      },
+      "encoding": {
+        "tooltip": {
+          "field": "tip",
+          "type": "nominal"
+        }
+      }
+    }
+  ]
+}

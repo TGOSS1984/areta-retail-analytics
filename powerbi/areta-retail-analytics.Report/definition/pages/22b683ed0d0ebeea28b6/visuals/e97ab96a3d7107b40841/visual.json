@@ -123,6 +123,19 @@
             }
           }
         }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "58D"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {

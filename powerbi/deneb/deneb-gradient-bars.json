@@ -1,0 +1,117 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "EDIT ONLY the 'transform' block at the top: point 'category' and 'value' (and 'sort_key' on the line charts) at your own fields, and change the number format in 'label' if the measure isn't money. Everything else refers to those generic names.",
+  "background": "transparent",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "labelColor": "#5B6A72",
+      "titleColor": "#5B6A72",
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "titleFont": "Segoe UI, Arial, sans-serif",
+      "labelFontSize": 11,
+      "gridColor": "#E8E1D6"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum['major_product_group']",
+      "as": "category"
+    },
+    {
+      "calculate": "datum['Net Sales (GBP)']",
+      "as": "value"
+    },
+    {
+      "calculate": "'£' + format(datum.value, '.3~s')",
+      "as": "label"
+    },
+    {
+      "calculate": "datum.category + ': ' + datum.label",
+      "as": "tip"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "category",
+      "type": "nominal",
+      "sort": "-x",
+      "title": null,
+      "axis": {
+        "grid": false,
+        "labelLimit": 130
+      }
+    },
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "title": null,
+      "axis": {
+        "format": "~s",
+        "tickCount": 4
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "color": {
+          "x1": 0,
+          "y1": 0,
+          "x2": 1,
+          "y2": 0,
+          "gradient": "linear",
+          "stops": [
+            {
+              "offset": 0,
+              "color": "#B1CED5"
+            },
+            {
+              "offset": 1,
+              "color": "#1F7486"
+            }
+          ]
+        },
+        "cornerRadiusTopRight": 3,
+        "cornerRadiusBottomRight": 3
+      },
+      "encoding": {
+        "opacity": {
+          "condition": {
+            "test": "datum['__selected__'] == 'off'",
+            "value": 0.35
+          },
+          "value": 1
+        },
+        "tooltip": {
+          "field": "tip",
+          "type": "nominal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 6,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#0F1A1E"
+      },
+      "encoding": {
+        "text": {
+          "field": "label",
+          "type": "nominal"
+        }
+      }
+    }
+  ]
+}

@@ -29,6 +29,16 @@ means something — it's the standard/book cost fact_stock_snapshot uses
 for stock valuation — it's just no longer what drives realized sale
 margin here.
 
+Margin drift: the tier ranges above are the STARTING point, but they are
+held constant in time, so margin came out at the same ~69.4% in every
+business year and any year-on-year margin measure sat at 0.0pp. Real
+margin moves: cost inflation squeezes it, price rises and mix shifts win
+it back. MARGIN_DRIFT_ANCHORS below adds a smooth, small shift (a
+fraction of margin, so -0.008 is -0.8 points) to every sale's margin,
+interpolated day by day between mid-year anchor dates. It's applied
+after the random draw, so nothing else in the simulation changes: same
+units, same prices, same random numbers, only cost_gbp moves.
+
 VAT: net_sales_gbp is now genuinely ex-VAT, with vat_gbp and
 gross_sales_gbp (inc-VAT) added, using each market's vat_rate from
 markets.yml.
@@ -253,6 +263,33 @@ MARGIN_TIER_RANGES = [
 ]
 
 
+# Year-on-year drift in margin, as a fraction added to each sale's margin
+# (-0.008 = 0.8 points lower). Anchored at 1 September, roughly the middle
+# of each business year, so a business year's average drift is close to its
+# anchor and the year-on-year change is the difference between anchors:
+#   2024: -0.8 points   cost inflation, before prices catch up
+#   2025: +0.5 points   price rises recover part of it
+#   2026: +0.3 points   mix and sourcing help a little more
+# Before the first anchor it holds at that value; after the last it holds
+# flat. Change these numbers to change the story the margin KPIs tell.
+MARGIN_DRIFT_ANCHORS = [
+    (dt.date(2023, 9, 1), 0.000),
+    (dt.date(2024, 9, 1), -0.008),
+    (dt.date(2025, 9, 1), -0.003),
+    (dt.date(2026, 9, 1), 0.000),
+    (dt.date(2027, 9, 1), 0.004),
+    (dt.date(2028, 9, 1), 0.006),
+]
+_DRIFT_DAYS = np.array([np.datetime64(d, "D").astype(int) for d, _ in MARGIN_DRIFT_ANCHORS], dtype=float)
+_DRIFT_VALUES = np.array([v for _, v in MARGIN_DRIFT_ANCHORS], dtype=float)
+
+
+def margin_drift(dates) -> np.ndarray:
+    """Margin shift for one date or an array/Series of dates (interpolated between the anchors)."""
+    days = np.atleast_1d(np.asarray(dates, dtype="datetime64[D]")).astype(float)
+    return np.interp(days, _DRIFT_DAYS, _DRIFT_VALUES)
+
+
 def _seasonal_mult(major_group: str, month: int) -> float:
     prof = SEASON_PROFILE[major_group]
     return 1 + prof["amplitude"] * np.cos(2 * np.pi * (month - prof["peak_month"]) / 12)
@@ -414,7 +451,7 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
         net_sales_gbp = np.round(net_unit_price_gbp * q, 2)
 
         margin_lo, margin_hi = _margin_bounds(applied_discount)
-        target_margin = margin_rng.uniform(margin_lo, margin_hi)
+        target_margin = margin_rng.uniform(margin_lo, margin_hi) + margin_drift(d)[0]
         cost_gbp = np.round(net_sales_gbp * (1 - target_margin), 2)
 
         vat = vat_rate_arr[idx]
@@ -534,7 +571,7 @@ def synthesize_multibuy_attachments(
 
     margin_rng = np.random.default_rng(RANDOM_SEED + 21)
     full_price_lo, full_price_hi = MARGIN_TIER_RANGES[0]
-    target_margin = margin_rng.uniform(full_price_lo, full_price_hi, size=len(companions))
+    target_margin = margin_rng.uniform(full_price_lo, full_price_hi, size=len(companions)) + margin_drift(companions["date"])
     companions["cost_gbp"] = np.round(companions["net_sales_gbp"] * (1 - target_margin), 2)
     companions["is_return"] = False
 
@@ -616,7 +653,7 @@ def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame) -> pd.Dat
 
     margin_lo, margin_hi = _margin_bounds(df.loc[idx, "discount_pct"].to_numpy())
     margin_rng = np.random.default_rng(RANDOM_SEED + 12)
-    target_margin = margin_rng.uniform(margin_lo, margin_hi)
+    target_margin = margin_rng.uniform(margin_lo, margin_hi) + margin_drift(df.loc[idx, "date"])
     df.loc[idx, "cost_gbp"] = np.round(new_net_sales_gbp * (1 - target_margin), 2)
 
     df.loc[idx, "vat_gbp"] = np.round(new_net_sales_gbp * vat_rate_implied.to_numpy(), 2)

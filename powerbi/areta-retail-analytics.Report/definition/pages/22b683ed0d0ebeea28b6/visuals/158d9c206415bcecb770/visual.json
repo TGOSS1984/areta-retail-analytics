@@ -29,6 +29,21 @@
               "queryRef": "dim_store.channel",
               "nativeQueryRef": "channel",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_store"
+                    }
+                  },
+                  "Property": "market_name"
+                }
+              },
+              "queryRef": "dim_store.market_name",
+              "nativeQueryRef": "market_name",
+              "active": false
             }
           ]
         },

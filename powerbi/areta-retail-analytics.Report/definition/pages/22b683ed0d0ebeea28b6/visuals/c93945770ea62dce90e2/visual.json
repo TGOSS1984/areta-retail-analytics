@@ -10,45 +10,25 @@
     "tabOrder": 20010
   },
   "visual": {
-    "visualType": "clusteredBarChart",
+    "visualType": "tableEx",
     "query": {
       "queryState": {
-        "Category": {
+        "Values": {
           "projections": [
             {
               "field": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dim_store"
+                      "Entity": "dim_product"
                     }
                   },
-                  "Property": "market_name"
+                  "Property": "product_group"
                 }
               },
-              "queryRef": "dim_store.market_name",
-              "nativeQueryRef": "market_name1",
-              "active": true
+              "queryRef": "dim_product.product_group",
+              "nativeQueryRef": "product_group"
             },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "dim_store"
-                    }
-                  },
-                  "Property": "channel"
-                }
-              },
-              "queryRef": "dim_store.channel",
-              "nativeQueryRef": "channel",
-              "active": false
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
             {
               "field": {
                 "Measure": {
@@ -71,11 +51,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Sales LY"
+                  "Property": "Net Sales YoY Combo"
                 }
               },
-              "queryRef": "fact_sales.Net Sales LY",
-              "nativeQueryRef": "Net Sales LY"
+              "queryRef": "fact_sales.Net Sales YoY Combo",
+              "nativeQueryRef": "Net Sales YoY Combo"
             }
           ]
         }
@@ -100,13 +80,132 @@
       }
     },
     "objects": {
-      "labels": [
+      "values": [
         {
           "properties": {
-            "show": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_sales"
+                                    }
+                                  },
+                                  "Property": "Net Sales YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_sales"
+                                    }
+                                  },
+                                  "Property": "Net Sales YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Sales YoY Combo"
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "209.12192859585832D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_product.product_group"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "129.8796926052326D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Net Sales YoY Combo"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'None'"
                 }
               }
             }

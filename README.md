@@ -228,7 +228,7 @@ What's in the simulation:
 - **A believable calendar.** Business years and periods, seasonality by season, a weekday curve (Saturday sells about 53% more than a Tuesday), and Black Friday and Boxing Day flags.
 - **A product hierarchy** of brand, division, major product group, product group, style, colour and size, with style names taken from real mountains (Glencoe, Snowdon, Chamonix) because they read like an outdoor range and nobody owns them.
 - **Channels and markets.** A dominant home market plus ten others, owned stores, concessions and an online site per market, each with its own currency (GBP, EUR, PLN, CZK).
-- **Promotions and margin.** Seasonal sales, clearance, flash events and multi-buys, all written into the sales lines with their VAT and cost.
+- **Promotions and margin.** Seasonal sales, clearance, flash events and multi-buys, all written into the sales lines with their VAT and cost. Margin comes from a range per discount depth, with a small year-on-year drift on top (a squeeze from cost inflation, then a recovery) so the margin KPIs have something to show.
 - **Stock, footfall and finance** built from the sales, so they agree with it. Footfall transactions are real invoice counts. Stock follows a simple reorder policy, selling down against each week's actual units and topping back up when it runs low. The store P&Ls are calibrated so gross and net contribution land in sensible ranges.
 - **Targets** for five metrics, built from prior-year actuals plus a growth assumption.
 - **A website**, with the online channel's actual sales split across desktop, mobile and tablet, and traffic simulated separately and calibrated to real conversion-rate benchmarks.
@@ -391,13 +391,15 @@ Separately, the same error showed up once on a refresh when nothing had changed.
 
 **14. Power BI can't check whether an image exists.** I wanted product photos at style-and-colour level with a placeholder for anything without one. A calculated column can't make an HTTP request, so it can't test a URL. The fix was to move the decision into the generator: it looks at which image files really exist and writes the best path into the table (own photo, then product group placeholder, then major group placeholder, then an icon tile). Two things caught me out. GitHub's raw URLs are case sensitive, so `Outerwear.webp` would work on Windows and fail once pushed. And the image is chosen when the script runs, not when Power BI refreshes, so when my own placeholders didn't show up at first it was because the script needed re-running after I'd added the files.
 
-**15. The data wasn't as realistic as I thought.** Querying it in SQL showed Black Friday sales at almost exactly 1.00 times a normal day and return rates of about 3% everywhere. Both are things a real retailer wouldn't have. It's a limitation of the generator and I've noted it rather than hidden it.
+**15. The data wasn't as realistic as I thought.** Querying it in SQL showed Black Friday sales at almost exactly 1.00 times a normal day and return rates of about 3% everywhere. Both are things a real retailer wouldn't have. It's a limitation of the generator and I've noted it rather than hidden it. The same went for margin: I'd calibrated a range per discount depth but held it constant, so every business year came out at the same 69.4% and every margin year-on-year figure read 0.0. I added a small drift over time (about -0.5 points in 2024, then +0.3 in 2025), which changes only the cost on each sale and nothing else, so the units, prices and sales are exactly as they were.
+
+**16. A KPI that reads 0.0 everywhere is either right or broken.** My margin year-on-year and versus-target combos all showed 0.0pp, and I nearly accepted it because the data barely moved. It was both: the data was flat, *and* the combos were formatting a fraction as if it were already in points, so a real -0.5 points rounded to 0.0. The second bug had been sitting behind the first in ten measures. The rule I took from it: when a number looks suspiciously perfect, work out what it should be independently before trusting it, and make sure the test data can actually move the measure you're testing.
 
 ### The web app and tooling
 
-**16. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
+**17. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
 
-**17. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
+**18. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
 
 **Overall, what I'd tell myself at the start:** get the relationship graph right before writing any DAX, test with a filter applied every time, keep numbers reconcilable against a second source (the web app and SQL both did that job), and write the audit before you need it.
 

@@ -115,6 +115,40 @@ CITY_TO_REGION = {
 RETAIL_STORE_TYPES = ["High Street", "Retail Park", "Shopping Centre", "Outlet"]
 RETAIL_STORE_TYPE_WEIGHTS = [0.40, 0.30, 0.20, 0.10]
 
+# Square footage, loosely anchored to real UK outdoor-retail lettings found
+# by searching: Millets ~1,800 sq ft (high street), Berghaus ~2,117 sq ft
+# (small standalone/high street), Mountain Warehouse ~4,160 sq ft (retail
+# park), a combined Cotswold Outdoor/Snow+Rock/Runners Need "megastore"
+# ~6,542 sq ft. These bands cover that range; the store_type value doubles
+# as the concession's HOST format (Garden Centre, Department Store), so the
+# dict below covers both.
+#
+# Deliberate design point: size is drawn from the FORMAT band only, with no
+# link at all to how well that particular store actually trades (trading
+# performance is drawn separately, in build_fact_sales.py's store_perf_factor,
+# from a completely different random seed). That mismatch — a store sized
+# for its format rather than its footfall — is exactly what real retailers
+# get wrong sometimes, and it's what makes fact_store_finance's contribution
+# figures show genuine, not cosmetic, variation: some stores end up with
+# more space than their trading justifies, and it shows in the numbers.
+RETAIL_SQFT_RANGES = {
+    "High Street": (1_200, 3_000),
+    "Retail Park": (3_000, 7_000),
+    "Shopping Centre": (1_500, 4_000),
+    "Outlet": (2_000, 5_000),
+    "Garden Centre": (1_500, 4_000),
+    "Department Store": (1_500, 4_000),
+}
+# A concession is a shop-within-a-shop, a fraction of its host format's
+# footprint, not a full unit of it.
+CONCESSION_SIZE_FACTOR_RANGE = (0.20, 0.40)
+# A small share of stores are an oversized "flagship" for their format —
+# the Kensington-megastore end of the range — regardless of whether the
+# local market can actually fill that much space.
+FLAGSHIP_SHARE = 0.05
+FLAGSHIP_MULTIPLIER_RANGE = (3.0, 5.0)
+FLAGSHIP_SQFT_CAP = 22_000
+
 # City-centre coordinates (decimal degrees) — approximate, a real store's
 # actual address would sit a few streets off these, which is exactly what
 # the per-store jitter below is for. Enough precision for what this is
@@ -205,6 +239,19 @@ CONCESSION_PARTNER_TYPE = {
 }
 
 
+def draw_square_footage(channel: str, store_type: str, rng: random.Random) -> int:
+    """Square footage for one store, by format band; see RETAIL_SQFT_RANGES above."""
+    if channel == "Online":
+        return 0
+    lo, hi = RETAIL_SQFT_RANGES.get(store_type, (1_200, 3_000))
+    base = rng.uniform(lo, hi)
+    if channel == "Concession":
+        return round(base * rng.uniform(*CONCESSION_SIZE_FACTOR_RANGE))
+    if rng.random() < FLAGSHIP_SHARE:
+        return round(min(base * rng.uniform(*FLAGSHIP_MULTIPLIER_RANGE), FLAGSHIP_SQFT_CAP))
+    return round(base)
+
+
 def jittered_coords(city: str, market_name: str, rng: random.Random) -> tuple[float, float]:
     lat, lon = CITY_COORDINATES.get(city, (None, None))
     if lat is None:
@@ -245,6 +292,7 @@ def build() -> pd.DataFrame:
                     "store_name": f"Areta {city}",
                     "channel": "Retail",
                     "store_type": store_type,
+                    "square_footage": draw_square_footage("Retail", store_type, rng),
                     "market_code": code,
                     "market_name": market["name"],
                     "city": city,
@@ -261,12 +309,14 @@ def build() -> pd.DataFrame:
             city = rng.choice(cities)
             partner = rng.choice(CONCESSION_PARTNERS)
             lat, lon = jittered_coords(city, market["name"], rng)
+            host_type = CONCESSION_PARTNER_TYPE[partner]
             rows.append(
                 {
                     "store_id": f"ST{store_id:04d}",
                     "store_name": f"{partner} \u2014 {city}",
                     "channel": "Concession",
-                    "store_type": CONCESSION_PARTNER_TYPE[partner],
+                    "store_type": host_type,
+                    "square_footage": draw_square_footage("Concession", host_type, rng),
                     "market_code": code,
                     "market_name": market["name"],
                     "city": city,
@@ -298,6 +348,7 @@ def build() -> pd.DataFrame:
                 "store_name": f"Areta Online \u2014 {market['name']}",
                 "channel": "Online",
                 "store_type": "Online",
+                "square_footage": 0,  # not a physical footprint — see fact_store_finance's own Online exclusion
                 "market_code": code,
                 "market_name": market["name"],
                 "city": online_city,

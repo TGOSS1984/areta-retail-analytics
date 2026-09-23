@@ -290,7 +290,17 @@ table fact_sales
 		displayFolder: Time Intelligence
 		lineageTag: 62e3d59a-00ca-4c63-a578-d03c03a42b99
 
-	measure 'Net Sales YoY Combo' = [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: 3492abb1-acc8-46dd-a656-550f60f373d9
 
@@ -298,15 +308,45 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 69faa9fc-e794-4561-8386-f06600fbbbb2
 
-	measure 'Retail Sales YoY Combo' = [Retail Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Retail Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Retail Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Retail Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Retail Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Retail Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Retail Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: 947fdd56-0111-4c33-9fdd-b284661069e6
 
-	measure 'Concession Sales YoY Combo' = [Concession Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Concession Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Concession Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Concession Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Concession Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Concession Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Concession Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: ea7ac2d9-d4d4-434d-82cb-9a6bde7ea015
 
-	measure 'Online Sales YoY Combo' = [Online Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Online Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Online Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Online Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Online Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Online Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Online Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: 52c2c241-1f3c-44b8-a248-beeae31d99ae
 
@@ -348,7 +388,11 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: 3b8bb0cf-c519-42c4-a8f5-b70e3f158a0d
 
-	measure 'Gross Profit YoY Combo' = [Gross Profit Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Gross Profit YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Gross Profit Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Gross Profit YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: 4861f910-090d-4e9b-8751-52d09c643003
 
@@ -482,7 +526,17 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: fcfb5a85-6ce4-4077-9e54-2a4c6abd6468
 
-	measure 'Full Price Sales YoY Combo' = [Full Price Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Full Price Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Full Price Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Full Price Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Full Price Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Full Price Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Full Price Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: a588022c-54a1-4c68-b373-a7a77522c983
 
@@ -520,7 +574,17 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: ede71e10-f6d2-4c9b-872f-ea907a50c7ac
 
-	measure 'Multi-buy Sales YoY Combo' = [Multi-buy Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Multi-buy Sales YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Multi-buy Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Multi-buy Sales YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Multi-buy Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Multi-buy Sales YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Multi-buy Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: KPI Trend Indicators
 		lineageTag: e6159350-5815-497c-934f-2c633dc752ba
 
@@ -666,53 +730,31 @@ table fact_sales
 		displayFolder: VAT View
 		lineageTag: ff3def85-3db2-430b-a3c2-cc96371da71e
 
-	measure 'Net Sales (Selected VAT View)' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", [Gross Sales inc. VAT (GBP)],
-			    [Net Sales (GBP)]
-			)
+	measure 'Net Sales (Selected VAT View)' = [Net Sales (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
 		lineageTag: df9c871a-6f35-41a7-b270-d2bc0aa7946f
 
-	measure 'Net Sales (Selected VAT View) LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Net Sales (Selected VAT View)],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
+	measure 'Net Sales (Selected VAT View) LY' = [Net Sales LY]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: 59071398-d8ba-4f62-ad12-3fcf0c376e02
 
-	measure 'Net Sales (Selected VAT View) YoY (GBP)' = [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY]
+	measure 'Net Sales (Selected VAT View) YoY (GBP)' = [Net Sales YoY (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: 4dc616d2-170b-4df9-befb-f99f470a0665
 
-	measure 'Net Sales (Selected VAT View) YoY %' = DIVIDE ( [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) LY], [Net Sales (Selected VAT View) LY] )
+	measure 'Net Sales (Selected VAT View) YoY %' = [Net Sales YoY %]
 		formatString: 0.0%
 		displayFolder: VAT View
-		lineageTag: 692a8e18-c199-462b-8950-488e29a10871
 
-	measure 'Net Sales (Selected VAT View) Trend Arrow' = IF ( [Net Sales (Selected VAT View) YoY %] > 0, "▲", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
+	measure 'Net Sales (Selected VAT View) Trend Arrow' = [Net Sales Trend Arrow]
 		displayFolder: VAT View
-		lineageTag: 4c765d29-3ebb-41f2-884b-77c3439bcdb1
 
-	measure 'Net Sales (Selected VAT View) Trend Colour' = IF ( [Net Sales (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+	measure 'Net Sales (Selected VAT View) Trend Colour' = [Net Sales Trend Colour]
 		displayFolder: VAT View
-		lineageTag: b52074bd-739f-4bd7-82d5-760736024e15
 
-	measure 'Net Sales (Selected VAT View) YoY Combo' = [Net Sales (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Sales (Selected VAT View) YoY Combo' = [Net Sales YoY Combo]
 		displayFolder: VAT View
-		lineageTag: 1fc562b2-7a5c-461b-affd-beb839f215c0
 
 	column date
 		dataType: dateTime

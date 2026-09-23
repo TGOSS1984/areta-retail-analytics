@@ -122,7 +122,11 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: 68d042f7-dbe7-4abc-a512-309965d32915
 
-	measure 'Stock Value Cost YoY Combo' = [Stock Value Cost Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Cost YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Cost YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Stock Value Cost YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Stock Value Cost Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Cost YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Cost YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Stock
 		lineageTag: 43c8483e-4937-4bb4-8a44-a29b11f8fb0f
 
@@ -160,7 +164,11 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: 70a00892-ce28-4ffe-9729-ed7bf94421b1
 
-	measure 'Stock Value Retail YoY Combo' = [Stock Value Retail Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Retail YoY (GBP)] ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Retail YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Stock Value Retail YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Stock Value Retail Trend Arrow] & " £" & FORMAT ( ABS ( [Stock Value Retail YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Stock Value Retail YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Stock
 		lineageTag: 3347b857-7b18-4f35-9f9e-1478b720e783
 

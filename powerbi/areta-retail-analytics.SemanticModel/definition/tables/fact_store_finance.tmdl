@@ -143,7 +143,11 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 0a1e6db1-c282-48c2-bcf6-10dc86fde39a
 
-	measure 'Net Contribution YoY Combo' = [Net Contribution Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Contribution YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Net Contribution Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Net Contribution YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Contribution
 		lineageTag: 2708d09f-bb2c-4c0a-abb5-d745a8073def
 
@@ -226,7 +230,11 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 65b54964-aa27-4d9b-bfeb-59ed3cf4dcbf
 
-	measure 'Store Operating Costs YoY Combo' = [Store Operating Costs Trend Arrow] & " £" & FORMAT ( ABS ( [Store Operating Costs YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Store Operating Costs YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Store Operating Costs YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Store Operating Costs Trend Arrow] & " £" & FORMAT ( ABS ( [Store Operating Costs YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Store Operating Costs YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Contribution
 		lineageTag: 46d42ef3-27f1-459e-9834-4c7ab38602b7
 
@@ -257,7 +265,11 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 3df60e90-e38e-43dc-9264-1c5d1adc7b20
 
-	measure 'Head Office Allocation YoY Combo' = [Head Office Allocation Trend Arrow] & " £" & FORMAT ( ABS ( [Head Office Allocation YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Head Office Allocation YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Head Office Allocation YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Head Office Allocation Trend Arrow] & " £" & FORMAT ( ABS ( [Head Office Allocation YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Head Office Allocation YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Contribution
 		lineageTag: aa70827e-f408-42c8-99af-3447d6185921
 

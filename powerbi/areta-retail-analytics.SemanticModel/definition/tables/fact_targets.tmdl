@@ -35,7 +35,17 @@ table fact_targets
 		displayFolder: Targets
 		lineageTag: 405c756a-2aa6-4c75-a421-d8d048fbaa70
 
-	measure 'Net Sales Target Combo' = [Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Sales Target Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Net Sales Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets
 		lineageTag: 862c75b2-cf00-409a-a79a-144f51ce29a6
 
@@ -95,7 +105,7 @@ table fact_targets
 		displayFolder: Targets
 		lineageTag: dd333f73-d6b8-48ee-a6c7-459c46035388
 
-	measure 'Gross Margin Target Combo' = [Gross Margin Target Trend Arrow] & " " & FORMAT ( [Gross Margin Target Variance (pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Gross Margin Target Combo' = [Gross Margin Target Trend Arrow] & " " & FORMAT ( [Gross Margin Target Variance (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Targets
 		lineageTag: 9aa2c689-7cf7-4b95-b3d0-629d8d7cb235
 
@@ -171,46 +181,38 @@ table fact_targets
 		displayFolder: Targets
 		lineageTag: 32a0a01e-f7d0-433f-a954-874444a6304b
 
-	measure 'Net Contribution Target Combo' = [Net Contribution Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Contribution Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Contribution Target Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Net Contribution Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Contribution Target Variance (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Net Contribution Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets
 		lineageTag: 6b14097c-f045-4d1d-8788-3a19636e33c3
 
-	measure 'Net Sales (Selected VAT View) Target' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", [Target Net Sales (GBP)] * [VAT Multiplier],
-			    [Target Net Sales (GBP)]
-			)
+	measure 'Net Sales (Selected VAT View) Target' = [Target Net Sales (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: c1abafb8-2d8a-4f26-9e9f-0705da8c6125
 
-	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' = [Net Sales (Selected VAT View)] - [Net Sales (Selected VAT View) Target]
+	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' = [Net Sales Target Variance (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: ec0ca6cd-57c3-4d6f-8c3e-e444254c87e2
 
-	measure 'Net Sales (Selected VAT View) Target Variance %' = DIVIDE ( [Net Sales (Selected VAT View) Target Variance (GBP)], [Net Sales (Selected VAT View) Target] )
+	measure 'Net Sales (Selected VAT View) Target Variance %' = [Net Sales Target Variance %]
 		formatString: 0.0%
 		displayFolder: VAT View
-		lineageTag: e21436f7-cf16-4af9-a1fe-974f2639492c
 
-	measure 'Net Sales (Selected VAT View) Target Achievement %' = DIVIDE ( [Net Sales (Selected VAT View)], [Net Sales (Selected VAT View) Target] )
+	measure 'Net Sales (Selected VAT View) Target Achievement %' = [Net Sales Target Achievement %]
 		formatString: 0.0%
 		displayFolder: VAT View
-		lineageTag: 442ad839-045b-471a-b150-1aad57611371
 
-	measure 'Net Sales (Selected VAT View) Target Trend Arrow' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "▲", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "▼", "▬" ) )
+	measure 'Net Sales (Selected VAT View) Target Trend Arrow' = [Net Sales Target Trend Arrow]
 		displayFolder: VAT View
-		lineageTag: 07602ca3-aa97-4dd3-a834-09d32222174c
 
-	measure 'Net Sales (Selected VAT View) Target Trend Colour' = IF ( [Net Sales (Selected VAT View) Target Variance %] > 0, "#2E7D32", IF ( [Net Sales (Selected VAT View) Target Variance %] < 0, "#D32F2F", "#8D9AA1" ) )
+	measure 'Net Sales (Selected VAT View) Target Trend Colour' = [Net Sales Target Trend Colour]
 		displayFolder: VAT View
-		lineageTag: bf92c166-a81e-474f-9442-9fb48493cc40
 
-	measure 'Net Sales (Selected VAT View) Target Combo' = [Net Sales (Selected VAT View) Target Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales (Selected VAT View) Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales (Selected VAT View) Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Sales (Selected VAT View) Target Combo' = [Net Sales Target Combo]
 		displayFolder: VAT View
-		lineageTag: c01aba0e-994c-4786-a531-a4bdc7af4ce1
 
 	measure 'Target Net Sales (GBP), Any Grain' =
 			SUMX (
@@ -286,7 +288,17 @@ table fact_targets
 		displayFolder: Targets (Any Grain)
 		lineageTag: 3501716e-bf50-4463-8b33-8b947ccbf459
 
-	measure 'Net Sales Target Combo (Any Grain)' = [Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Net Sales Target Combo (Any Grain)' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Net Sales Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Net Sales Target Variance (Any Grain, GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Net Sales Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets (Any Grain)
 		lineageTag: 87d1e373-d9a1-420f-aec5-a19eded694f9
 
@@ -480,7 +492,11 @@ table fact_targets
 		displayFolder: Targets
 		lineageTag: a4cbce1a-84cb-4332-b3c3-9ff263e5321b
 
-	measure 'Gross Profit Target Combo' = [Gross Profit Target Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit Target Variance (GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Gross Profit Target Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Gross Profit Target Trend Arrow] & " £" & FORMAT ( ABS ( [Gross Profit Target Variance (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Gross Profit Target Variance %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets
 		lineageTag: 41d87a42-baed-4447-943f-feb35e4323cd
 
@@ -560,7 +576,11 @@ table fact_targets
 		displayFolder: Targets (Any Grain)
 		lineageTag: a471c95c-807b-4e61-9e2c-bb966f11619f
 
-	measure 'Gross Profit Target Combo (Any Grain)' = [Gross Profit Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Gross Profit Target Variance (Any Grain, GBP)] ), "#,0" ) & " (" & FORMAT ( [Gross Profit Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Gross Profit Target Combo (Any Grain)' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Gross Profit Target Trend Arrow (Any Grain)] & " £" & FORMAT ( ABS ( [Gross Profit Target Variance (Any Grain, GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Gross Profit Target Variance % (Any Grain)], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Targets (Any Grain)
 		lineageTag: d1da6428-adba-4de0-b0b5-204d0d6cc97b
 
@@ -585,25 +605,9 @@ table fact_targets
 		displayFolder: Targets (Any Grain)
 		lineageTag: 54b9c542-eacb-4e5c-9d15-3634055b43c0
 
-	measure 'Gross Margin Target Combo (Any Grain)' = [Gross Margin Target Trend Arrow (Any Grain)] & " " & FORMAT ( [Gross Margin Target Variance (Any Grain, pp)], "+0.0pp;-0.0pp;0.0pp" )
+	measure 'Gross Margin Target Combo (Any Grain)' = [Gross Margin Target Trend Arrow (Any Grain)] & " " & FORMAT ( [Gross Margin Target Variance (Any Grain, pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
 		displayFolder: Targets (Any Grain)
 		lineageTag: 95564ae9-487e-46d1-bd71-9c0553d7d1b7
-
-	measure 'Pilot VAT Selection' = SELECTEDVALUE ( 'VAT View'[VAT View], "Nothing selected" )
-		displayFolder: Pilot (delete later)
-		lineageTag: 0d3dbe45-8e6b-48ec-9de1-4b4386cd84df
-
-	measure 'Pilot Net Sales YoY Combo' =
-			VAR VatFactor =
-			    IF (
-			        SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
-			        DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
-			        1
-			    )
-			RETURN
-			    [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] ) * VatFactor, "#,0" ) & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: Pilot (delete later)
-		lineageTag: 7ad5b6ec-191d-4c0d-a5e0-5236fd4ecd58
 
 	column store_id
 		dataType: string

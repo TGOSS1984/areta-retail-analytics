@@ -98,7 +98,17 @@ table fact_footfall
 		displayFolder: Footfall & Conversion
 		lineageTag: 45e6cff5-9e79-45fe-b049-5a3af13b1741
 
-	measure 'Average Transaction Value YoY Combo' = [Average Transaction Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Transaction Value YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Transaction Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Average Transaction Value YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Average Transaction Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Transaction Value YoY (GBP)] * Factor ), "#,0" ) & " (" & FORMAT ( [Average Transaction Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Footfall & Conversion
 		lineageTag: 84ab7449-c5d1-4330-bed5-160e01d4422c
 
@@ -173,53 +183,31 @@ table fact_footfall
 		displayFolder: Footfall & Conversion
 		lineageTag: aa5d2ba7-f617-442b-b9ca-a3dbadba942d
 
-	measure 'Average Transaction Value (Selected VAT View)' =
-			SWITCH (
-			    SELECTEDVALUE ( dim_vat_view[vat_view], "Excluding VAT" ),
-			    "Including VAT", DIVIDE ( [Gross Sales inc. VAT (GBP)], [Total Transactions] ),
-			    [Average Transaction Value (GBP)]
-			)
+	measure 'Average Transaction Value (Selected VAT View)' = [Average Transaction Value (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
 		lineageTag: 6f6aceb9-5a44-4f7e-8219-dd5a53dbdf2e
 
-	measure 'Average Transaction Value (Selected VAT View) LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Average Transaction Value (Selected VAT View)],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
+	measure 'Average Transaction Value (Selected VAT View) LY' = [Average Transaction Value LY]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: 6e566278-9930-4b71-a5c4-5624e546c3da
 
-	measure 'Average Transaction Value (Selected VAT View) YoY (GBP)' = [Average Transaction Value (Selected VAT View)] - [Average Transaction Value (Selected VAT View) LY]
+	measure 'Average Transaction Value (Selected VAT View) YoY (GBP)' = [Average Transaction Value YoY (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
-		lineageTag: c53e1173-35b6-44ec-af0e-ce7cd6da6d71
 
-	measure 'Average Transaction Value (Selected VAT View) YoY %' = DIVIDE ( [Average Transaction Value (Selected VAT View)] - [Average Transaction Value (Selected VAT View) LY], [Average Transaction Value (Selected VAT View) LY] )
+	measure 'Average Transaction Value (Selected VAT View) YoY %' = [Average Transaction Value YoY %]
 		formatString: 0.0%
 		displayFolder: VAT View
-		lineageTag: 3288d405-1ee0-4868-bc70-fa5615ef6161
 
-	measure 'Average Transaction Value (Selected VAT View) Trend Arrow' = IF ( [Average Transaction Value (Selected VAT View) YoY %] > 0, "▲", IF ( [Average Transaction Value (Selected VAT View) YoY %] < 0, "▼", "▬" ) )
+	measure 'Average Transaction Value (Selected VAT View) Trend Arrow' = [Average Transaction Value Trend Arrow]
 		displayFolder: VAT View
-		lineageTag: 9907544e-c6d5-4dfc-b529-32004d19cb31
 
-	measure 'Average Transaction Value (Selected VAT View) Trend Colour' = IF ( [Average Transaction Value (Selected VAT View) YoY %] > 0, "#2E7D32", IF ( [Average Transaction Value (Selected VAT View) YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+	measure 'Average Transaction Value (Selected VAT View) Trend Colour' = [Average Transaction Value Trend Colour]
 		displayFolder: VAT View
-		lineageTag: 7fe7b30b-5c74-42a3-942a-d8b55c67aaed
 
-	measure 'Average Transaction Value (Selected VAT View) YoY Combo' = [Average Transaction Value (Selected VAT View) Trend Arrow] & " £" & FORMAT ( ABS ( [Average Transaction Value (Selected VAT View) YoY (GBP)] ), "#,0" ) & " (" & FORMAT ( [Average Transaction Value (Selected VAT View) YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+	measure 'Average Transaction Value (Selected VAT View) YoY Combo' = [Average Transaction Value YoY Combo]
 		displayFolder: VAT View
-		lineageTag: b1a19fa0-705c-4170-a40d-7b80d5a438ba
 
 	column date
 		dataType: dateTime

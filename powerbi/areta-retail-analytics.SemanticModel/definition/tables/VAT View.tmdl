@@ -7,15 +7,47 @@ table 'VAT View'
 		calculationItem 'Excluding VAT' = SELECTEDMEASURE ( )
 
 		calculationItem 'Including VAT' =
+				// Whitelist of every base sales-VALUE measure the report exposes: current, last year and
+				// YoY diff for each sales family, plus the plain and Any-Grain sales targets and variances.
+				// Deliberately excludes anything ex-VAT by definition (Gross Profit, margin, cost, contribution,
+				// stock value) and the P&L Bridge (VAT on one bridge step would break the waterfall's arithmetic).
 				IF (
 				    ISSELECTEDMEASURE (
 				        [Net Sales (GBP)],
 				        [Net Sales LY],
 				        [Net Sales YoY (GBP)],
+				        [Retail Sales (GBP)],
+				        [Retail Sales LY],
+				        [Retail Sales YoY (GBP)],
+				        [Concession Sales (GBP)],
+				        [Concession Sales LY],
+				        [Concession Sales YoY (GBP)],
+				        [Online Sales (GBP)],
+				        [Online Sales LY],
+				        [Online Sales YoY (GBP)],
+				        [Full Price Sales (GBP)],
+				        [Full Price Sales LY],
+				        [Full Price Sales YoY (GBP)],
+				        [Multi-buy Sales (GBP)],
+				        [Multi-buy Sales LY],
+				        [Multi-buy Sales YoY (GBP)],
+				        [Average Transaction Value (GBP)],
+				        [Average Transaction Value LY],
+				        [Average Transaction Value YoY (GBP)],
+				        [Digital Net Sales (GBP)],
+				        [Digital Net Sales LY],
+				        [Digital Net Sales YoY (GBP)],
+				        [Average Basket Value (GBP)],
+				        [Average Basket Value LY],
+				        [Average Basket Value YoY (GBP)],
 				        [Target Net Sales (GBP)],
 				        [Net Sales Target Variance (GBP)],
 				        [Target Net Sales (GBP), Any Grain],
-				        [Net Sales Target Variance (Any Grain, GBP)]
+				        [Net Sales Target Variance (Any Grain, GBP)],
+				        [Target Digital Net Sales (GBP)],
+				        [Digital Net Sales Target Variance (GBP)],
+				        [Target Digital Net Sales (GBP), Any Grain],
+				        [Digital Net Sales Target Variance (Any Grain, GBP)]
 				    ),
 				    SELECTEDMEASURE ( )
 				        * DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),

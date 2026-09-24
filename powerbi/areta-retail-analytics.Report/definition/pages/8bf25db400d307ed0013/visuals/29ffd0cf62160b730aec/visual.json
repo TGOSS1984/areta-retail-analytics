@@ -1,0 +1,107 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "29ffd0cf62160b730aec",
+  "position": {
+    "x": 423.27067669172931,
+    "y": 442.55639097744364,
+    "z": 29002,
+    "height": 329.88721804511277,
+    "width": 536.95488721804509,
+    "tabOrder": 29002
+  },
+  "visual": {
+    "visualType": "waterfallChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_pnl_bridge"
+                    }
+                  },
+                  "Property": "step_name"
+                }
+              },
+              "queryRef": "dim_pnl_bridge.step_name",
+              "nativeQueryRef": "step_name",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "P&L Bridge Value"
+                }
+              },
+              "queryRef": "fact_sales.P&L Bridge Value",
+              "nativeQueryRef": "P&L Bridge Value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "P&L Bridge Value"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "3588e0e6a59bded41989",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_pnl_bridge"
+              }
+            },
+            "Property": "step_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "362e9c1525300c5d2993",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "P&L Bridge Value"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

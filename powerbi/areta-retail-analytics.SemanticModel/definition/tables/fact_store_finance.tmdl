@@ -56,6 +56,17 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 94d10f07-8e03-4ebf-837a-ae1ff799c5cf
 
+	measure 'Turnover (GBP)' =
+			VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+			RETURN
+			    CALCULATE (
+				    SUM ( fact_store_finance[net_sales_gbp] ),
+			        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+			    )
+		formatString: "£"#,0.00
+		displayFolder: Contribution
+		lineageTag: 4ce99639-aa02-43ae-b673-e71587d503ec
+
 	measure 'Store Operating Costs (GBP)' = [Rent (GBP)] + [Staff Costs (GBP)] + [Utilities (GBP)] + [Marketing (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: Contribution
@@ -443,6 +454,28 @@ table fact_store_finance
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'P&L Bridge Value' =
+			/* Turnover down to Net Contribution. Deliberately does NOT include a "Net Contribution"
+			   row in dim_pnl_bridge -- Power BI's waterfall calculates and shows that running total
+			   on its own, automatically, as the final bar. Feeding it as an extra category on top of
+			   that would double-count it (this bit us once already -- see the README's lessons list).
+			   Rename that auto "Total" bar to "Net Contribution" in Format visual > Totals if you
+			   want the label to match exactly. */
+			SWITCH (
+			    SELECTEDVALUE ( dim_pnl_bridge[step_name] ),
+			    "Turnover", [Turnover (GBP)],
+			    "Cost of Goods", -[Cost of Goods (GBP)],
+			    "Rent", -[Rent (GBP)],
+			    "Staff", -[Staff Costs (GBP)],
+			    "Utilities", -[Utilities (GBP)],
+			    "Marketing", -[Marketing (GBP)],
+			    "Head Office", -[Head Office Allocation (GBP)],
+			    BLANK ()
+			)
+		formatString: "£"#,0.00
+		lineageTag: ff812ea0-908b-452f-af84-628f4cae0c3d
+		displayFolder: Waterfall
 
 	partition fact_store_finance = m
 		mode: import

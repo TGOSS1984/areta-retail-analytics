@@ -191,23 +191,29 @@ table fact_footfall
 	measure 'Average Transaction Value (Selected VAT View) LY' = [Average Transaction Value LY]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: a68371a0-aebf-4067-a483-bc7703af1bda
 
 	measure 'Average Transaction Value (Selected VAT View) YoY (GBP)' = [Average Transaction Value YoY (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 29deefe2-77e4-4bb6-baf3-40d3e787dc4a
 
 	measure 'Average Transaction Value (Selected VAT View) YoY %' = [Average Transaction Value YoY %]
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: 821de923-3c6e-4498-aba1-73afeb59c0f2
 
 	measure 'Average Transaction Value (Selected VAT View) Trend Arrow' = [Average Transaction Value Trend Arrow]
 		displayFolder: VAT View
+		lineageTag: b3bd540b-5af6-47c0-85a7-1216f3770909
 
 	measure 'Average Transaction Value (Selected VAT View) Trend Colour' = [Average Transaction Value Trend Colour]
 		displayFolder: VAT View
+		lineageTag: b3c294f5-ba67-4c92-9a57-cd0956fa9127
 
 	measure 'Average Transaction Value (Selected VAT View) YoY Combo' = [Average Transaction Value YoY Combo]
 		displayFolder: VAT View
+		lineageTag: e4bbfb0b-bc51-4c1d-ab3e-ab4a8721e45a
 
 	column date
 		dataType: dateTime

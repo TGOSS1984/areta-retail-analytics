@@ -129,30 +129,39 @@ table fact_digital_sales
 	measure 'Average Basket Value (Selected VAT View) LY' = [Average Basket Value LY]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: d63e8f26-c9a6-4b23-8f7e-fee2abd273ec
 
 	measure 'Average Basket Value (Selected VAT View) YoY (GBP)' = [Average Basket Value YoY (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 94f3d459-3d52-4413-a9df-364aa230a123
 
 	measure 'Average Basket Value (Selected VAT View) YoY %' = [Average Basket Value YoY %]
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: f2192d02-0c37-404a-9eab-fa9f4bdd8a26
 
 	measure 'Average Basket Value (Selected VAT View) Trend Arrow' = [Average Basket Value Trend Arrow]
 		displayFolder: VAT View
+		lineageTag: 8d42ff0f-b902-4316-9188-e6ebec7575ab
 
 	measure 'Average Basket Value (Selected VAT View) Trend Colour' = [Average Basket Value Trend Colour]
 		displayFolder: VAT View
+		lineageTag: 196efe54-afed-4e22-b94a-f17b6f4e54b3
 
 	measure 'Average Basket Value (Selected VAT View) YoY Combo' = [Average Basket Value YoY Combo]
 		displayFolder: VAT View
+		lineageTag: c753d1bb-1fff-4c32-a90f-e67b98e5c60b
 
 	column date
 		dataType: dateTime
 		isHidden
+		formatString: Long Date
 		lineageTag: f07e7591-bd39-4e3b-92c7-ccad63f47958
 		summarizeBy: none
 		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column market_code
 		dataType: string

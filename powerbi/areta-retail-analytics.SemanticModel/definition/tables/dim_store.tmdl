@@ -1,6 +1,70 @@
 table dim_store
 	lineageTag: 20575949-3d05-4d2d-9ac6-523fb593820f
 
+	measure 'Total Square Footage' = CALCULATE ( SUM ( dim_store[square_footage] ), dim_store[channel] <> "Online" )
+		formatString: #,0
+		displayFolder: Space Productivity
+		lineageTag: 9ec4ab2b-d547-45eb-a955-612d5e91abeb
+
+	measure 'Sales per Sq Ft' = DIVIDE ( CALCULATE ( [Net Sales (GBP)], dim_store[channel] <> "Online" ), [Total Square Footage] )
+		formatString: "£"#,0.00
+		displayFolder: Space Productivity
+		lineageTag: f763c882-6b5c-442a-9509-e95ec2d35a67
+
+	measure 'Sales per Sq Ft (Annualised)' =
+			// period_key (business_year * 100 + period number) is unique per elapsed period, so this
+			// still annualises correctly if more than one business year is in the filter — a plain
+			// DISTINCTCOUNT of business_period_number alone would undercount there (12 distinct
+			// numbers however many years are selected) and overstate the annualised figure.
+			VAR PeriodsInFilter = COALESCE ( DISTINCTCOUNT ( dim_date[period_key] ), 1 )
+			RETURN
+			    [Sales per Sq Ft] * DIVIDE ( 12, PeriodsInFilter )
+		formatString: "£"#,0.00
+		displayFolder: Space Productivity
+		lineageTag: 3049ed03-a789-4941-bbba-fd91abe2d6c9
+
+	measure 'Sales per Sq Ft LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			RETURN
+			    CALCULATE (
+			        [Sales per Sq Ft],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			    )
+		formatString: "£"#,0.00
+		displayFolder: Space Productivity
+		lineageTag: 38c2eb01-e49c-4078-9302-f3241640fcf0
+
+	measure 'Sales per Sq Ft YoY (GBP)' = [Sales per Sq Ft] - [Sales per Sq Ft LY]
+		formatString: "£"#,0.00
+		displayFolder: Space Productivity
+		lineageTag: 5eef9aa4-ccc5-4455-ba6c-0340e943b22c
+
+	measure 'Sales per Sq Ft YoY %' = DIVIDE ( [Sales per Sq Ft] - [Sales per Sq Ft LY], [Sales per Sq Ft LY] )
+		formatString: 0.0%
+		displayFolder: Space Productivity
+		lineageTag: 1ea142f8-44c4-442d-9c67-a8510d9620a1
+
+	measure 'Sales per Sq Ft Trend Arrow' = IF ( [Sales per Sq Ft YoY %] > 0, "▲", IF ( [Sales per Sq Ft YoY %] < 0, "▼", "▬" ) )
+		displayFolder: Space Productivity
+		lineageTag: f4889897-999c-4417-aa2e-65f921db3eb3
+
+	measure 'Sales per Sq Ft Trend Colour' = IF ( [Sales per Sq Ft YoY %] > 0, "#2E7D32", IF ( [Sales per Sq Ft YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Space Productivity
+		lineageTag: 93e2331f-eb0f-4b9f-af6c-c4d43bb7ab48
+
+	measure 'Sales per Sq Ft YoY Combo' =
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = CcyFactor
+			RETURN
+			    [Sales per Sq Ft Trend Arrow] & " £" & FORMAT ( ABS ( [Sales per Sq Ft YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Sales per Sq Ft YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: Space Productivity
+		lineageTag: 1f3b8c0e-aeb8-451e-bc09-3c0f9fb3e813
+
 	column store_id
 		dataType: string
 		isHidden
@@ -112,74 +176,6 @@ table dim_store
 
 		annotation SummarizationSetBy = Automatic
 
-	measure 'Total Square Footage' =
-			CALCULATE ( SUM ( dim_store[square_footage] ), dim_store[channel] <> "Online" )
-		formatString: #,0
-		lineageTag: 9ec4ab2b-d547-45eb-a955-612d5e91abeb
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft' =
-			DIVIDE ( CALCULATE ( [Net Sales (GBP)], dim_store[channel] <> "Online" ), [Total Square Footage] )
-		formatString: "£"#,0.00
-		lineageTag: f763c882-6b5c-442a-9509-e95ec2d35a67
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft (Annualised)' =
-			// period_key (business_year * 100 + period number) is unique per elapsed period, so this
-			// still annualises correctly if more than one business year is in the filter — a plain
-			// DISTINCTCOUNT of business_period_number alone would undercount there (12 distinct
-			// numbers however many years are selected) and overstate the annualised figure.
-			VAR PeriodsInFilter = COALESCE ( DISTINCTCOUNT ( dim_date[period_key] ), 1 )
-			RETURN
-			    [Sales per Sq Ft] * DIVIDE ( 12, PeriodsInFilter )
-		formatString: "£"#,0.00
-		lineageTag: 3049ed03-a789-4941-bbba-fd91abe2d6c9
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft LY' =
-			VAR CurrentYear = MAX ( dim_date[business_year] )
-			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
-			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
-			RETURN
-			    CALCULATE (
-			        [Sales per Sq Ft],
-			        REMOVEFILTERS ( dim_date ),
-			        dim_date[business_year] = CurrentYear - 1,
-			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
-			    )
-		formatString: "£"#,0.00
-		lineageTag: 38c2eb01-e49c-4078-9302-f3241640fcf0
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft YoY (GBP)' = [Sales per Sq Ft] - [Sales per Sq Ft LY]
-		formatString: "£"#,0.00
-		lineageTag: 5eef9aa4-ccc5-4455-ba6c-0340e943b22c
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft YoY %' = DIVIDE ( [Sales per Sq Ft] - [Sales per Sq Ft LY], [Sales per Sq Ft LY] )
-		formatString: 0.0%
-		lineageTag: 1ea142f8-44c4-442d-9c67-a8510d9620a1
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft Trend Arrow' =
-			IF ( [Sales per Sq Ft YoY %] > 0, "▲", IF ( [Sales per Sq Ft YoY %] < 0, "▼", "▬" ) )
-		lineageTag: f4889897-999c-4417-aa2e-65f921db3eb3
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft Trend Colour' =
-			IF ( [Sales per Sq Ft YoY %] > 0, "#2E7D32", IF ( [Sales per Sq Ft YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		lineageTag: 93e2331f-eb0f-4b9f-af6c-c4d43bb7ab48
-		displayFolder: Space Productivity
-
-	measure 'Sales per Sq Ft YoY Combo' =
-			VAR CcyFactor = [FX Rate (Selected)]
-			VAR Factor = CcyFactor
-			RETURN
-			    [Sales per Sq Ft Trend Arrow] & " £" & FORMAT ( ABS ( [Sales per Sq Ft YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Sales per Sq Ft YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		lineageTag: 1f3b8c0e-aeb8-451e-bc09-3c0f9fb3e813
-		displayFolder: Space Productivity
-
 	partition dim_store = m
 		mode: import
 		source =
@@ -189,6 +185,4 @@ table dim_store
 				    Source
 
 	annotation PBI_ResultType = Table
-
-
 

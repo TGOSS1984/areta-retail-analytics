@@ -30,9 +30,13 @@ table dim_pnl_bridge
 				    Source = #table(
 				        {"step_name", "step_order", "is_total"},
 				        {
-				    {"Net Sales", 1, false},
+				    {"Turnover", 1, false},
 				    {"Cost of Goods", 2, false},
-				    {"Gross Profit", 3, true}
+				    {"Rent", 3, false},
+				    {"Staff", 4, false},
+				    {"Utilities", 5, false},
+				    {"Marketing", 6, false},
+				    {"Head Office", 7, false}
 				        }
 				    )
 				in

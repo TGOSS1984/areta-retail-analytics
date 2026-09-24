@@ -192,27 +192,34 @@ table fact_targets
 	measure 'Net Sales (Selected VAT View) Target' = [Target Net Sales (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 127e51bd-9259-4745-8eb9-7600d200156e
 
 	measure 'Net Sales (Selected VAT View) Target Variance (GBP)' = [Net Sales Target Variance (GBP)]
 		formatString: "£"#,0.00
 		displayFolder: VAT View
+		lineageTag: 98b9c95a-e5e1-4657-a331-1eb2198a08fa
 
 	measure 'Net Sales (Selected VAT View) Target Variance %' = [Net Sales Target Variance %]
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: 4400a40a-c117-4267-ab85-167578b3f92e
 
 	measure 'Net Sales (Selected VAT View) Target Achievement %' = [Net Sales Target Achievement %]
 		formatString: 0.0%
 		displayFolder: VAT View
+		lineageTag: 383c4a35-0e4b-498e-a232-a64d47149454
 
 	measure 'Net Sales (Selected VAT View) Target Trend Arrow' = [Net Sales Target Trend Arrow]
 		displayFolder: VAT View
+		lineageTag: 5abc6d8d-1b17-43aa-92a4-2f7363ebb78f
 
 	measure 'Net Sales (Selected VAT View) Target Trend Colour' = [Net Sales Target Trend Colour]
 		displayFolder: VAT View
+		lineageTag: 433a9838-2ae7-4117-b5dc-6080fdacc76f
 
 	measure 'Net Sales (Selected VAT View) Target Combo' = [Net Sales Target Combo]
 		displayFolder: VAT View
+		lineageTag: 86354225-803b-4c5c-8adc-57d9a4b5a28d
 
 	measure 'Target Net Sales (GBP), Any Grain' =
 			SUMX (

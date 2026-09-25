@@ -176,8 +176,14 @@ BRAND_DEMAND_MULT = {"Areta": 1.3, "Kestrel Ridge": 1.0, "Basecamp": 1.0, "Areta
 # the actual output) AND some top-20 variety across 4 different product
 # groups, rather than the aggregate-realistic version alone (which
 # swept the top-20 down to just 2 categories on the first try).
+#
+# Boots came down from 1.2 to 1.18 when style popularity weights went in.
+# The weights keep each group's EXPECTED revenue fixed, but a few hero boot
+# styles ranged in a lot of stores nudged Boots £10k past Waterproof
+# Insulated Jacket (the two were only 0.8% apart to start with). 1.18
+# restores the researched order without touching anything else.
 PRODUCT_GROUP_DEMAND_MULT: dict[str, float] = {
-    "Boots": 1.2,
+    "Boots": 1.18,
     "Waterproof Shell": 1.5,
     "Waterproof Insulated Jacket": 1.35,
     "Fleece": 2.1,
@@ -200,6 +206,46 @@ SEASON_PROFILE = {
 PROMO_ELIGIBLE_SHARE = 0.65
 PROMO_UPLIFT_FACTOR = 1.2
 RETURN_RATE = 0.03
+
+# --- style popularity ---------------------------------------------------
+# Without this every style in the same brand and product group sold at the
+# same rate apart from price, so the style Pareto came out almost flat: the
+# top 20% of styles did only ~41% of sales and the best style sold ~4x the
+# median one. Real ranges have hero styles and a long tail. Each style_code
+# gets a lognormal weight on its demand. I tested sigma against the real
+# style totals before picking it: 0.8 puts ~58% of sales in the top 20% of
+# styles, 1.0 ~64%, 1.2 ~71%. 1.1 sits in the middle of that.
+#
+# The weights are rescaled inside every brand x product_group so each
+# group's expected revenue doesn't move. That keeps BRAND_DEMAND_MULT and
+# PRODUCT_GROUP_DEMAND_MULT doing the job they were calibrated for; this
+# only changes which styles inside a group do the selling. It has its own
+# seeded generator so none of the other random draws shift.
+STYLE_POPULARITY_SIGMA = 1.1
+STYLE_POPULARITY_SEED = RANDOM_SEED + 30
+
+# --- key trading days ---------------------------------------------------
+# dim_date has had is_black_friday / is_christmas_day / is_boxing_day for a
+# while but nothing here used them, so a calendar heatmap showed all three
+# as ordinary days. Worse than ordinary, in fact: the promo uplift above
+# lifts units by 1 + discount x 1.2, which at 40% off (Black Friday) or 60%
+# off (Boxing Day) doesn't make up for the price cut, so those days came out
+# LOWER in pounds than a normal day. What actually drives those days in real
+# retail is a surge in shoppers, so these multiply demand on top of the
+# promo, and they're set from the revenue I want to see, not guessed:
+#   Black Friday: promo leaves a day at ~0.93x revenue (65% of lines at 40%
+#     off), so 2.15x traffic lands at ~2x a normal Friday.
+#   Sat-Mon of the Black Friday event: ~1.35x traffic, ~1.25x revenue.
+#   Boxing Day: the 60% off sale leaves a day at ~0.80x, so 1.9x traffic
+#     lands at ~1.5x a normal day.
+#   Christmas Day: physical stores are shut (large shops in England and
+#     Wales can't legally open), so Retail and Concession get zero. Online
+#     keeps trading as normal.
+# (physical, online) multipliers; a date not listed here is 1.0 for both.
+BLACK_FRIDAY_MULT = (2.15, 2.15)
+BLACK_FRIDAY_WEEKEND_MULT = (1.35, 1.35)
+BOXING_DAY_MULT = (1.9, 1.9)
+CHRISTMAS_DAY_MULT = (0.0, 1.0)
 
 # --- multi-buy promos -------------------------------------------------
 # A genuinely different mechanic from the %-off promo calendar above:
@@ -350,8 +396,44 @@ def build_assortment(dim_store: pd.DataFrame, dim_product: pd.DataFrame, markets
         * np.where(assortment["is_home_market"], HOME_MARKET_MULT, 1.0)
         * assortment["store_perf_factor"]
     )
-    assortment["base_rate"] = base_rate
+    assortment["base_rate"] = apply_style_popularity(assortment, base_rate, dim_product)
     return assortment
+
+
+def apply_style_popularity(assortment: pd.DataFrame, base_rate: pd.Series, dim_product: pd.DataFrame) -> pd.Series:
+    """Weight each style's demand, keeping every brand x product_group's expected revenue unchanged.
+
+    Weights are drawn over the whole catalogue in style_code order, not just
+    the styles that happened to get ranged, so a style's popularity doesn't
+    depend on which stores stock it.
+    """
+    styles = np.sort(dim_product["style_code"].unique())
+    rng = np.random.default_rng(STYLE_POPULARITY_SEED)
+    weights = pd.Series(rng.lognormal(0.0, STYLE_POPULARITY_SIGMA, len(styles)), index=styles)
+
+    w = assortment["style_code"].map(weights)
+    expected_revenue = base_rate * assortment["base_price_gbp"] * assortment["price_index"]
+    group = [assortment["brand_name"], assortment["product_group"]]
+    rescale = (
+        expected_revenue.groupby(group).transform("sum")
+        / (expected_revenue * w).groupby(group).transform("sum")
+    )
+    return base_rate * w * rescale
+
+
+def build_key_day_lookup(dim_date: pd.DataFrame) -> dict:
+    """Date -> (physical, online) demand multiplier for the key trading days."""
+    lookup = {}
+    for row in dim_date.itertuples():
+        if row.is_christmas_day:
+            lookup[row.full_date] = CHRISTMAS_DAY_MULT
+        elif row.is_boxing_day:
+            lookup[row.full_date] = BOXING_DAY_MULT
+        elif row.is_black_friday:
+            lookup[row.full_date] = BLACK_FRIDAY_MULT
+            for offset in (1, 2, 3):  # Saturday to Monday, the rest of the event
+                lookup.setdefault(row.full_date + dt.timedelta(days=offset), BLACK_FRIDAY_WEEKEND_MULT)
+    return lookup
 
 
 def build_promo_lookup(dim_promo: pd.DataFrame) -> dict:
@@ -396,7 +478,7 @@ def assign_invoices(store_id_arr: np.ndarray, rng: np.random.Generator) -> np.nd
     return invoice_num
 
 
-def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_lookup) -> pd.DataFrame:
+def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_lookup, key_day_lookup) -> pd.DataFrame:
     rng = np.random.default_rng(RANDOM_SEED + 1)
     invoice_rng = np.random.default_rng(RANDOM_SEED + 10)
     margin_rng = np.random.default_rng(RANDOM_SEED + 11)
@@ -409,6 +491,7 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
     vat_rate_arr = assortment["vat_rate"].to_numpy()
     base_rate_arr = assortment["base_rate"].to_numpy()
     promo_eligible_arr = assortment["promo_eligible"].to_numpy()
+    is_online_arr = (assortment["channel"] == "Online").to_numpy()
 
     season_by_month = precompute_season_arrays(assortment["major_product_group"].to_numpy())
 
@@ -426,6 +509,10 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
             promo_id, discount_pct = promo_info
             promo_mult = np.where(promo_eligible_arr, 1 + discount_pct / 100 * PROMO_UPLIFT_FACTOR, 1.0)
             rate = base_rate_arr * season_arr * weekday_mult * promo_mult
+
+        key_day = key_day_lookup.get(d)
+        if key_day is not None:
+            rate = rate * np.where(is_online_arr, key_day[1], key_day[0])
 
         qty = rng.poisson(rate)
         idx = np.flatnonzero(qty > 0)
@@ -663,10 +750,12 @@ def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame) -> pd.Dat
     return df.drop(columns=["product_group", "month", "multibuy_scheme_id"])
 
 
-def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict) -> pd.DataFrame:
+def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict, closed_days: set) -> pd.DataFrame:
     """Single-unit returns on a sample of original sale rows, 3-21 days later.
     Each return gets its own invoice_id — a refund isn't part of the
-    original purchase transaction."""
+    original purchase transaction. A return that would land on a day its
+    store was shut (closed_days holds (store_id, date) pairs) moves to the
+    next day instead."""
     rng = np.random.default_rng(RANDOM_SEED + 2)
     n_returns = int(len(df) * RETURN_RATE)
     sampled = df.sample(n=n_returns, random_state=RANDOM_SEED + 2).copy()
@@ -678,6 +767,10 @@ def add_returns(df: pd.DataFrame, end_date: dt.date, fx_lookup: dict) -> pd.Data
     sampled["date"] = [
         min(d + dt.timedelta(days=int(off)), end_date)
         for d, off in zip(sampled["date"], offsets)
+    ]
+    sampled["date"] = [
+        d + dt.timedelta(days=1) if (s, d) in closed_days and d < end_date else d
+        for s, d in zip(sampled["store_id"], sampled["date"])
     ]
 
     fx = np.array(
@@ -734,7 +827,8 @@ def main() -> None:
     promo_lookup = build_promo_lookup(dim_promo)
     fx_lookup = build_fx_lookup(fx_rate)
 
-    df = simulate(assortment, dim_date, promo_lookup, fx_lookup)
+    key_day_lookup = build_key_day_lookup(dim_date)
+    df = simulate(assortment, dim_date, promo_lookup, fx_lookup, key_day_lookup)
     print(f"simulated: {len(df):,} positive-quantity rows, {df['invoice_id'].nunique():,} invoices")
 
     # Channel split, before returns/messiness — the number that actually
@@ -764,7 +858,13 @@ def main() -> None:
     n_multibuy = (df["promo_id"].str.startswith("MULTIBUY-")).sum()
     print(f"multi-buy adjusted: {n_multibuy:,} lines")
 
-    df = add_returns(df, dim_date["full_date"].max(), fx_lookup)
+    physical_stores = dim_store.loc[dim_store["channel"] != "Online", "store_id"]
+    closed_days = {
+        (s, d)
+        for d, (physical_mult, _) in key_day_lookup.items() if physical_mult == 0
+        for s in physical_stores
+    }
+    df = add_returns(df, dim_date["full_date"].max(), fx_lookup, closed_days)
     df = inject_messiness(df)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

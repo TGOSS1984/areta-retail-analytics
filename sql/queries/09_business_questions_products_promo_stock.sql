@@ -91,9 +91,10 @@ ORDER BY d.period_key;
 -- ## 6b. Black Friday: how do the promo days compare with normal trading?
 -- Compares average daily sales during each Black Friday window with the 28
 -- days before it. The date-range join (BETWEEN) from 04_joins is doing the work.
--- Worth noticing: the uplift is barely above 1.00 here. The generated data has
--- discounts but no promo-driven surge in demand, which a real retailer would see.
--- Knowing what your data does and doesn't model is part of reading it honestly.
+-- Expect roughly 1.5x across the four-day window: Black Friday itself runs at
+-- about 2x a normal Friday and the weekend and Monday after at about 1.25x.
+-- Before the generator modelled the shopper surge this came out at about 1.00,
+-- because a 40% discount on its own lowers revenue per day.
 WITH bf AS (
     SELECT promo_name, start_date, end_date
     FROM dim_promo

@@ -115,15 +115,15 @@ The KPI cards sit at x = 227, 570, 903, 1241 and 1577, which is the same grid as
 
 ## Numbers to check against
 
-From my 20 Sep 2026 run. If you regenerate on a later day the data runs up to that day, so the row counts and dates will move.
+From my 25 Sep 2026 run, after the style popularity and key trading day changes to the generator. If you regenerate on a later day the data runs up to that day, so the row counts and dates will move.
 
 | Measure | Should show |
 |---|---|
 | Data Quality Score | 95.9% (71 of 74 checks passed) |
 | DQ Overall Status | 3 warnings |
-| DQ Scored Rows Tested | 84,838,199 |
-| DQ Latest Data Date | 20 Sep 2026 |
-| DQ Rows Fixed in Cleaning | 363,152 (of 3,948,592 raw lines) |
-| DQ Tables Profiled / DQ Total Rows | 15 / 11,496,593 |
+| DQ Scored Rows Tested | 84,398,281 |
+| DQ Latest Data Date | 25 Sep 2026 |
+| DQ Rows Fixed in Cleaning | 358,686 (of 3,912,282 raw lines) |
+| DQ Tables Profiled / DQ Total Rows | 15 / 11,463,131 |
 | DQ Null % | 0.001% |
 | Score by category | Completeness 84.6%, Validity 95.7%, everything else 100% |

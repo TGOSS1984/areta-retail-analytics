@@ -109,7 +109,7 @@ The only job left on this page is the VAT slicer swap.
 
 **Notes**
 
-- Expect a gentle curve, not 80/20. Across all time it takes 239 of 907 styles to reach 50% of sales and 502 to reach 80%.
+- Expect a proper Pareto bow. Since the generator gave styles a popularity weight, the top 20% of styles do about 62% of sales and 331 of 907 reach 80%. Before that it took 502, which is why the first version of this chart looked nearly flat.
 - The first draft had a Style-Colour Pareto. There's no Style-Colour Pareto measure in the model, and three Paretos on one page was repetitive anyway, so I cut it.
 - The Product Group Pareto lives on Categories.
 - I used 33 product groups for the scatter rather than brands. There are only four brands, which isn't enough dots to show a relationship.
@@ -346,9 +346,9 @@ Things I handled in the spec so you don't have to:
 - Future dates have no sales, so Power BI never passes them to Deneb. A part-year grid simply stops at the latest week. The last cell can look pale because the current day is only partly traded.
 - To show something other than Net Sales, change the `value` line at the top of `transform`. For a percentage, also change the label format.
 
-I rendered it against the real BY25 and BY26 data before committing. It shows two things straight away: Saturday is the biggest day every week, and there's a step up in week 22 when the AW range lands.
+I rendered it against the real BY25 data before committing. It shows three things straight away: Saturday is the biggest day most weeks, trade steps up around week 22 when the AW range lands, and the key days stand out. Black Friday is the darkest cell of the year, Boxing Day is next to it, and Christmas Day is almost blank because the stores are shut and only Online trades.
 
-It also shows something I didn't expect. **Black Friday, Christmas and Boxing Day look like ordinary days.** The flags exist in `dim_date`, but the sales generator never uses them. Black Friday actually trades slightly below a normal Friday, and every store trades on Christmas Day, which a real UK store over 280 sq m legally can't. That's a generator fix for another session, not a report fix. It's a good example of the heatmap earning its place, though.
+The first render showed something I didn't expect: all three key days looked like ordinary days, and every store traded on Christmas Day. The flags existed in `dim_date`, but the sales generator never used them. That's fixed now (see `build_fact_sales.py`), and it's a good example of the heatmap earning its place.
 
 ### Native matrix heatmaps
 

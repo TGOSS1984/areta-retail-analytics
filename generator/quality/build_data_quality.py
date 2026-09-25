@@ -295,8 +295,13 @@ def check_validity(audit: Audit, t: dict[str, pd.DataFrame]) -> None:
       severity="Advisory")
 
     f = t["fact_footfall"]
-    v("VAL-09", "fact_footfall", "Footfall above zero",
-      "Every store-day records at least one visitor.", len(f), (f["footfall"] <= 0).sum())
+    # Stores are shut on Christmas Day, so a zero there is correct, not a
+    # broken door counter. Those days are left out of the rows tested.
+    christmas = set(as_datetime(t["dim_date"].loc[t["dim_date"]["is_christmas_day"], "full_date"]))
+    open_days = f[~as_datetime(f["date"]).isin(christmas)]
+    v("VAL-09", "fact_footfall", "Footfall above zero on trading days",
+      "Every store-day records at least one visitor, apart from Christmas Day when the stores are shut.",
+      len(open_days), (open_days["footfall"] <= 0).sum())
     v("VAL-10", "fact_footfall", "Transactions and conversion are consistent",
       "Transactions never exceed footfall and conversion rate stays between 0 and 1.", len(f),
       ((f["transactions"] > f["footfall"]) | (f["conversion_rate"] < 0) | (f["conversion_rate"] > 1)).sum())

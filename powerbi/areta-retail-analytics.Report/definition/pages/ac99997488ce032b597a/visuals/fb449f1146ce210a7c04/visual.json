@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "fb449f1146ce210a7c04",
   "position": {
-    "x": 327.70538243626061,
-    "y": 391.61473087818695,
+    "x": 240.5639097744361,
+    "y": 413.12030075187971,
     "z": 29001,
-    "height": 448.72521246458922,
-    "width": 1385.6090651558072,
+    "height": 500.41353383458647,
+    "width": 890.187969924812,
     "tabOrder": 29001
   },
   "visual": {
@@ -23,11 +23,11 @@
                       "Entity": "dim_product"
                     }
                   },
-                  "Property": "style_name"
+                  "Property": "style_label"
                 }
               },
-              "queryRef": "dim_product.style_name",
-              "nativeQueryRef": "style_name",
+              "queryRef": "dim_product.style_label",
+              "nativeQueryRef": "style_label",
               "active": true
             }
           ]

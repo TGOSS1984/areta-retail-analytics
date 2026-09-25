@@ -68,7 +68,7 @@ def build() -> pd.DataFrame:
     # baseline (an "online conversion rate" is a real, different metric
     # — sessions-to-purchase — not modelled in this project yet).
     dim_store = dim_store[dim_store["channel"] != "Online"]
-    dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date"]].rename(columns={"full_date": "date"})
+    dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date", "is_christmas_day"]].rename(columns={"full_date": "date"})
     dim_date = dim_date[dim_date["date"] <= present_date()]
     sales = pd.read_parquet(FACT_SALES_PATH)
 
@@ -110,6 +110,11 @@ def build() -> pd.DataFrame:
         rng.integers(5, 40, size=n),  # quiet days still get some passing footfall
     ).astype(int)
     grid["footfall"] = np.maximum(footfall, grid["transactions"])
+
+    # Stores are shut on Christmas Day (build_fact_sales.py gives them no
+    # sales), so the door counter reads zero rather than the handful of
+    # passers-by a quiet day gets above.
+    grid.loc[grid["is_christmas_day"], "footfall"] = 0
 
     # recompute conversion_rate from the final integer footfall/transactions
     # so the two columns are always internally consistent, not just close

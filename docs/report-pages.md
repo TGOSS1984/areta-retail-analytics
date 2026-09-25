@@ -136,7 +136,7 @@ The only job left on this page is the VAT slicer swap.
 
 | KPI card | Value | Reference label | Icon |
 |---|---|---|---|
-| Top category | `product_group` (card with visual filter Top N 1 by `Net Sales (GBP)`) | none | `trophy` |
+| Top category | `Top Product Group` | `Top Product Group Share %` (label it "of sales") | `trophy` |
 | Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
 | YoY | `Net Sales YoY %` | `Net Sales YoY Combo` | `trending-up` |
 | Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |

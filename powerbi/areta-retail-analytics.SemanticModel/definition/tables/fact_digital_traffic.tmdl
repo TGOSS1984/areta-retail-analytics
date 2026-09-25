@@ -46,13 +46,15 @@ table fact_digital_traffic
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Total Visitors],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: #,0
 		displayFolder: Time Intelligence
@@ -84,13 +86,15 @@ table fact_digital_traffic
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Total Sessions],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: #,0
 		displayFolder: Time Intelligence
@@ -122,13 +126,15 @@ table fact_digital_traffic
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Digital Conversion Rate %],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: 0.0%
 		displayFolder: Time Intelligence

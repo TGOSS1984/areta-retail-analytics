@@ -108,11 +108,23 @@ SUM ( fact_sales[gross_sales_gbp] )
 ### Time intelligence (business-calendar aware)
 
 ```dax
+-- Same business year minus one, same period, week and weekday. Works at year,
+-- period, week and day level, and under a day-of-week slicer. A day compares
+-- with the same weekday 364 days earlier.
 Net Sales LY =
-CALCULATE (
-    [Net Sales (GBP)],
-    FILTER ( ALL ( dim_date ), dim_date[business_year] = MAX ( dim_date[business_year] ) - 1 )
-)
+VAR CurrentYear = MAX ( dim_date[business_year] )
+VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
+RETURN
+    CALCULATE (
+        [Net Sales (GBP)],
+        REMOVEFILTERS ( dim_date ),
+        dim_date[business_year] = CurrentYear - 1,
+        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
+    )
 
 Net Sales YoY % =
 DIVIDE ( [Net Sales (GBP)] - [Net Sales LY], [Net Sales LY] )
@@ -222,4 +234,5 @@ Optional sanity-check measure, not meant for a report page — `fact_footfall[tr
 ```dax
 Distinct Invoices (from Sales) =
 CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
+```
 ```

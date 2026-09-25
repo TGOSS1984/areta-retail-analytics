@@ -237,13 +237,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Net Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: efd2b77e-e632-4382-876f-26b475aba94c
@@ -347,13 +349,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Gross Profit (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 82cff70f-a397-4d42-830b-c4136ae97da5
@@ -409,13 +413,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Net Units Sold],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: #,0
 		lineageTag: 6a109c4e-0995-4e32-9d1b-45e673489fb8
@@ -425,13 +431,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Gross Margin %],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: 0.0%
 		lineageTag: bbbbe2c9-128a-45aa-ad55-167646b69e47
@@ -441,13 +449,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Retail Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 7d0692ff-1673-4337-b23c-2aab457bd365
@@ -457,13 +467,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Concession Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 3a1ea33d-cede-43b1-b452-b4cd3e210705
@@ -473,13 +485,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Online Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 1a6953d6-f352-4408-9735-f93f273a0a9c
@@ -725,13 +739,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Full Price Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 9cd7e4f0-25b3-4559-8110-c32d3b63458e
@@ -773,13 +789,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Multi-buy Sales (GBP)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: "£"#,0.00
 		lineageTag: 2b51c0b3-557e-48b6-9f28-254fb573e24d
@@ -821,13 +839,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Distinct Invoices (from Sales)],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: #,0
 		lineageTag: 6eddefb5-d8dd-452f-b97e-ef6a48826e90
@@ -859,13 +879,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Full Price Mix %],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: 0.0%
 		lineageTag: 2a54e33b-0bc1-463e-95a7-0e5bf845d2e2
@@ -892,13 +914,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Multi-buy Mix %],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: 0.0%
 		lineageTag: 13f2a807-fa1c-45da-ae1a-e1d0220e758c
@@ -925,13 +949,15 @@ table fact_sales
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
 			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
 			RETURN
 			    CALCULATE (
 			        [Return Rate %],
 			        REMOVEFILTERS ( dim_date ),
 			        dim_date[business_year] = CurrentYear - 1,
 			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
 			    )
 		formatString: 0.0%
 		lineageTag: 8f558784-8491-42c7-9375-f6c8369ee009

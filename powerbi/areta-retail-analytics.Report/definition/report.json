@@ -40,7 +40,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
@@ -180,6 +180,16 @@
         {
           "name": "tag3305522322481459.png",
           "path": "tag3305522322481459.png",
+          "type": "Image"
+        },
+        {
+          "name": "trophy9509742336426757.png",
+          "path": "trophy9509742336426757.png",
+          "type": "Image"
+        },
+        {
+          "name": "walk7273131012448502.png",
+          "path": "walk7273131012448502.png",
           "type": "Image"
         },
         {

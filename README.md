@@ -282,13 +282,15 @@ Net Units Sold LY =
     VAR CurrentYear = MAX ( dim_date[business_year] )
     VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
     VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+    VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
     RETURN
         CALCULATE (
             [Net Units Sold],
             REMOVEFILTERS ( dim_date ),
             dim_date[business_year] = CurrentYear - 1,
             TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
-            TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] )
+            TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+            TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
         )
 ```
 
@@ -367,7 +369,7 @@ Separately, the same error showed up once on a refresh when nothing had changed.
 
 **2. Figures that were 3 to 4 times too high, but only sometimes.** I'd used `USERELATIONSHIP` to reach targets and finance through `dim_date` and `dim_period`. In an unfiltered test everything looked fine. Once I sliced by year, the targets came out 3 to 4 times too big, because `USERELATIONSHIP` doesn't reliably inherit a filter across more than one hop. I replaced all 15 affected measures with `TREATAS`. The lesson I keep repeating to myself: "checked against real data" has to include a *filtered* test, not just the all-time total.
 
-**3. Blank year-on-year percentages.** The fix for the bug above still failed when someone filtered by period, because the label `BY25 P03` has the year inside it, so clearing the `business_year` column didn't clear the filter. The fix is the pattern in the DAX snippet above: capture the year-independent period and week *numbers* first, clear the date table, then re-apply them for last year. I applied it to about 30 measures in one sweep instead of patching one at a time.
+**3. Blank year-on-year percentages.** The fix for the bug above still failed when someone filtered by period, because the label `BY25 P03` has the year inside it, so clearing the `business_year` column didn't clear the filter. The fix is the pattern in the DAX snippet above: capture the year-independent period and week *numbers* first, clear the date table, then re-apply them for last year. I applied it to about 30 measures in one sweep instead of patching one at a time. Later I found it had one more gap: it carried the year, period and week across but not the day, so on a daily chart every day was compared with the whole of last year's week. Adding the weekday as a fourth `TREATAS` fixed that, and it means a day compares with the same weekday 364 days earlier, the usual retail like-for-like. I checked every date in the calendar maps to exactly one LY day. A day-of-week slicer now works for LY too, since before the date table was cleared and the weekday filter went with it.
 
 **4. Targets at the wrong grain.** Targets are stored per store per period. Put a weekly line chart of sales next to a period target and the variance showed about -80%, because I was comparing one week's actuals to a whole period's target. The Any-Grain measures spread each period target across its days using **last year's real day-of-week pattern** (not an even split, since Saturday is much bigger than Tuesday). I checked it by summing the allocated days back up, and it matches the period target exactly under every store and market filter I tried. Contribution deliberately doesn't get one: finance actuals only exist per period, so there's nothing to compare a day with.
 

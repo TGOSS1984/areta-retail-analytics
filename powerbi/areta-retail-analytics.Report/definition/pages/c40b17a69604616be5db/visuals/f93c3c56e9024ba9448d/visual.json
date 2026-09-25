@@ -183,5 +183,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f4be3320ba8829a0b081",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_year"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

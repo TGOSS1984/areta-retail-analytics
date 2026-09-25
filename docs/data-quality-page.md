@@ -49,20 +49,24 @@ The 1,064 null cells in the profile are by design. `fact_targets` has no footfal
 
 ## Build sheet
 
-Canvas 1280 x 720, same header and nav buttons as the other pages. Page icon is `shield-check`. The positions below assume a 64px header, so shift everything down if yours is taller.
+The page is 1920 x 1080 and uses the same shell as the rest of the report: the 211px left rail, the 84px header, the page navigator and the `Report Last Refreshed` card. Page icon is `shield-check`. The shell was copied from Sales, so clear it first:
+
+- Delete the Net Sales card and its sparkline.
+- Delete the `business_year` slicer and the five rail slicers (week, month, product_group, major_product_group, channel). The DQ tables have no relationships, so none of those slicers filter anything here. They'd only suggest that they do.
+- Leave the VAT and currency slicers off this page (don't sync them here).
 
 | # | Visual | Type | x | y | w | h |
 |---|---|---|---|---|---|---|
-| 1 | Category filter | Slicer, tile style | 20 | 64 | 620 | 40 |
-| 2 | Five KPI cards (below) | Card (new) | 20 | 112 | 236 each | 92 |
-| 3 | Checks by status | Donut | 20 | 216 | 190 | 190 |
-| 4 | Score by category | Bar | 222 | 216 | 418 | 190 |
-| 5 | Reconciliation | Table | 20 | 418 | 620 | 136 |
-| 6 | Table profile and freshness | Table | 20 | 566 | 620 | 134 |
-| 7 | All check results | Table | 652 | 216 | 596 | 300 |
-| 8 | What cleaning fixed | Bar | 652 | 528 | 596 | 172 |
+| 1 | Category filter | Slicer, vertical tile, in the rail | 19 | 619 | 160 | 300 |
+| 2 | Five KPI cards (below) | Card (new) | 227 | 94 | 324 each | 162 |
+| 3 | Checks by status | Donut | 227 | 268 | 400 | 400 |
+| 4 | What cleaning fixed | Bar | 639 | 268 | 600 | 400 |
+| 5 | Where the problems sit | Matrix heatmap | 1251 | 268 | 650 | 400 |
+| 6 | All check results | Table | 227 | 680 | 1107 | 390 |
+| 7 | Reconciliation | Table | 1346 | 680 | 555 | 190 |
+| 8 | Table profile and freshness | Table | 1346 | 880 | 555 | 190 |
 
-The KPI cards sit at x = 20, 268, 516, 764 and 1012.
+The KPI cards sit at x = 227, 570, 903, 1241 and 1577, which is the same grid as every other page.
 
 **Slicer:** `dq_check_results[category]`. Sorts by `category_order` automatically.
 
@@ -76,21 +80,38 @@ The KPI cards sit at x = 20, 268, 516, 764 and 1012.
 | Latest data | `DQ Latest Data Date` | `DQ Freshness Summary` | subtitle: Field value, `DQ Freshness Overall Colour` |
 | Fixed in cleaning | `DQ Rows Fixed in Cleaning` | `DQ Raw Rows Received` | none |
 
-**3. Donut:** legend `dq_check_results[status]`, values `DQ Checks Run`. Set the slice colours by hand: Pass `#2E7D32`, Warn `#F9A825`, Fail `#D32F2F`. Use `DQ Checks Run` here and not `DQ Checks Passed`, because the passed/warned/failed measures set their own status filter and would ignore the legend.
+**3. Donut:**
+- Legend `dq_check_results[status]`, values `DQ Checks Run`.
+- Set the slice colours by hand: Pass `#2E7D32`, Warn `#F9A825`, Fail `#D32F2F`.
+- Use `DQ Checks Run` here, not `DQ Checks Passed`. The passed/warned/failed measures set their own status filter and would ignore the legend.
 
-**4. Score by category:** axis `category`, value `Data Quality Score`, axis 0 to 100%, data labels on. Cleaning drops out on its own because it has no scored checks.
+**4. Cleaning bar:**
+- Visual filter: `category` is `Cleaning`.
+- Axis `check_name`, value `DQ Rows Failed`, one colour (`#0288D1`).
 
-**5. Reconciliation:** visual filter `category` is `Reconciliation`. Columns `check_name`, `DQ Source A Value`, `DQ Source B Value`, `DQ Recon Variance`, `status`.
+**5. Heatmap:**
+- Matrix with rows `table_name`, columns `category`, values `Data Quality Score`.
+- Turn row subtotals off and column subtotals on. The column totals are the score by category, which is why this replaced the separate score-by-category bar.
+- Cell elements > Background colour > Format style Rules on `Data Quality Score`: value is 1 then `#2E7D32`, 0.9 or more and below 1 then `#F9A825`, below 0.9 then `#D32F2F`.
+- White font, white 2px gridlines, fixed equal column widths.
+- Blank cells mean that table has no check in that category, so they stay uncoloured. The Cleaning column drops out by itself because it has no scored checks.
 
-**6. Table profile:** columns `table_name`, `table_type`, `DQ Total Rows`, `DQ Null %`, `latest_data_date`, `DQ Days Behind`, `freshness_status`.
+**6. Check results:**
+- Columns `check_id`, `category`, `table_name`, `check_name`, `DQ Rows Tested`, `DQ Rows Failed`, `DQ Row Pass Rate %`, `status`.
+- Sort by `status` ascending so Fail and Warn come first.
+- The width fits `check_description` as a last column if you want the explanation inline.
 
-**7. Check results:** columns `check_id`, `category`, `check_name`, `DQ Rows Tested`, `DQ Rows Failed`, `DQ Row Pass Rate %`, `status`. Sort by `status` ascending so Fail and Warn come first. Add `check_description` as a last column if you want the explanation inline.
+**7. Reconciliation:**
+- Visual filter: `category` is `Reconciliation`.
+- Columns `check_name`, `DQ Source A Value`, `DQ Source B Value`, `DQ Recon Variance`, `status`.
+- Put the footnote below in this visual's subtitle, so it sits right next to the numbers it explains.
 
-**8. Cleaning bar:** visual filter `category` is `Cleaning`. Axis `check_name`, value `DQ Rows Failed`, one colour (`#0288D1`).
+**8. Table profile:**
+- Columns `table_name`, `table_type`, `DQ Total Rows`, `DQ Null %`, `latest_data_date`, `DQ Days Behind`, `freshness_status`.
 
-**Status colours in the tables:** on the `status` column in 5 and 7, set Cell elements > Background colour > Format style: Field value > `DQ Status Colour`, with white font. Do the same on `freshness_status` in 6 with `DQ Freshness Colour`.
+**Status colours in the tables:** on the `status` column in 6 and 7, set Cell elements > Background colour > Format style: Field value > `DQ Status Colour`, with white font. Do the same on `freshness_status` in 8 with `DQ Freshness Colour`.
 
-**Footnote text box** under the tables: *Digital sales, footfall transactions and footfall units reconcile to sales before returns. Returns exist only as lines in fact_sales, so Online net sales including returns is lower than Digital Net Sales by the value of the returns. Audit times are UTC.*
+**Footnote** (subtitle of visual 7): *Digital sales, footfall transactions and footfall units reconcile to sales before returns. Returns exist only as lines in fact_sales, so Online net sales including returns is lower than Digital Net Sales by the value of the returns. Audit times are UTC.*
 
 ## Numbers to check against
 

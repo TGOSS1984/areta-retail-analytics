@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "29ffd0cf62160b730aec",
   "position": {
-    "x": 423.27067669172931,
-    "y": 442.55639097744364,
+    "x": 290.86220789685734,
+    "y": 402.25624496373894,
     "z": 29002,
-    "height": 329.88721804511277,
-    "width": 536.95488721804509,
+    "height": 524.48025785656728,
+    "width": 535.31023368251408,
     "tabOrder": 29002
   },
   "visual": {
@@ -39,13 +39,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_sales"
+                      "Entity": "fact_store_finance"
                     }
                   },
                   "Property": "P&L Bridge Value"
                 }
               },
-              "queryRef": "fact_sales.P&L Bridge Value",
+              "queryRef": "fact_store_finance.P&L Bridge Value",
               "nativeQueryRef": "P&L Bridge Value"
             }
           ]
@@ -58,7 +58,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_sales"
+                    "Entity": "fact_store_finance"
                   }
                 },
                 "Property": "P&L Bridge Value"
@@ -87,20 +87,6 @@
           }
         },
         "type": "Categorical"
-      },
-      {
-        "name": "362e9c1525300c5d2993",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "P&L Bridge Value"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

@@ -1,0 +1,165 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Daily trading calendar. EDIT ONLY the first block of 'transform': point 'value' at your measure and change the 'label' format if it isn't money. Needs these dim_date fields in the Values well too: full_date, day_name, day_of_week_num, business_year, business_week_number, business_period_label. is_black_friday, is_christmas_day and is_boxing_day are optional and outline those days if present. Shows the latest business year in the filter context.",
+  "background": "transparent",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "grid": false,
+      "labelColor": "#5B6A72",
+      "titleColor": "#5B6A72",
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "titleFont": "Segoe UI, Arial, sans-serif",
+      "labelFontSize": 11
+    },
+    "legend": {
+      "labelColor": "#5B6A72",
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "labelFontSize": 10
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum['Net Sales (GBP)']",
+      "as": "value"
+    },
+    {
+      "calculate": "datum.value == null ? 'No trading yet' : '£' + format(datum.value, ',.0f')",
+      "as": "label"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "business_year",
+          "as": "latest_year"
+        }
+      ]
+    },
+    {
+      "filter": "datum.business_year == datum.latest_year"
+    },
+    {
+      "calculate": "timeFormat(toDate(datum.full_date), '%a %d %b %Y')",
+      "as": "date_text"
+    },
+    {
+      "calculate": "datum.is_christmas_day == true ? 'Christmas Day' : datum.is_boxing_day == true ? 'Boxing Day' : datum.is_black_friday == true ? 'Black Friday' : ''",
+      "as": "key_day"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "business_week_number",
+      "type": "ordinal",
+      "title": null,
+      "axis": {
+        "orient": "top",
+        "labelAngle": 0,
+        "labelExpr": "datum.value % 4 == 1 ? 'Wk ' + datum.value : ''"
+      }
+    },
+    "y": {
+      "field": "day_name",
+      "type": "ordinal",
+      "title": null,
+      "sort": {
+        "field": "day_of_week_num",
+        "op": "min"
+      },
+      "axis": {
+        "labelExpr": "slice(datum.value, 0, 3)"
+      }
+    },
+    "tooltip": [
+      {
+        "field": "date_text",
+        "type": "nominal",
+        "title": "Date"
+      },
+      {
+        "field": "business_period_label",
+        "type": "nominal",
+        "title": "Period"
+      },
+      {
+        "field": "label",
+        "type": "nominal",
+        "title": "Value"
+      },
+      {
+        "field": "key_day",
+        "type": "nominal",
+        "title": "Note"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 2,
+        "stroke": "#FFFFFF",
+        "strokeWidth": 1.5
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "datum.value == null",
+            "value": "#EEE9E1"
+          },
+          "field": "value",
+          "type": "quantitative",
+          "title": null,
+          "scale": {
+            "type": "sqrt",
+            "range": [
+              "#EAF2F3",
+              "#B1CED5",
+              "#1F7486",
+              "#0B3B45"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 220,
+            "gradientThickness": 8,
+            "format": "~s",
+            "labelExpr": "'£' + datum.label"
+          }
+        },
+        "opacity": {
+          "condition": {
+            "test": "datum['__selected__'] == 'off'",
+            "value": 0.35
+          },
+          "value": 1
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.key_day != '' && datum.value != null"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "filled": false,
+        "cornerRadius": 2,
+        "stroke": "#C8962E",
+        "strokeWidth": 2
+      }
+    }
+  ]
+}

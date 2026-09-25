@@ -161,6 +161,16 @@ table dim_product
 		dataCategory: ImageUrl
 		summarizeBy: none
 
+	/// style_name on its own isn't unique: 907 style codes share 498 names across
+	/// brands. I use this on any axis that needs one bar per real style (the Style
+	/// Pareto especially) while still reading as a name rather than a code.
+	column style_label = dim_product[style_name] & " · " & dim_product[style_code]
+		dataType: string
+		lineageTag: caa4c1da-8f74-4bc1-9c1d-007448aeca14
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	column image_file
 		dataType: string
 		isHidden

@@ -40,6 +40,10 @@ The rail slicers aren't the same on every page. A slicer only filters what it ha
 | Finance | none of the date ones | Finance and targets are period grain. Replace with `dim_store[store_type]` and `dim_store[market_name]`. |
 | Data Quality | nothing | The DQ tables have no relationships, so no slicer does anything. See that page. |
 
+### KPI icons
+
+The icons are the Tabler set in `branding/icons/`, in the same colour variant the Overview cards use. One metric always gets one icon across the whole report: Net Sales is `coin` everywhere, conversion is `chart-funnel` for both stores and web, and anything profit-shaped is `moneybag`. That way the icon carries meaning, not just decoration. Every icon named in this doc is already in the set, so nothing needs generating.
+
 ### VAT and currency
 
 Add two small tile slicers to the rail on every page except Data Quality: `'VAT View'[VAT View]` and `'Currency Conversion'[Currency Conversion]`. Use View, then Sync slicers, so a choice follows you around the report.
@@ -56,7 +60,17 @@ The report has three heatmaps. There's one headline calendar heatmap in Deneb on
 
 ## 1. Overview
 
-Already built, no changes needed. It has five KPI cards with sparklines, the sales and margin combo, the channel and market bar with LY, the best sellers table with images, the store map, the major product group donut, and the product group YoY table.
+Already built, no changes needed. Its KPI row sets the icon for each core metric, and every other page reuses the same icon for the same metric:
+
+| KPI card | Value | Icon |
+|---|---|---|
+| Net Sales | `Net Sales (GBP)` | `coin` |
+| Units | `Net Units Sold` | `package` |
+| Gross Margin | `Gross Margin %` | `percentage` |
+| Gross Profit | `Gross Profit (GBP)` | `moneybag` |
+| Stock Value | `Stock Value (Retail, GBP)` | `building-warehouse` |
+
+The rest of the page is the sales and margin combo, the channel and market bar with LY, the best sellers table with images, the store map, the major product group donut, and the product group YoY table.
 
 The only job left on this page is the VAT slicer swap.
 
@@ -66,13 +80,13 @@ The only job left on this page is the VAT slicer swap.
 
 *How are we trading against last year and target, and on which days?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` |
-| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` |
-| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` |
-| Transactions | `Distinct Invoices (from Sales)` | `Distinct Invoices YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
+| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` | `target-arrow` |
+| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` | `moneybag` |
+| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
+| Transactions | `Distinct Invoices (from Sales)` | `Distinct Invoices YoY Combo` | `receipt` |
 
 | # | Visual | Type | Position (x, y, w, h) | Fields |
 |---|---|---|---|---|
@@ -92,13 +106,13 @@ The only job left on this page is the VAT slicer swap.
 
 *Which lines carry the business, and which ones come back?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` |
-| Units | `Net Units Sold` | `Net Units Sold YoY Combo` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` |
-| Return Rate | `Return Rate %` | `Return Rate YoY Combo` |
-| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
+| Units | `Net Units Sold` | `Net Units Sold YoY Combo` | `package` |
+| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
+| Return Rate | `Return Rate %` | `Return Rate YoY Combo` | `rotate` |
+| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` | `moneybag` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -120,13 +134,13 @@ The only job left on this page is the VAT slicer swap.
 
 *How does the range mix perform, and where?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Top category | `product_group` (card with visual filter Top N 1 by `Net Sales (GBP)`) | none |
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` |
-| YoY | `Net Sales YoY %` | `Net Sales YoY Combo` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` |
-| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Top category | `product_group` (card with visual filter Top N 1 by `Net Sales (GBP)`) | none | `trophy` |
+| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
+| YoY | `Net Sales YoY %` | `Net Sales YoY Combo` | `trending-up` |
+| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
+| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` | `target-arrow` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -148,13 +162,13 @@ The only job left on this page is the VAT slicer swap.
 
 *How are the stores trading, converting and earning their space?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Footfall | `Total Footfall` | `Total Footfall Target Combo (Any Grain)` |
-| Conversion | `Conversion Rate %` | `Conversion Rate YoY Combo` |
-| ATV | `Average Transaction Value (GBP)` | `Average Transaction Value YoY Combo` |
-| IPT | `Items per Transaction` | `Items per Transaction YoY Combo` |
-| Sales per Sq Ft | `Sales per Sq Ft (Annualised)` | `Sales per Sq Ft YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Footfall | `Total Footfall` | `Total Footfall Target Combo (Any Grain)` | `walk` |
+| Conversion | `Conversion Rate %` | `Conversion Rate YoY Combo` | `chart-funnel` |
+| ATV | `Average Transaction Value (GBP)` | `Average Transaction Value YoY Combo` | `receipt-2` |
+| IPT | `Items per Transaction` | `Items per Transaction YoY Combo` | `shopping-bag` |
+| Sales per Sq Ft | `Sales per Sq Ft (Annualised)` | `Sales per Sq Ft YoY Combo` | `ruler` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -176,13 +190,13 @@ The only job left on this page is the VAT slicer swap.
 
 *What does discounting buy us, and what does it cost in margin?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Full Price Sales | `Full Price Sales (GBP)` | `Full Price Sales YoY Combo` |
-| Multi-buy Sales | `Multi-buy Sales (GBP)` | `Multi-buy Sales YoY Combo` |
-| Full Price Mix | `Full Price Mix %` | `Full Price Mix YoY Combo` |
-| Multi-buy Mix | `Multi-buy Mix %` | `Multi-buy Mix YoY Combo` |
-| Return Rate | `Return Rate %` | `Return Rate YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Full Price Sales | `Full Price Sales (GBP)` | `Full Price Sales YoY Combo` | `tag` |
+| Multi-buy Sales | `Multi-buy Sales (GBP)` | `Multi-buy Sales YoY Combo` | `basket` |
+| Full Price Mix | `Full Price Mix %` | `Full Price Mix YoY Combo` | `chart-pie` |
+| Multi-buy Mix | `Multi-buy Mix %` | `Multi-buy Mix YoY Combo` | `chart-donut` |
+| Return Rate | `Return Rate %` | `Return Rate YoY Combo` | `rotate` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -204,13 +218,13 @@ The only job left on this page is the VAT slicer swap.
 
 Rail slicers on this page: week, month and `dim_market[market_name]`.
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Digital Sales | `Digital Net Sales (GBP)` | `Digital Net Sales Target Combo (Any Grain)` |
-| Sessions | `Total Sessions` | `Total Sessions YoY Combo` |
-| Conversion | `Digital Conversion Rate %` | `Digital Conversion Rate YoY Combo` |
-| Basket | `Average Basket Value (GBP)` | `Average Basket Value YoY Combo` |
-| Engagement | `Pages per Session` | none |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Digital Sales | `Digital Net Sales (GBP)` | `Digital Net Sales Target Combo (Any Grain)` | `shopping-cart` |
+| Sessions | `Total Sessions` | `Total Sessions YoY Combo` | `click` |
+| Conversion | `Digital Conversion Rate %` | `Digital Conversion Rate YoY Combo` | `chart-funnel` |
+| Basket | `Average Basket Value (GBP)` | `Average Basket Value YoY Combo` | `basket` |
+| Engagement | `Pages per Session` | none | `browser` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -234,13 +248,13 @@ Rail slicers on this page: week, month and `dim_market[market_name]`.
 
 Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everything on this page is business period grain, so keep axes on `business_period_label`, never week or month.
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Turnover | `Turnover (GBP)` | none |
-| Gross Contribution | `Gross Contribution %` | `Gross Contribution YoY Combo` |
-| Net Contribution | `Net Contribution (GBP)` | `Net Contribution Target Combo` |
-| Net Contribution % | `Net Contribution %` | `Net Contribution Pct YoY Combo` |
-| Operating Costs | `Store Operating Costs (GBP)` | `Store Operating Costs YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Turnover | `Turnover (GBP)` | none | `building-bank` |
+| Gross Contribution | `Gross Contribution %` | `Gross Contribution YoY Combo` | `percentage` |
+| Net Contribution | `Net Contribution (GBP)` | `Net Contribution Target Combo` | `moneybag` |
+| Net Contribution % | `Net Contribution %` | `Net Contribution Pct YoY Combo` | `scale` |
+| Operating Costs | `Store Operating Costs (GBP)` | `Store Operating Costs YoY Combo` | `calculator` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -262,13 +276,13 @@ Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everyth
 
 *Have we got the right stock in the right place for how fast it sells?*
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Stock Units | `Stock Units` | `Stock Units YoY Combo` |
-| Stock at Retail | `Stock Value (Retail, GBP)` | `Stock Value Retail YoY Combo` |
-| Stock at Cost | `Stock Value (Cost, GBP)` | `Stock Value Cost YoY Combo` |
-| Weeks of Cover | `Weeks of Cover` | `Weeks of Cover YoY Combo` |
-| Rate of Sale | `Avg Weekly Sales (Units)` | `Avg Weekly Sales YoY Combo` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Stock Units | `Stock Units` | `Stock Units YoY Combo` | `box` |
+| Stock at Retail | `Stock Value (Retail, GBP)` | `Stock Value Retail YoY Combo` | `building-warehouse` |
+| Stock at Cost | `Stock Value (Cost, GBP)` | `Stock Value Cost YoY Combo` | `truck-delivery` |
+| Weeks of Cover | `Weeks of Cover` | `Weeks of Cover YoY Combo` | `hourglass-high` |
+| Rate of Sale | `Avg Weekly Sales (Units)` | `Avg Weekly Sales YoY Combo` | `calendar-week` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -297,13 +311,13 @@ The page shell exists (it was copied from Sales), so it needs clearing first:
 
 The full field-by-field detail, colours and expected numbers are in `docs/data-quality-page.md`, which has the 1920 x 1080 layout below.
 
-| KPI card | Value | Reference label |
-|---|---|---|
-| Score | `Data Quality Score` | `DQ Checks Passed Label` |
-| Status | `DQ Overall Status` | none |
-| Rows tested | `DQ Scored Rows Tested` | none |
-| Latest data | `DQ Latest Data Date` | `DQ Freshness Summary` |
-| Fixed in cleaning | `DQ Rows Fixed in Cleaning` | `DQ Raw Rows Received` |
+| KPI card | Value | Reference label | Icon |
+|---|---|---|---|
+| Score | `Data Quality Score` | `DQ Checks Passed Label` | `shield-check` |
+| Status | `DQ Overall Status` | none | `circle-check` |
+| Rows tested | `DQ Scored Rows Tested` | none | `database` |
+| Latest data | `DQ Latest Data Date` | `DQ Freshness Summary` | `clock` |
+| Fixed in cleaning | `DQ Rows Fixed in Cleaning` | `DQ Raw Rows Received` | `filter` |
 
 | # | Visual | Type | Position |
 |---|---|---|---|

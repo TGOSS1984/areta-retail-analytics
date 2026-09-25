@@ -1,0 +1,71 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "ac4ef4bfd79d9e459057",
+  "position": {
+    "x": 232.72727272727272,
+    "y": 746.66666666666663,
+    "z": 37000,
+    "height": 323.87878787878788,
+    "width": 921.21212121212125,
+    "tabOrder": 37000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "business_period_label"
+                }
+              },
+              "queryRef": "dim_date.business_period_label",
+              "nativeQueryRef": "business_period_label",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Gross Contribution %"
+                }
+              },
+              "queryRef": "fact_store_finance.Gross Contribution %",
+              "nativeQueryRef": "Gross Contribution %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Net Contribution %"
+                }
+              },
+              "queryRef": "fact_store_finance.Net Contribution %",
+              "nativeQueryRef": "Net Contribution %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

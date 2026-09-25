@@ -1,0 +1,90 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "edefcff88604b525266a",
+  "position": {
+    "x": 231.96506550218342,
+    "y": 268.29694323144105,
+    "z": 42000,
+    "height": 431.79039301310047,
+    "width": 542.1834061135371,
+    "tabOrder": 42000
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_sales"
+                    }
+                  },
+                  "Property": "device_type"
+                }
+              },
+              "queryRef": "fact_digital_sales.device_type",
+              "nativeQueryRef": "device_type",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_sales"
+                    }
+                  },
+                  "Property": "Average Basket Value (GBP)"
+                }
+              },
+              "queryRef": "fact_digital_sales.Average Basket Value (GBP)",
+              "nativeQueryRef": "Average Basket Value (GBP)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_digital_sales"
+                  }
+                },
+                "Property": "Average Basket Value (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

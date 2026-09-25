@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "29ffd0cf62160b730aec",
   "position": {
-    "x": 290.86220789685734,
-    "y": 402.25624496373894,
-    "z": 29002,
-    "height": 524.48025785656728,
-    "width": 535.31023368251408,
-    "tabOrder": 29002
+    "x": 1177.2121212121212,
+    "y": 267.63636363636363,
+    "z": 31000,
+    "height": 401.45454545454544,
+    "width": 723.39393939393938,
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "waterfallChart",
@@ -71,23 +71,5 @@
       }
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "3588e0e6a59bded41989",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_pnl_bridge"
-              }
-            },
-            "Property": "step_name"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

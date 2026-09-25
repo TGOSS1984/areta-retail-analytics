@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "fb449f1146ce210a7c04",
   "position": {
-    "x": 240.5639097744361,
-    "y": 413.12030075187971,
-    "z": 29001,
-    "height": 500.41353383458647,
-    "width": 890.187969924812,
-    "tabOrder": 29001
+    "x": 345.2821670428894,
+    "y": 312.05417607223478,
+    "z": 30000,
+    "height": 767.36842105263156,
+    "width": 667.89473684210532,
+    "tabOrder": 30000
   },
   "visual": {
     "visualType": "lineClusteredColumnComboChart",
@@ -29,6 +29,52 @@
               "queryRef": "dim_product.style_label",
               "nativeQueryRef": "style_label",
               "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Style Pareto Rank"
+                }
+              },
+              "queryRef": "fact_sales.Style Pareto Rank",
+              "nativeQueryRef": "Style Pareto Rank"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Style Pareto Cumulative Sales (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Style Pareto Cumulative Sales (GBP)",
+              "nativeQueryRef": "Style Pareto Cumulative Sales (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Style Pareto Cumulative %"
+                }
+              },
+              "queryRef": "fact_sales.Style Pareto Cumulative %",
+              "nativeQueryRef": "Style Pareto Cumulative %"
             }
           ]
         },

@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "46e148836dcb441b80cd",
   "position": {
-    "x": 211.06382978723406,
-    "y": 93.957446808510653,
+    "x": 232.01472612394483,
+    "y": 90.964461617551976,
     "z": 6000,
     "height": 162.04255319148936,
     "width": 324.08510638297872,
@@ -20,14 +20,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_sales"
+                      "Entity": "fact_digital_sales"
                     }
                   },
-                  "Property": "Net Sales (GBP)"
+                  "Property": "Digital Net Sales (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Net Sales (GBP)",
-              "nativeQueryRef": "Net Sales (GBP)"
+              "queryRef": "fact_digital_sales.Digital Net Sales (GBP)",
+              "nativeQueryRef": "Digital Net Sales (GBP)"
             }
           ]
         }
@@ -39,10 +39,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_sales"
+                    "Entity": "fact_digital_sales"
                   }
                 },
-                "Property": "Net Sales (GBP)"
+                "Property": "Digital Net Sales (GBP)"
               }
             },
             "direction": "Descending"
@@ -52,109 +52,6 @@
       }
     },
     "objects": {
-      "referenceLabel": [
-        {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-bcfefb72-4e1d-592d-d45b-19819f06cb30",
-            "order": 0
-          }
-        },
-        {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-54612733-9066-981f-2b2c-149ac4cd675d",
-            "order": 0
-          }
-        },
-        {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-8ca8b2fe-e018-0800-875b-b2cb91ee05e9",
-            "order": 1
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_sales"
-                    }
-                  },
-                  "Property": "Net Sales YoY Combo"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-9e7fc411-ae06-7102-0a8b-07095bb73473",
-            "order": 1
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_targets"
-                    }
-                  },
-                  "Property": "Net Sales Target Combo (Any Grain)"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241",
-            "order": 0
-          }
-        }
-      ],
       "layout": [
         {
           "properties": {
@@ -236,502 +133,6 @@
           }
         }
       ],
-      "referenceLabelValue": [
-        {
-          "properties": {
-            "valueFontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 2,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_sales"
-                                    }
-                                  },
-                                  "Property": "Net Sales YoY (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#2E7D32'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_sales"
-                                    }
-                                  },
-                                  "Property": "Net Sales YoY (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D32F2F'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-54612733-9066-981f-2b2c-149ac4cd675d"
-          }
-        },
-        {
-          "properties": {
-            "valueFontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 2,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_targets"
-                                    }
-                                  },
-                                  "Property": "Net Sales Target Variance (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#2E7D32'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_targets"
-                                    }
-                                  },
-                                  "Property": "Net Sales Target Variance (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D32F2F'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-8ca8b2fe-e018-0800-875b-b2cb91ee05e9"
-          }
-        },
-        {
-          "properties": {
-            "valueFontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 2,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_sales"
-                                    }
-                                  },
-                                  "Property": "Net Sales YoY (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#2E7D32'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_sales"
-                                    }
-                                  },
-                                  "Property": "Net Sales YoY (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D32F2F'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-9e7fc411-ae06-7102-0a8b-07095bb73473"
-          }
-        },
-        {
-          "properties": {
-            "valueBold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "valueItalic": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-9e7fc411-ae06-7102-0a8b-07095bb73473"
-          }
-        },
-        {
-          "properties": {
-            "valueBold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "valueItalic": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-8ca8b2fe-e018-0800-875b-b2cb91ee05e9"
-          }
-        },
-        {
-          "properties": {
-            "valueItalic": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241"
-          }
-        },
-        {
-          "properties": {
-            "valueFontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 2,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_targets"
-                                    }
-                                  },
-                                  "Property": "Net Sales Target Variance (Any Grain, GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#2E7D32'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_targets"
-                                    }
-                                  },
-                                  "Property": "Net Sales Target Variance (Any Grain, GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D32F2F'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241"
-          }
-        },
-        {
-          "properties": {
-            "valueFontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)"
-          }
-        }
-      ],
-      "referenceLabelTitle": [
-        {
-          "properties": {
-            "titleContentType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'custom'"
-                }
-              }
-            },
-            "titleText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Vs Target'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-8ca8b2fe-e018-0800-875b-b2cb91ee05e9"
-          }
-        },
-        {
-          "properties": {
-            "titleContentType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'custom'"
-                }
-              }
-            },
-            "titleText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Vs PY'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-54612733-9066-981f-2b2c-149ac4cd675d"
-          }
-        },
-        {
-          "properties": {
-            "titleContentType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'custom'"
-                }
-              }
-            },
-            "titleText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Vs PY'"
-                }
-              }
-            },
-            "titleBold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-9e7fc411-ae06-7102-0a8b-07095bb73473"
-          }
-        },
-        {
-          "properties": {
-            "titleContentType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'custom'"
-                }
-              }
-            },
-            "titleText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Vs Target'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "fact_sales.Net Sales (GBP)",
-            "id": "field-f45584a4-bfd1-086b-4c59-8b4adff25241"
-          }
-        }
-      ],
       "referenceLabelLayout": [
         {
           "properties": {
@@ -777,6 +178,186 @@
           },
           "selector": {
             "id": "default"
+          }
+        }
+      ],
+      "referenceLabel": [
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-9cbfb986-94a3-6c6b-95b6-3fe64e51b3bc",
+            "order": 0
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_sales"
+                    }
+                  },
+                  "Property": "Digital Net Sales YoY Combo"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-0f48dd9f-0c5a-ea36-ef02-00ba22c9ac9a",
+            "order": 1
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_targets"
+                    }
+                  },
+                  "Property": "Digital Net Sales Target Combo (Any Grain)"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-29c7eb99-bf32-5bc2-e1f6-e2ddbece7432",
+            "order": 0
+          }
+        }
+      ],
+      "referenceLabelTitle": [
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-9cbfb986-94a3-6c6b-95b6-3fe64e51b3bc"
+          }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-0f48dd9f-0c5a-ea36-ef02-00ba22c9ac9a"
+          }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs Target'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-29c7eb99-bf32-5bc2-e1f6-e2ddbece7432"
+          }
+        }
+      ],
+      "referenceLabelValue": [
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-0f48dd9f-0c5a-ea36-ef02-00ba22c9ac9a"
+          }
+        },
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_sales.Digital Net Sales (GBP)",
+            "id": "field-29c7eb99-bf32-5bc2-e1f6-e2ddbece7432"
           }
         }
       ]

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "eebba9976598a502a0be",
+  "position": {
+    "x": 789.51965065502191,
+    "y": 265.50218340611355,
+    "z": 41000,
+    "height": 434.585152838428,
+    "width": 681.92139737991272,
+    "tabOrder": 41000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_market"
+                    }
+                  },
+                  "Property": "market_name"
+                }
+              },
+              "queryRef": "dim_market.market_name",
+              "nativeQueryRef": "market_name",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_targets"
+                    }
+                  },
+                  "Property": "Target Digital Net Sales (GBP), Any Grain"
+                }
+              },
+              "queryRef": "fact_digital_targets.Target Digital Net Sales (GBP), Any Grain",
+              "nativeQueryRef": "Target Digital Net Sales (GBP), Any Grain"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_sales"
+                    }
+                  },
+                  "Property": "Digital Net Sales (GBP)"
+                }
+              },
+              "queryRef": "fact_digital_sales.Digital Net Sales (GBP)",
+              "nativeQueryRef": "Digital Net Sales (GBP)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_digital_targets"
+                  }
+                },
+                "Property": "Target Digital Net Sales (GBP), Any Grain"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

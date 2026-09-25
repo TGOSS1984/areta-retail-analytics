@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "79da01ce5bc09891d7ab",
+  "position": {
+    "x": 1177.2121212121212,
+    "y": 680.72727272727275,
+    "z": 32000,
+    "height": 389.81818181818181,
+    "width": 723.39393939393938,
+    "tabOrder": 32000
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Staff Costs (GBP)"
+                }
+              },
+              "queryRef": "fact_store_finance.Staff Costs (GBP)",
+              "nativeQueryRef": "Staff Costs (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Rent (GBP)"
+                }
+              },
+              "queryRef": "fact_store_finance.Rent (GBP)",
+              "nativeQueryRef": "Rent (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Utilities (GBP)"
+                }
+              },
+              "queryRef": "fact_store_finance.Utilities (GBP)",
+              "nativeQueryRef": "Utilities (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Marketing (GBP)"
+                }
+              },
+              "queryRef": "fact_store_finance.Marketing (GBP)",
+              "nativeQueryRef": "Marketing (GBP)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_store_finance"
+                  }
+                },
+                "Property": "Staff Costs (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

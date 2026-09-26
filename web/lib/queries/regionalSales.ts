@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { marketAnd, tyDates } from "@/lib/filters/sql";
 
 export type MarketPoint = {
   marketCode: string;
@@ -21,20 +23,7 @@ export type MarketPoint = {
  * dim_store, not a second independently-maintained position" decision
  * made when lat/long was added there.
  */
-export async function fetchRegionalSales(): Promise<MarketPoint[]> {
-  const yearRows = await queryDuckDB<{ current_year: number }>(`
-    SELECT CAST(MAX(d.business_year) AS INTEGER) AS current_year
-    FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
-  `);
-  const year = yearRows[0].current_year;
-
-  const periodRows = await queryDuckDB<{ max_period: number }>(`
-    SELECT CAST(MAX(d.business_period_number) AS INTEGER) AS max_period
-    FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
-    WHERE d.business_year = ${year}
-  `);
-  const maxPeriod = periodRows[0].max_period;
-
+export async function fetchRegionalSales(f: ResolvedFilters): Promise<MarketPoint[]> {
   const rows = await queryDuckDB<{
     market_code: string;
     market_name: string;
@@ -51,7 +40,7 @@ export async function fetchRegionalSales(): Promise<MarketPoint[]> {
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_store s ON f.store_id = s.store_id
-    WHERE d.business_year = ${year} AND d.business_period_number <= ${maxPeriod}
+    WHERE ${tyDates(f, "f.date")} ${marketAnd(f, "s")}
     GROUP BY s.market_code, s.market_name
     ORDER BY sales_gbp DESC
   `);

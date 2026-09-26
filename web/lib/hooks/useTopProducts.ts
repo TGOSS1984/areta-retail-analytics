@@ -1,8 +1,10 @@
 "use client";
 
-import { useAsyncData, type AsyncState } from "@/lib/hooks/useAsyncData";
+import type { AsyncState } from "@/lib/hooks/useAsyncData";
+import { useFilteredData } from "@/lib/hooks/useFilteredData";
 import { fetchTopProducts, type TopProduct } from "@/lib/queries/topProducts";
 
 export function useTopProducts(limit = 10): AsyncState<TopProduct[]> {
-  return useAsyncData(() => fetchTopProducts(limit), [limit]);
+  // limit is fixed per call site, so it doesn't need to be a dependency.
+  return useFilteredData((f) => fetchTopProducts(f, limit));
 }

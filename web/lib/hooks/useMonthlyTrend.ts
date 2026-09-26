@@ -1,8 +1,9 @@
 "use client";
 
-import { useAsyncData, type AsyncState } from "@/lib/hooks/useAsyncData";
+import type { AsyncState } from "@/lib/hooks/useAsyncData";
+import { useFilteredData } from "@/lib/hooks/useFilteredData";
 import { fetchMonthlyTrend, type MonthlyTrend } from "@/lib/queries/monthlyTrend";
 
 export function useMonthlyTrend(): AsyncState<MonthlyTrend> {
-  return useAsyncData(fetchMonthlyTrend);
+  return useFilteredData(fetchMonthlyTrend);
 }

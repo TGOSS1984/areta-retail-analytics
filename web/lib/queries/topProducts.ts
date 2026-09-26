@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { tyDates } from "@/lib/filters/sql";
 
 export type TopProduct = {
   styleCode: string;
@@ -13,26 +15,6 @@ export type TopProduct = {
   quantity: number;
 };
 
-/** Same like-for-like YTD bounds as salesSummary.ts, monthlyTrend.ts and
- * salesMix.ts — current business year, elapsed periods only. Not shared
- * code with those for the same reason noted in salesMix.ts: different
- * tables joined, so a shared helper would need the query shape passed
- * in, which isn't simpler than repeating eight lines of SQL. */
-async function currentYtdBounds(): Promise<{ year: number; maxPeriod: number }> {
-  const yearRows = await queryDuckDB<{ current_year: number }>(`
-    SELECT CAST(MAX(d.business_year) AS INTEGER) AS current_year
-    FROM fact_sales_style_colour_daily f JOIN dim_date d ON f.date = d.full_date
-  `);
-  const year = yearRows[0].current_year;
-
-  const periodRows = await queryDuckDB<{ max_period: number }>(`
-    SELECT CAST(MAX(d.business_period_number) AS INTEGER) AS max_period
-    FROM fact_sales_style_colour_daily f JOIN dim_date d ON f.date = d.full_date
-    WHERE d.business_year = ${year}
-  `);
-  return { year, maxPeriod: periodRows[0].max_period };
-}
-
 /**
  * Ranked at (style, colour) grain, not style alone — a jacket in three
  * colours is three rows here, each with its own image_path, because
@@ -41,8 +23,11 @@ async function currentYtdBounds(): Promise<{ year: number; maxPeriod: number }> 
  * exactly the SKU prefix (style_code-colour_code) rather than a
  * separately invented convention.
  */
-export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
-  const { year, maxPeriod } = await currentYtdBounds();
+/** Follows the year and period filters. It can't follow the market
+ * filter: the style-colour export is kept at date x style x colour, with
+ * no store, to keep the file small, so the card says "all markets" when
+ * one is selected rather than quietly showing the wrong thing. */
+export async function fetchTopProducts(f: ResolvedFilters, limit = 10): Promise<TopProduct[]> {
   const rows = await queryDuckDB<{
     style_code: string;
     colour_code: string;
@@ -69,7 +54,7 @@ export async function fetchTopProducts(limit = 10): Promise<TopProduct[]> {
     FROM fact_sales_style_colour_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_style_colour s ON f.style_code = s.style_code AND f.colour_code = s.colour_code
-    WHERE d.business_year = ${year} AND d.business_period_number <= ${maxPeriod}
+    WHERE ${tyDates(f, "f.date")}
     GROUP BY s.style_code, s.colour_code, s.style_name, s.colour, s.brand_name, s.major_product_group, s.product_group, s.image_path
     ORDER BY sales_gbp DESC
     LIMIT ${limit}

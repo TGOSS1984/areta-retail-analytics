@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { marketAnd, tyDates } from "@/lib/filters/sql";
 
 export type RegionPoint = {
   region: string;
@@ -20,20 +22,7 @@ export type RegionPoint = {
  * (RegionalMapChart.tsx) passes a hardcoded literal ("UK"), never
  * anything from a user-facing input.
  */
-export async function fetchRegionalSalesDrilldown(marketCode: string): Promise<RegionPoint[]> {
-  const yearRows = await queryDuckDB<{ current_year: number }>(`
-    SELECT CAST(MAX(d.business_year) AS INTEGER) AS current_year
-    FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
-  `);
-  const year = yearRows[0].current_year;
-
-  const periodRows = await queryDuckDB<{ max_period: number }>(`
-    SELECT CAST(MAX(d.business_period_number) AS INTEGER) AS max_period
-    FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
-    WHERE d.business_year = ${year}
-  `);
-  const maxPeriod = periodRows[0].max_period;
-
+export async function fetchRegionalSalesDrilldown(marketCode: string, f: ResolvedFilters): Promise<RegionPoint[]> {
   const rows = await queryDuckDB<{
     region: string;
     avg_lat: number;
@@ -48,7 +37,7 @@ export async function fetchRegionalSalesDrilldown(marketCode: string): Promise<R
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_store s ON f.store_id = s.store_id
-    WHERE d.business_year = ${year} AND d.business_period_number <= ${maxPeriod}
+    WHERE ${tyDates(f, "f.date")}
       AND s.market_code = '${marketCode}'
     GROUP BY s.region
     ORDER BY sales_gbp DESC

@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { marketAnd } from "@/lib/filters/sql";
 
 export type SalesMarginPoint = {
   monthNum: number;
@@ -31,7 +33,7 @@ function daysInMonth(year: number, monthNum: number): number {
  * current-vs-prior there), a shared helper would need the shape passed
  * in, which isn't simpler than repeating the logic.
  */
-export async function fetchSalesMarginByMonth(year: number): Promise<SalesMarginByMonth> {
+export async function fetchSalesMarginByMonth(year: number, f: ResolvedFilters): Promise<SalesMarginByMonth> {
   const lastDateRows = await queryDuckDB<{ last_date: string }>(`
     SELECT MAX(f.date) AS last_date FROM fact_sales_daily f
   `);
@@ -51,7 +53,8 @@ export async function fetchSalesMarginByMonth(year: number): Promise<SalesMargin
            CAST(SUM(f.cost_gbp) AS DOUBLE) AS cost_gbp
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
-    WHERE d.calendar_year = ${year}
+    JOIN dim_store s ON f.store_id = s.store_id
+    WHERE d.calendar_year = ${year} ${marketAnd(f, "s")}
     GROUP BY d.month_num, d.month_name
     ORDER BY d.month_num
   `);

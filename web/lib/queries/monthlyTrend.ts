@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { marketAnd } from "@/lib/filters/sql";
 
 export type MonthlyTrendPoint = {
   monthNum: number;
@@ -37,7 +39,7 @@ function daysInMonth(year: number, monthNum: number): number {
  * before writing it: the last date present was 2026-09-16, day 16 of a
  * 30-day month — genuinely incomplete, not an edge case that won't occur.
  */
-export async function fetchMonthlyTrend(): Promise<MonthlyTrend> {
+export async function fetchMonthlyTrend(f: ResolvedFilters): Promise<MonthlyTrend> {
   const yearRows = await queryDuckDB<{ cal_year: number }>(`
     SELECT CAST(MAX(d.calendar_year) AS INTEGER) AS cal_year
     FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
@@ -64,7 +66,8 @@ export async function fetchMonthlyTrend(): Promise<MonthlyTrend> {
            CAST(SUM(f.net_sales_gbp) AS DOUBLE) AS net_sales_gbp
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
-    WHERE d.calendar_year IN (${currentYear}, ${priorYear})
+    JOIN dim_store s ON f.store_id = s.store_id
+    WHERE d.calendar_year IN (${currentYear}, ${priorYear}) ${marketAnd(f, "s")}
     GROUP BY d.month_num, d.month_name, d.calendar_year
     ORDER BY d.month_num
   `);

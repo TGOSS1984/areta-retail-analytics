@@ -1,8 +1,9 @@
 "use client";
 
-import { useAsyncData, type AsyncState } from "@/lib/hooks/useAsyncData";
+import type { AsyncState } from "@/lib/hooks/useAsyncData";
+import { useFilteredData } from "@/lib/hooks/useFilteredData";
 import { fetchRegionalSales, type MarketPoint } from "@/lib/queries/regionalSales";
 
 export function useRegionalSales(): AsyncState<MarketPoint[]> {
-  return useAsyncData(fetchRegionalSales);
+  return useFilteredData(fetchRegionalSales);
 }

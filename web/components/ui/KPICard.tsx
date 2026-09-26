@@ -3,33 +3,37 @@ import { Sparkline } from "@/components/ui/Sparkline";
 type KPICardProps = {
   label: string;
   value: string;
-  deltaLabel: string;
+  /** null when there's no earlier year to compare with. */
+  deltaLabel: string | null;
   trend: "up" | "down";
   icon?: React.ReactNode;
-  /** Trailing 12 full calendar months, oldest first — see
-   * lib/queries/kpiTrends.ts. Optional so KPICard still works for any
-   * future card that doesn't have a trend series behind it. */
+  /** Trailing 12 full calendar months, oldest first (lib/queries/kpiTrends.ts). */
   sparkline?: number[];
 };
 
 export function KPICard({ label, value, deltaLabel, trend, icon, sparkline }: KPICardProps) {
-  const deltaColor = trend === "up" ? "text-success" : "text-error";
-  // Matches the success/error Tailwind tokens' actual hex values — SVG
-  // stroke can't consume a Tailwind class directly, so this is kept in
-  // sync with tailwind.config's success/error entries by hand.
+  const deltaColor = deltaLabel === null ? "text-mist" : trend === "up" ? "text-success" : "text-error";
+  // SVG stroke can't take a Tailwind class, so these match the
+  // success/error tokens in tailwind.config by hand.
   const sparkColor = trend === "up" ? "#2E7D32" : "#D32F2F";
 
   return (
-    <div className="flex-1 rounded-xl bg-charcoal/40 p-4 backdrop-blur-sm">
+    <div className="min-w-0 rounded-xl bg-charcoal/40 p-3 backdrop-blur-sm md:p-4">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-summit-gold">
-          {icon}
-          {label}
+        <div className="flex min-w-0 items-center gap-2 text-[10px] uppercase tracking-wide text-summit-gold md:text-xs">
+          <span className="flex-shrink-0">{icon}</span>
+          <span className="truncate">{label}</span>
         </div>
-        {sparkline && sparkline.length > 1 && <Sparkline data={sparkline} color={sparkColor} />}
+        {sparkline && sparkline.length > 1 && (
+          <span className="hidden sm:block">
+            <Sparkline data={sparkline} color={sparkColor} />
+          </span>
+        )}
       </div>
-      <div className="text-2xl font-medium text-cloud">{value}</div>
-      <div className={`mt-1 text-xs ${deltaColor}`}>{deltaLabel} vs LY</div>
+      <div className="truncate text-xl font-medium text-cloud md:text-2xl">{value}</div>
+      <div className={`mt-1 truncate text-xs ${deltaColor}`}>
+        {deltaLabel === null ? "No earlier year" : `${deltaLabel} vs LY`}
+      </div>
     </div>
   );
 }

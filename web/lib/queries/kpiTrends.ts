@@ -1,4 +1,6 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { marketAnd } from "@/lib/filters/sql";
 
 export type KpiTrends = {
   totalSales: number[];
@@ -27,7 +29,9 @@ function daysInMonth(year: number, monthNum: number): number {
  * basis between the number and the shape behind it is fine here in a
  * way it would NOT be fine for the number itself.
  */
-export async function fetchKpiTrends(): Promise<KpiTrends> {
+/** Follows the market filter; the time window stays the trailing twelve
+ * full months, since a sparkline is about recent shape. */
+export async function fetchKpiTrends(f: ResolvedFilters): Promise<KpiTrends> {
   const lastDateRows = await queryDuckDB<{ last_date: string }>(`
     SELECT MAX(f.date) AS last_date FROM fact_sales_daily f
   `);
@@ -54,6 +58,7 @@ export async function fetchKpiTrends(): Promise<KpiTrends> {
     FROM fact_sales_daily f
     JOIN dim_date d ON f.date = d.full_date
     JOIN dim_store s ON f.store_id = s.store_id
+    WHERE TRUE ${marketAnd(f, "s")}
     GROUP BY date_trunc('month', d.full_date)
     ORDER BY month_start DESC
     LIMIT 13

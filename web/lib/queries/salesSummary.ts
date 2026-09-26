@@ -1,14 +1,15 @@
 import { queryDuckDB } from "@/lib/duckdb";
+import type { ResolvedFilters } from "@/lib/filters/filters";
+import { lyDates, marketAnd, tyDates } from "@/lib/filters/sql";
 
 export type SalesSummary = {
-  currentYear: number;
-  maxPeriod: number;
   totalSalesGbp: number;
   totalUnits: number;
   grossMarginPct: number;
   retailSalesGbp: number;
   concessionSalesGbp: number;
   onlineSalesGbp: number;
+  /** null when the selection is the first year of data. */
   deltaVsLastYear: {
     totalSalesPct: number;
     totalUnitsPct: number;
@@ -16,87 +17,67 @@ export type SalesSummary = {
     retailSalesPct: number;
     concessionSalesPct: number;
     onlineSalesPct: number;
-  };
-};
-
-type YearAggregate = {
-  total_sales: number;
-  total_units: number;
-  total_cost: number;
-  retail_sales: number;
-  concession_sales: number;
-  online_sales: number;
+  } | null;
 };
 
 function pctDelta(current: number, prior: number): number {
-  return ((current - prior) / prior) * 100;
-}
-
-async function aggregateForYear(year: number, maxPeriod: number): Promise<YearAggregate> {
-  const rows = await queryDuckDB<YearAggregate>(`
-    SELECT
-      CAST(SUM(f.net_sales_gbp) AS DOUBLE) AS total_sales,
-      CAST(SUM(f.quantity) AS DOUBLE) AS total_units,
-      CAST(SUM(f.cost_gbp) AS DOUBLE) AS total_cost,
-      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Retail') AS DOUBLE) AS retail_sales,
-      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Concession') AS DOUBLE) AS concession_sales,
-      CAST(SUM(f.net_sales_gbp) FILTER (WHERE s.channel = 'Online') AS DOUBLE) AS online_sales
-    FROM fact_sales_daily f
-    JOIN dim_date d ON f.date = d.full_date
-    JOIN dim_store s ON f.store_id = s.store_id
-    WHERE d.business_year = ${year} AND d.business_period_number <= ${maxPeriod}
-  `);
-  return rows[0];
+  return prior ? ((current - prior) / prior) * 100 : 0;
 }
 
 /**
- * Like-for-like YTD vs LY: same elapsed business periods in both years,
- * not partial-current-year vs full-prior-year (that comparison shipped
- * wrong once already in Hero.tsx's static placeholder — a -48% delta
- * that was actually just fewer months elapsed, not a real decline; see
- * that component's git history). This SQL was verified against the real
- * exported Parquet files with DuckDB's Python bindings before being
- * ported here, and reproduces those same validated figures.
+ * The Overview KPI cards for the selected periods and market, against the
+ * same days last year. Like-for-like by date rather than by period
+ * number: the period still trading is compared with the matching days of
+ * last year's period, not all of it. The first version compared a part
+ * year with a full one and showed a -48% "decline" that was only fewer
+ * months elapsed.
  */
-export async function fetchSalesSummary(): Promise<SalesSummary> {
-  const yearRows = await queryDuckDB<{ current_year: number }>(`
-    SELECT CAST(MAX(d.business_year) AS INTEGER) AS current_year
-    FROM fact_sales_daily f JOIN dim_date d ON f.date = d.full_date
+export async function fetchSalesSummary(f: ResolvedFilters): Promise<SalesSummary> {
+  const [r] = await queryDuckDB<{
+    sales_ty: number; sales_ly: number | null;
+    units_ty: number; units_ly: number | null;
+    cost_ty: number; cost_ly: number | null;
+    retail_ty: number; retail_ly: number | null;
+    concession_ty: number; concession_ly: number | null;
+    online_ty: number; online_ly: number | null;
+  }>(`
+    SELECT
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${tyDates(f, "x.date")}) AS DOUBLE) AS sales_ty,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${lyDates(f, "x.date")}) AS DOUBLE) AS sales_ly,
+      CAST(SUM(x.quantity) FILTER (WHERE ${tyDates(f, "x.date")}) AS DOUBLE) AS units_ty,
+      CAST(SUM(x.quantity) FILTER (WHERE ${lyDates(f, "x.date")}) AS DOUBLE) AS units_ly,
+      CAST(SUM(x.cost_gbp) FILTER (WHERE ${tyDates(f, "x.date")}) AS DOUBLE) AS cost_ty,
+      CAST(SUM(x.cost_gbp) FILTER (WHERE ${lyDates(f, "x.date")}) AS DOUBLE) AS cost_ly,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${tyDates(f, "x.date")} AND s.channel = 'Retail') AS DOUBLE) AS retail_ty,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${lyDates(f, "x.date")} AND s.channel = 'Retail') AS DOUBLE) AS retail_ly,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${tyDates(f, "x.date")} AND s.channel = 'Concession') AS DOUBLE) AS concession_ty,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${lyDates(f, "x.date")} AND s.channel = 'Concession') AS DOUBLE) AS concession_ly,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${tyDates(f, "x.date")} AND s.channel = 'Online') AS DOUBLE) AS online_ty,
+      CAST(SUM(x.net_sales_gbp) FILTER (WHERE ${lyDates(f, "x.date")} AND s.channel = 'Online') AS DOUBLE) AS online_ly
+    FROM fact_sales_daily x
+    JOIN dim_store s ON x.store_id = s.store_id
+    WHERE (${tyDates(f, "x.date")} OR ${lyDates(f, "x.date")}) ${marketAnd(f, "s")}
   `);
-  const currentYear = yearRows[0].current_year;
 
-  const periodRows = await queryDuckDB<{ max_period: number }>(`
-    SELECT CAST(MAX(d.business_period_number) AS INTEGER) AS max_period
-    FROM fact_sales_daily f
-    JOIN dim_date d ON f.date = d.full_date
-    WHERE d.business_year = ${currentYear}
-  `);
-  const maxPeriod = periodRows[0].max_period;
-
-  const [cur, prev] = await Promise.all([
-    aggregateForYear(currentYear, maxPeriod),
-    aggregateForYear(currentYear - 1, maxPeriod),
-  ]);
-
-  const curMargin = 1 - cur.total_cost / cur.total_sales;
-  const prevMargin = 1 - prev.total_cost / prev.total_sales;
+  const margin = (sales: number | null, cost: number | null) => (sales ? 1 - (cost ?? 0) / sales : 0);
+  const hasLy = f.hasLastYear && !!r.sales_ly;
 
   return {
-    currentYear,
-    maxPeriod,
-    totalSalesGbp: cur.total_sales,
-    totalUnits: cur.total_units,
-    grossMarginPct: curMargin * 100,
-    retailSalesGbp: cur.retail_sales,
-    concessionSalesGbp: cur.concession_sales,
-    onlineSalesGbp: cur.online_sales,
-    deltaVsLastYear: {
-      totalSalesPct: pctDelta(cur.total_sales, prev.total_sales),
-      totalUnitsPct: pctDelta(cur.total_units, prev.total_units),
-      grossMarginPp: (curMargin - prevMargin) * 100,
-      retailSalesPct: pctDelta(cur.retail_sales, prev.retail_sales),
-      concessionSalesPct: pctDelta(cur.concession_sales, prev.concession_sales),
-      onlineSalesPct: pctDelta(cur.online_sales, prev.online_sales),
-    },
+    totalSalesGbp: r.sales_ty ?? 0,
+    totalUnits: r.units_ty ?? 0,
+    grossMarginPct: margin(r.sales_ty, r.cost_ty) * 100,
+    retailSalesGbp: r.retail_ty ?? 0,
+    concessionSalesGbp: r.concession_ty ?? 0,
+    onlineSalesGbp: r.online_ty ?? 0,
+    deltaVsLastYear: hasLy
+      ? {
+          totalSalesPct: pctDelta(r.sales_ty ?? 0, r.sales_ly ?? 0),
+          totalUnitsPct: pctDelta(r.units_ty ?? 0, r.units_ly ?? 0),
+          grossMarginPp: (margin(r.sales_ty, r.cost_ty) - margin(r.sales_ly, r.cost_ly)) * 100,
+          retailSalesPct: pctDelta(r.retail_ty ?? 0, r.retail_ly ?? 0),
+          concessionSalesPct: pctDelta(r.concession_ty ?? 0, r.concession_ly ?? 0),
+          onlineSalesPct: pctDelta(r.online_ty ?? 0, r.online_ly ?? 0),
+        }
+      : null,
   };
 }

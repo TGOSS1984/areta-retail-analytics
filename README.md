@@ -75,7 +75,7 @@ One Python pipeline feeds all three, so the numbers agree wherever you look.
 | **The data** | About 3.9 million invoice lines, 361 stores (202 retail, 148 concession, 11 online), 12,151 SKUs across 907 styles, 4 brands, 11 markets. History starts 5 March 2023 and runs up to the day the pipeline last ran |
 | **The pipeline** | 17 steps in Python, about two minutes end to end, scheduled weekly with GitHub Actions |
 | **Power BI** | 24 tables, 385 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
-| **The web app** | Next.js 16, DuckDB-wasm, ECharts, one dashboard page with six charts |
+| **The web app** | Next.js 16, DuckDB-wasm, ECharts, a responsive multi-page dashboard with shared filters |
 | **SQL** | 147 queries in 11 files plus 30 practice exercises |
 | **Data quality** | 78 automated checks that run at the end of every refresh |
 
@@ -325,7 +325,9 @@ Eleven pages, each with five KPI cards and a set of visuals. The full design, wi
 
 I built the web app because I didn't want to be someone who can only work inside Power BI. I've done full stack development (React and Django, mostly), and I wanted to see how far I could take retail analytics in a browser, with the commercial and data side and the development side in one project.
 
-It's in [`web/`](web/). Next.js (App Router) and TypeScript, Tailwind for styling, ECharts for the charts, Tabler icons, and the Montserrat brand font. The whole thing is one dashboard page: KPI cards with sparklines, and six charts (sales trend, channel mix, a Europe map with market drill-down, top products with photos, sales and margin by month, and category mix).
+It's in [`web/`](web/). Next.js (App Router) and TypeScript, Tailwind for styling, ECharts for the charts, Tabler icons, and the Montserrat brand font. It has an Overview dashboard (KPI cards with sparklines, sales trend, channel mix, a Europe map with market drill-down, top products with photos, sales and margin by month, category mix) and a growing set of pages behind it. Sales has a weekly filled line against last year, a calendar heatmap of every trading day, a waterfall from last year to this year by market, and sales against a phased target by period. Stores has a footfall-to-basket funnel, a footfall-versus-conversion scatter, a sortable league table with net contribution, and a weekday-by-period footfall heatmap. The rest of the nav is planned page by page, and each one says what it will hold until it's built.
+
+**Filters and layout.** Year, period range and market are real filters that every query on every page respects. They live in the URL, so a filtered view can be bookmarked or shared and follows you between pages. "This year" is always the selected periods up to the last day of data, and "last year" is always the same days 364 days earlier, so a part-traded period is never compared with a whole one. The layout is designed three times rather than left to reflow: every page opens with the same banner, its KPIs sitting over the mountain image like the Overview's; a phone gets a top bar, a slide-out menu and the KPIs two across; a tablet gets an icon rail and two columns; a desktop gets the full sidebar and, on a tall enough screen, a grid that fits the viewport exactly, like the reference board it was designed from. Charts watch their own width and change what they show when they're narrow (a waterfall turns on its side, a donut moves its legend underneath) rather than only shrinking.
 
 **How it gets its data.** There's no API and no server. The generator writes a few pre-aggregated Parquet files to `data/exports`, a small script (`scripts/sync-data.mjs`) copies them into `web/public/data` before `dev` and `build`, and the browser loads them into **DuckDB-wasm** and runs SQL against them. Each chart has a query in `web/lib/queries/` and a hook in `web/lib/hooks/`. Hosting is a static site, so it costs nothing.
 
@@ -333,9 +335,9 @@ The dashboard is dark themed on purpose, in the same teal and gold as the report
 
 The first version of the file loading hit a real bug: DuckDB-wasm threw "Invalid URL" when I registered an HTTP URL and let it fetch the file itself. Fetching the bytes myself and handing DuckDB the buffer is simpler and has been fine since.
 
-What's not done: it's one page, mobile layout is deliberately deferred, and it doesn't show the digital metrics even though the data and the Power BI side are ready.
+Each page only downloads the files it needs, the first time it needs them, so adding pages doesn't slow the first load down. More detail is in [`web/README.md`](web/README.md).
 
-<!-- TODO: web/README.md is still the original "empty until the schema's stable" placeholder. Rewrite it. -->
+What's not done: Products, Categories, Margins, Digital, Customers, Forecasting and the Data page are still to build.
 
 ## SQL, and how I used AI
 
@@ -544,7 +546,9 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [x] Model demand on the key trading days (Black Friday, Boxing Day, Christmas closures) and give styles a popularity curve
 - [ ] Turn the hard-coded data path and image URL in the Power BI project into parameters
 - [ ] A closing-rate currency convention for point-in-time measures like stock value
-- [ ] Web app: mobile layout, more pages, and the digital metrics
+- [x] Web app: responsive layout, shared filters, Sales and Stores pages
+- [ ] Web app: Products, Categories and Margins pages
+- [ ] Web app: Digital, Customers, Forecasting, Reports and Data pages
 - [ ] A GitHub project board
 
 **Parked on purpose**

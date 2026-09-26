@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "5736fb3bade54be2c11b",
   "position": {
-    "x": 227.79661016949152,
-    "y": 275.52542372881356,
+    "x": 227.16723549488054,
+    "y": 275.22184300341297,
     "z": 29004,
-    "height": 794.03389830508479,
-    "width": 715.93220338983053,
+    "height": 795.08532423208192,
+    "width": 733.92491467576792,
     "tabOrder": 29004
   },
   "visual": {
@@ -90,6 +90,20 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
+                      "Entity": "fact_targets"
+                    }
+                  },
+                  "Property": "Net Sales Target Combo (Any Grain)"
+                }
+              },
+              "queryRef": "fact_targets.Net Sales Target Combo (Any Grain)",
+              "nativeQueryRef": "Net Sales Target Combo (Any Grain)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
                       "Entity": "fact_sales"
                     }
                   },
@@ -146,6 +160,20 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
+                      "Entity": "fact_footfall"
+                    }
+                  },
+                  "Property": "Conversion Rate YoY Combo"
+                }
+              },
+              "queryRef": "fact_footfall.Conversion Rate YoY Combo",
+              "nativeQueryRef": "Conversion Rate YoY Combo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
                       "Entity": "dim_store"
                     }
                   },
@@ -154,6 +182,34 @@
               },
               "queryRef": "dim_store.Sales per Sq Ft",
               "nativeQueryRef": "Sales per Sq Ft"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_footfall"
+                    }
+                  },
+                  "Property": "Total Footfall YoY Combo"
+                }
+              },
+              "queryRef": "fact_footfall.Total Footfall YoY Combo",
+              "nativeQueryRef": "Total Footfall YoY Combo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Net Contribution %"
+                }
+              },
+              "queryRef": "fact_store_finance.Net Contribution %",
+              "nativeQueryRef": "Net Contribution %"
             }
           ]
         }
@@ -175,6 +231,68 @@
           }
         ]
       }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_sales"
+                                    }
+                                  },
+                                  "Property": "Net Sales YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Sales YoY Combo"
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   },
@@ -319,6 +437,48 @@
           }
         },
         "type": "Categorical"
+      },
+      {
+        "name": "6492971e5c746bb9c93a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_footfall"
+              }
+            },
+            "Property": "Total Footfall YoY Combo"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "237429d730229cacc480",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_footfall"
+              }
+            },
+            "Property": "Conversion Rate YoY Combo"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2f365d1cd1c79265a818",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_targets"
+              }
+            },
+            "Property": "Net Sales Target Combo (Any Grain)"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

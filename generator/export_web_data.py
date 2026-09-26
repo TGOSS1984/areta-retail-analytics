@@ -55,6 +55,7 @@ def export_dim_date() -> None:
     cols = [
         "full_date", "day_name", "month_num", "month_name", "calendar_year",
         "business_year", "business_period_number", "business_period_label", "season",
+        "business_week_number", "day_of_week_num",
     ]
     df[cols].to_parquet(EXPORTS / "dim_date.parquet", index=False)
     print(f"dim_date: {len(df):,} rows")
@@ -63,7 +64,7 @@ def export_dim_date() -> None:
 def export_dim_store() -> None:
     df = pd.read_parquet(WAREHOUSE / "dim_store.parquet")
     cols = [
-        "store_id", "store_name", "channel", "store_type", "market_code",
+        "store_id", "store_name", "channel", "store_type", "square_footage", "market_code",
         "market_name", "city", "region", "latitude", "longitude", "currency", "is_home_market",
     ]
     df[cols].to_parquet(EXPORTS / "dim_store.parquet", index=False)
@@ -138,6 +139,59 @@ def export_fact_sales_style_colour_daily() -> None:
     print(f"fact_sales_style_colour_daily: {len(agg):,} rows (from {len(sales):,} invoice lines)")
 
 
+def export_fact_footfall_daily() -> None:
+    """Store-day footfall for the Stores page, plus one thing footfall
+    doesn't carry: how many of the day's baskets had two or more items.
+    That's the third step of the store funnel (visitors -> buyers ->
+    multi-item buyers), so it's counted here from the invoice lines once
+    rather than shipping invoice grain to the browser. Returns are left
+    out because a refund isn't a basket. The transaction counts already
+    reconcile to distinct invoices in total, so the three funnel steps
+    come from the same underlying numbers."""
+    footfall = pd.read_parquet(WAREHOUSE / "fact_footfall.parquet")[
+        ["date", "store_id", "footfall", "transactions", "units_sold"]
+    ]
+    sales = pd.read_parquet(
+        WAREHOUSE / "fact_sales.parquet", columns=["date", "store_id", "invoice_id", "quantity", "is_return"]
+    )
+    baskets = (
+        sales[~sales["is_return"]]
+        .groupby(["store_id", "date", "invoice_id"])["quantity"].sum()
+    )
+    multi = (
+        (baskets >= 2).groupby(level=["store_id", "date"]).sum()
+        .rename("multi_item_baskets").reset_index()
+    )
+    out = footfall.merge(multi, on=["store_id", "date"], how="left")
+    out["multi_item_baskets"] = out["multi_item_baskets"].fillna(0).astype("int64")
+    out.to_parquet(EXPORTS / "fact_footfall_daily.parquet", index=False)
+    print(f"fact_footfall_daily: {len(out):,} rows")
+
+
+def export_fact_targets() -> None:
+    """Store x business period targets. Only the two the web app uses so
+    far; the rest stay in the warehouse until a page needs them."""
+    df = pd.read_parquet(WAREHOUSE / "fact_targets.parquet")[
+        ["store_id", "business_year", "business_period_number", "target_net_sales_gbp", "target_footfall"]
+    ]
+    df.to_parquet(EXPORTS / "fact_targets.parquet", index=False)
+    print(f"fact_targets: {len(df):,} rows")
+
+
+def export_fact_store_finance() -> None:
+    """Store x business period P&L lines, for contribution on the Stores
+    league table now and the Margins page next."""
+    df = pd.read_parquet(WAREHOUSE / "fact_store_finance.parquet")[
+        [
+            "store_id", "business_year", "business_period_number", "net_sales_gbp", "cogs_gbp",
+            "gross_profit_gbp", "rent_gbp", "staff_gbp", "utilities_gbp", "marketing_gbp",
+            "head_office_gbp", "net_contribution_gbp",
+        ]
+    ]
+    df.to_parquet(EXPORTS / "fact_store_finance.parquet", index=False)
+    print(f"fact_store_finance: {len(df):,} rows")
+
+
 def main() -> None:
     EXPORTS.mkdir(parents=True, exist_ok=True)
     export_dim_date()
@@ -145,6 +199,9 @@ def main() -> None:
     export_fact_sales_daily()
     export_dim_style_colour()
     export_fact_sales_style_colour_daily()
+    export_fact_footfall_daily()
+    export_fact_targets()
+    export_fact_store_finance()
 
 
 if __name__ == "__main__":

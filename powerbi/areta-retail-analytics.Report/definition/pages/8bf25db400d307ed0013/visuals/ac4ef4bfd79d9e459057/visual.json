@@ -42,20 +42,6 @@
                       "Entity": "fact_store_finance"
                     }
                   },
-                  "Property": "Gross Contribution %"
-                }
-              },
-              "queryRef": "fact_store_finance.Gross Contribution %",
-              "nativeQueryRef": "Gross Contribution %"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_store_finance"
-                    }
-                  },
                   "Property": "Net Contribution %"
                 }
               },
@@ -65,6 +51,21 @@
           ]
         }
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

@@ -7,6 +7,14 @@ const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      screens: {
+        // "Fit" is the desktop dashboard layout: the grid fills exactly
+        // one screen, like the reference board, with no page scroll.
+        // It needs height as well as width, so a wide but short window
+        // (a laptop with the browser toolbar open) falls back to the
+        // scrolling layout rather than squashing every chart.
+        fit: { raw: "(min-width: 1280px) and (min-height: 820px)" },
+      },
       colors: {
         "deep-terrain": "#003744",
         "mountain-teal": "#1F7486",

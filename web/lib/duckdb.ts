@@ -25,15 +25,25 @@
 
 import * as duckdb from "@duckdb/duckdb-wasm";
 
+// Every export the app can read. Nothing is fetched up front any more:
+// with ten pages that would mean downloading every file before the first
+// chart drew. Each query registers only the tables its SQL mentions, the
+// first time anything asks for them, and every later query reuses them.
 const TABLES = [
   "dim_date",
   "dim_store",
-  "fact_sales_daily",
   "dim_style_colour",
+  "fact_sales_daily",
   "fact_sales_style_colour_daily",
+  "fact_footfall_daily",
+  "fact_targets",
+  "fact_store_finance",
 ] as const;
 
+type TableName = (typeof TABLES)[number];
+
 let dbPromise: Promise<duckdb.AsyncDuckDB> | null = null;
+const tablePromises = new Map<TableName, Promise<void>>();
 
 async function initDuckDB(): Promise<duckdb.AsyncDuckDB> {
   const bundles = duckdb.getJsDelivrBundles();
@@ -52,35 +62,50 @@ async function initDuckDB(): Promise<duckdb.AsyncDuckDB> {
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
   URL.revokeObjectURL(workerUrl);
+  return db;
+}
 
-  // Fetch each export as raw bytes and hand the buffer directly to
-  // DuckDB, rather than registering an HTTP URL for it to range-request
-  // internally. First version used registerFileURL + HTTP protocol and
-  // hit a real bug in testing: "Failed to execute 'open' on
-  // 'XMLHttpRequest': Invalid URL" — DuckDB's internal HTTP path was
-  // trying to open the registered NAME ("dim_date.parquet") as a URL
-  // rather than resolving it to what it was registered against. Fetching
-  // the bytes with a plain browser fetch() first sidesteps that code
-  // path entirely — nothing DuckDB-specific about a fetch() call, so
-  // nothing DuckDB-specific to go wrong. These files are small enough
-  // (14KB-8MB) that lazy HTTP range-requests were never buying anything
-  // real anyway; the app needs all of it queryable regardless.
+// Fetch the export as raw bytes and hand DuckDB the buffer, rather than
+// registering an HTTP URL for it to range-request. The first version did
+// the latter and hit "Failed to execute 'open' on 'XMLHttpRequest':
+// Invalid URL" in a real browser: DuckDB's HTTP path tried to open the
+// registered NAME as a URL. A plain fetch() has nothing DuckDB-specific
+// to go wrong, and the files are small enough (16KB-7MB) that range
+// requests never bought anything.
+async function registerTable(db: duckdb.AsyncDuckDB, table: TableName): Promise<void> {
+  const response = await fetch(`/data/${table}.parquet`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch /data/${table}.parquet: ${response.status} ${response.statusText}`);
+  }
+  const buffer = new Uint8Array(await response.arrayBuffer());
+  await db.registerFileBuffer(`${table}.parquet`, buffer);
   const conn = await db.connect();
   try {
-    for (const table of TABLES) {
-      const response = await fetch(`/data/${table}.parquet`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch /data/${table}.parquet: ${response.status} ${response.statusText}`);
-      }
-      const buffer = new Uint8Array(await response.arrayBuffer());
-      await db.registerFileBuffer(`${table}.parquet`, buffer);
-      await conn.query(`CREATE VIEW ${table} AS SELECT * FROM read_parquet('${table}.parquet')`);
-    }
+    await conn.query(`CREATE VIEW ${table} AS SELECT * FROM read_parquet('${table}.parquet')`);
   } finally {
     await conn.close();
   }
+}
 
-  return db;
+/** The tables a piece of SQL refers to. Word-boundary matched, so
+ * fact_sales_daily doesn't also match fact_sales_style_colour_daily. */
+function tablesIn(sql: string): TableName[] {
+  return TABLES.filter((t) => new RegExp(`\\b${t}\\b`).test(sql));
+}
+
+async function ensureTables(db: duckdb.AsyncDuckDB, tables: TableName[]): Promise<void> {
+  await Promise.all(
+    tables.map((table) => {
+      let p = tablePromises.get(table);
+      if (!p) {
+        p = registerTable(db, table);
+        // A failed fetch shouldn't be cached forever; the next query retries.
+        p.catch(() => tablePromises.delete(table));
+        tablePromises.set(table, p);
+      }
+      return p;
+    }),
+  );
 }
 
 /** Lazily initialises DuckDB-wasm once, shares the same instance across
@@ -95,6 +120,7 @@ export function getDuckDB(): Promise<duckdb.AsyncDuckDB> {
 
 export async function queryDuckDB<T = Record<string, unknown>>(sql: string): Promise<T[]> {
   const db = await getDuckDB();
+  await ensureTables(db, tablesIn(sql));
   const conn = await db.connect();
   try {
     const result = await conn.query(sql);

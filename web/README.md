@@ -14,7 +14,7 @@ npm run dev     # http://localhost:3000
 
 ## How it's put together
 
-**Data.** `generator/export_web_data.py` writes small pre-aggregated exports: daily sales by store, daily sales by style and colour, daily footfall with basket counts, targets and store finance by period, and the date, store and product dimensions. They stay a star schema and the SQL joins them, the same way Power BI does. `lib/duckdb.ts` registers a table the first time a query mentions it, so a page only downloads what it uses.
+**Data.** `generator/export_web_data.py` writes small pre-aggregated exports: daily sales by store, daily sales by style and colour, daily sales by market, channel, product hierarchy and discount band (the "mix" export), daily footfall with basket counts, targets and store finance by period, and the date, store and product dimensions. They stay a star schema and the SQL joins them, the same way Power BI does. `lib/duckdb.ts` registers a table the first time a query mentions it, so a page only downloads what it uses.
 
 **Filters.** `lib/filters/` holds the year, period-range and market filters every page shares. They're kept in the URL. `resolveFilters` turns the URL into a selection the data can answer: it defaults to year to date, pulls anything out of range back in, and works out this year's dates and the matching days last year (always 364 days earlier, so the same weekday in the same business week). `lib/filters/sql.ts` turns that into the SQL fragments every query uses, so "this year" and "last year" mean the same thing on every chart. The market code ends up inside SQL, so it's checked against a strict pattern and the real market list first.
 
@@ -32,6 +32,8 @@ The fit-to-screen layout is its own Tailwind breakpoint (`fit:` in `tailwind.con
 
 **Page banner.** Every page opens the same way as the Overview: `PageHeader` draws the mountain banner with the page's question and the filters, and the page's KPI strip goes inside it as children, so the KPIs sit over the image in the same frosted cards the Overview uses.
 
+**Market filter.** Everything follows it except the Products page and the Overview's top products card, which read the style-colour export. That's kept at date x style x colour, with no store, so it stays a few megabytes. Both say "showing all markets" when a market is selected rather than quietly showing the wrong thing.
+
 **Charts.** `components/charts/base/EChart.tsx` measures its own width and passes it to the chart's option builder, so a chart can change what it shows when it's narrow: the waterfall turns horizontal, the donut moves its legend underneath, heatmaps drop their cell labels. The calendar heatmap needs about 14px a week to be readable, so on a phone it scrolls sideways instead of shrinking. The map only pans and zooms with a mouse, so a finger can still scroll the page past it.
 
 ## Pages
@@ -41,8 +43,10 @@ The fit-to-screen layout is its own Tailwind breakpoint (`fit:` in `tailwind.con
 | Overview | Built | KPI cards with sparklines, sales trend, channel mix, Europe map with UK drill-down, top products, sales and margin by month, category mix |
 | Sales | Built | Weekly filled line vs last year, calendar heatmap, market waterfall, sales vs phased target by period |
 | Stores | Built | Visitor-to-basket funnel, footfall vs conversion scatter, sortable league table, weekday x period footfall heatmap |
-| Products, Categories, Margins | Next | Pareto, bubble scatter, treemap, matrix heatmap, sunburst, Sankey, P&L waterfall, box plot |
-| Digital, Customers, Forecasting, Reports, Data | After that | Stacked area, device heatmap, basket histogram, projection with a range band, gauge, data quality tables |
+| Products | Built | Style Pareto with the 80% line, brand and category treemap, price vs volume bubble scatter (log scale), best and slowest sellers with photos and sparklines |
+| Categories | Built | Growth heatmap (major group x market), range sunburst, channel-to-category Sankey, risers and fallers bars |
+| Margins | Built | Store P&L waterfall, sales and margin by discount band, box plot of store contribution by type, product group x period margin matrix |
+| Digital, Customers, Forecasting, Reports, Data | Next | Stacked area, device heatmap, basket histogram, projection with a range band, gauge, data quality tables |
 
 ## Testing
 

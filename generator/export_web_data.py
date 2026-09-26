@@ -43,6 +43,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -192,6 +193,61 @@ def export_fact_store_finance() -> None:
     print(f"fact_store_finance: {len(df):,} rows")
 
 
+# Same bands, same order, as the Discount Band column in the Power BI
+# model (fact_sales.tmdl), so both front ends mean the same thing by them.
+DISCOUNT_BANDS = ["Full Price", "Multi-buy", "Up to 30% off", "31-50% off", "51-70% off", "70%+ off"]
+
+
+def discount_band(promo_id: pd.Series, discount_pct: pd.Series) -> pd.Series:
+    bands = np.select(
+        [
+            promo_id == "PROMO0000",
+            promo_id.str.startswith("MULTIBUY-"),
+            discount_pct <= 30,
+            discount_pct <= 50,
+            discount_pct <= 70,
+        ],
+        DISCOUNT_BANDS[:5],
+        default=DISCOUNT_BANDS[5],
+    )
+    return pd.Series(bands, index=promo_id.index)
+
+
+def export_fact_sales_mix_daily() -> None:
+    """Sales by day, market, channel, product hierarchy and discount band, for
+    the Categories and Margins pages. It's the one grain that answers
+    "which categories, where, through which channel, at what discount"
+    without shipping line-level data: about 0.9M rows against 3.9M lines.
+    Market is carried directly rather than store, because nothing on those
+    pages needs a single store and it keeps the file a fraction of the
+    size. Cost is included so margin can be worked out at any cut.
+
+    Division and major group ride along because three product groups
+    (Softshell, Gilets & Bodywarmers, Socks) sit under two major groups
+    each, so the hierarchy can't be rebuilt from product group alone."""
+    sales = pd.read_parquet(
+        WAREHOUSE / "fact_sales.parquet",
+        columns=["date", "store_id", "sku", "promo_id", "discount_pct", "net_sales_gbp", "cost_gbp", "quantity"],
+    )
+    product = pd.read_parquet(
+        WAREHOUSE / "dim_product.parquet", columns=["sku", "division", "major_product_group", "product_group"]
+    )
+    store = pd.read_parquet(WAREHOUSE / "dim_store.parquet", columns=["store_id", "market_code", "channel"])
+    sales = sales.merge(product, on="sku").merge(store, on="store_id")
+    sales["discount_band"] = discount_band(sales["promo_id"], sales["discount_pct"])
+    out = (
+        sales.groupby(
+            ["date", "market_code", "channel", "division", "major_product_group", "product_group", "discount_band"],
+            as_index=False,
+        )
+        .agg(net_sales_gbp=("net_sales_gbp", "sum"), cost_gbp=("cost_gbp", "sum"), quantity=("quantity", "sum"))
+    )
+    out["net_sales_gbp"] = out["net_sales_gbp"].round(2)
+    out["cost_gbp"] = out["cost_gbp"].round(2)
+    out.to_parquet(EXPORTS / "fact_sales_mix_daily.parquet", index=False)
+    print(f"fact_sales_mix_daily: {len(out):,} rows")
+
+
 def main() -> None:
     EXPORTS.mkdir(parents=True, exist_ok=True)
     export_dim_date()
@@ -202,6 +258,7 @@ def main() -> None:
     export_fact_footfall_daily()
     export_fact_targets()
     export_fact_store_finance()
+    export_fact_sales_mix_daily()
 
 
 if __name__ == "__main__":

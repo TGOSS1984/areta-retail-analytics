@@ -41,3 +41,7 @@ export const baseOption = {
 
 /** Under this width a chart switches to its compact form. */
 export const COMPACT_WIDTH = 520;
+
+/** Diverging scale for growth and variance: red below zero, the card
+ * colour at zero, green above. */
+export const DIVERGING = ["#EF5350", "#0B3B45", "#4CAF50"];

@@ -38,6 +38,7 @@ const TABLES = [
   "fact_footfall_daily",
   "fact_targets",
   "fact_store_finance",
+  "fact_sales_mix_daily",
 ] as const;
 
 type TableName = (typeof TABLES)[number];

@@ -42,6 +42,8 @@ if (ukFeature && !echarts.getMap(UK_MAP_NAME)) {
   } as unknown as Parameters<typeof echarts.registerMap>[1]);
 }
 
+const canRoam = typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
+
 export function RegionalMapChart() {
   const [drilldown, setDrilldown] = useState<"europe" | "uk">("europe");
   const europeSales = useRegionalSales();
@@ -106,7 +108,10 @@ export function RegionalMapChart() {
     },
     geo: {
       map: drilldown === "uk" ? UK_MAP_NAME : MAP_NAME,
-      roam: true,
+      // Pan and zoom only with a mouse. On a touch screen a map that
+      // captures drags traps the finger and the page can't be scrolled
+      // past it.
+      roam: canRoam,
       // Explicit layout rather than relying on ECharts' auto-fit margins
       // — the auto-fit was very likely the actual source of the "tiny
       // map crammed in a corner" symptom. layoutCenter/layoutSize is the

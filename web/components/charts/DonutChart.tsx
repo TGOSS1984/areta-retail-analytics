@@ -1,10 +1,11 @@
 "use client";
 
-import ReactECharts from "echarts-for-react";
 import type { MixSlice } from "@/lib/queries/salesMix";
+import { EChart } from "@/components/charts/base/EChart";
 import { formatGbpMillions } from "@/lib/format";
+import { COLORS, tooltipBase } from "@/lib/chartTheme";
 
-const PALETTE = ["#1F7486", "#D0AA62", "#4A5B63", "#8D9AA1", "#2E7D32"];
+const PALETTE = [COLORS.teal, COLORS.gold, COLORS.slate, COLORS.mist, COLORS.success];
 
 type TooltipParams = { name: string; value: number; percent: number };
 
@@ -13,77 +14,63 @@ type DonutChartProps = {
   slices: MixSlice[];
 };
 
-/** Shared by category mix and channel mix — same visual, different data.
- * Takes pre-fetched slices rather than owning its own query, so it stays
- * reusable for whatever the next mix-style breakdown turns out to be.
- *
- * Sized by its parent, not a hardcoded height: the ECharts instance is
- * height:100% of a flex-1 wrapper, and the card root is h-full — so
- * whatever box the caller's layout gives this component (a full grid
- * row in CategoryMixChart's case, half a row split with an image panel
- * in ChannelMixChart's case), the ring and legend fill it, rather than
- * this component guessing two different pixel heights for two
- * different contexts. */
+/** Shared by category mix and channel mix. Sized by its parent. When the
+ * card is wide the legend sits to the right of the ring; when it's narrow
+ * (a phone, or a squeezed tablet column) the ring centres and the legend
+ * moves underneath, so the two never overlap. The total in the middle is
+ * an ECharts title placed on the ring's own centre, so it moves with it. */
 export function DonutChart({ title, slices }: DonutChartProps) {
-  // The ring's own total — not a second query. Slices already sum to
-  // the whole (channel/category sums have been checked against the
-  // total elsewhere in this project), so re-deriving it here from what
-  // was already fetched is simpler and can't drift out of sync with
-  // what the ring itself is showing.
   const total = slices.reduce((sum, s) => sum + s.salesGbp, 0);
 
-  const option = {
-    textStyle: { fontFamily: "Montserrat, sans-serif" },
-    tooltip: {
-      trigger: "item",
-      formatter: (params: TooltipParams) =>
-        `${params.name}: £${(params.value / 1_000_000).toFixed(2)}M (${params.percent}%)`,
-    },
-    legend: {
-      orient: "vertical",
-      right: 0,
-      top: "middle",
-      textStyle: { color: "#8D9AA1", fontSize: 11 },
-      itemWidth: 10,
-      itemHeight: 10,
-    },
-    series: [
-      {
-        type: "pie",
-        radius: ["55%", "80%"],
-        center: ["36%", "50%"],
-        avoidLabelOverlap: true,
-        label: { show: false },
-        // Slice-gap border matches the card's own background
-        // (deep-terrain) rather than white, so gaps between slices
-        // blend into the card instead of standing out as bright rings.
-        itemStyle: { borderColor: "#003744", borderWidth: 2 },
-        data: slices.map((s, i) => ({
-          name: s.label,
-          value: s.salesGbp,
-          itemStyle: { color: PALETTE[i % PALETTE.length] },
-        })),
-      },
-    ],
-  };
-
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-4 md:p-5">
       <h2 className="mb-2 flex-shrink-0 text-sm font-medium text-cloud">{title}</h2>
-      <div className="relative min-h-0 flex-1">
-        <ReactECharts option={option} style={{ height: "100%" }} notMerge />
-        {/* Positioned to match the ring's own center: [0] is the
-            ring's "36%" center X, which is offset left of the box's
-            true 50% midpoint to leave room for the legend on the
-            right — this has to track that value, not the container's
-            midpoint, or it drifts off-ring if the ring ever moves. */}
-        <div
-          className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-          style={{ left: "36%", top: "50%" }}
-        >
-          <span className="text-lg font-medium text-cloud">{formatGbpMillions(total)}</span>
-          <span className="text-[10px] uppercase tracking-wide text-mist">Total sales</span>
-        </div>
+      <div className="min-h-0 flex-1">
+        <EChart
+          build={(width) => {
+            const stacked = width < 380;
+            const centreX = stacked ? "50%" : "36%";
+            const centreY = stacked ? "42%" : "50%";
+            return {
+              tooltip: {
+                ...tooltipBase,
+                trigger: "item",
+                formatter: (p: TooltipParams) => `${p.name}: ${formatGbpMillions(p.value)} (${p.percent}%)`,
+              },
+              legend: stacked
+                ? { orient: "horizontal", bottom: 0, left: "center", textStyle: { color: COLORS.mist, fontSize: 11 }, itemWidth: 10, itemHeight: 10 }
+                : { orient: "vertical", right: 0, top: "middle", textStyle: { color: COLORS.mist, fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+              title: {
+                text: formatGbpMillions(total),
+                subtext: "TOTAL SALES",
+                left: centreX,
+                top: centreY,
+                textAlign: "center",
+                textVerticalAlign: "middle",
+                itemGap: 2,
+                textStyle: { color: COLORS.cloud, fontSize: 16, fontWeight: 500 },
+                subtextStyle: { color: COLORS.mist, fontSize: 9 },
+              },
+              series: [
+                {
+                  type: "pie",
+                  radius: stacked ? ["50%", "72%"] : ["55%", "80%"],
+                  center: [centreX, centreY],
+                  avoidLabelOverlap: true,
+                  label: { show: false },
+                  // Gap borders match the card, so gaps blend in rather
+                  // than showing as bright rings.
+                  itemStyle: { borderColor: COLORS.deepTerrain, borderWidth: 2 },
+                  data: slices.map((s, i) => ({
+                    name: s.label,
+                    value: s.salesGbp,
+                    itemStyle: { color: PALETTE[i % PALETTE.length] },
+                  })),
+                },
+              ],
+            };
+          }}
+        />
       </div>
     </div>
   );

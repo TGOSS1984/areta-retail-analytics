@@ -1,5 +1,4 @@
 import type { Icon } from "@tabler/icons-react";
-import { IconTile } from "@/components/ui/IconTile";
 
 export type KpiTileProps = {
   label: string;
@@ -7,43 +6,42 @@ export type KpiTileProps = {
   icon: Icon;
   /** e.g. "+2.4%" or "+0.3pp". null when there's no comparison. */
   delta: string | null;
-  /** Which way is good: for most KPIs up is good; for costs it isn't. */
+  /** Which way is good. null shows the change in neutral grey, for
+   * measures where up isn't simply better (online share, say). */
   deltaGood?: boolean | null;
   comparison?: string;
 };
 
-export function KpiTile({ label, value, icon, delta, deltaGood, comparison = "vs LY" }: KpiTileProps) {
-  const tone = deltaGood === null || deltaGood === undefined ? "text-mist" : deltaGood ? "text-success" : "text-error";
-  const arrow = deltaGood === null || deltaGood === undefined ? "" : delta?.startsWith("-") ? "▼ " : "▲ ";
+/** A page KPI, drawn the same way as the Overview hero's KPI cards: a
+ * frosted panel over the banner image, gold icon and label, the value,
+ * then the change. They sit inside PageHeader, over the image, so every
+ * page opens like the Overview does. */
+export function KpiTile({ label, value, icon: TileIcon, delta, deltaGood, comparison = "vs LY" }: KpiTileProps) {
+  const neutral = deltaGood === null || deltaGood === undefined;
+  const tone = neutral ? "text-mist" : deltaGood ? "text-success" : "text-error";
   return (
-    <div className="flex min-w-0 items-center gap-3 rounded-xl border border-white/10 bg-deep-terrain p-3 md:p-4">
-      <IconTile icon={icon} size={40} />
-      <div className="min-w-0">
-        <p className="truncate text-[10px] uppercase tracking-[0.15em] text-mist">{label}</p>
-        <p className="truncate text-xl font-medium text-cloud md:text-2xl">{value}</p>
-        <p className={`truncate text-xs ${tone}`}>
-          {delta ? `${arrow}${delta} ${comparison}` : "No comparison"}
-        </p>
+    <div className="min-w-0 rounded-xl bg-charcoal/40 p-3 backdrop-blur-sm md:p-4">
+      <div className="mb-2 flex min-w-0 items-center gap-2 text-[10px] uppercase tracking-wide text-summit-gold md:text-xs">
+        <TileIcon size={16} className="flex-shrink-0" aria-hidden="true" />
+        <span className="truncate">{label}</span>
       </div>
+      <div className="truncate text-xl font-medium text-cloud md:text-2xl">{value}</div>
+      <div className={`mt-1 truncate text-xs ${tone}`}>{delta ? `${delta} ${comparison}` : "No earlier year"}</div>
     </div>
   );
 }
 
-/** Five tiles: a swipeable strip on phones, then three and five across.
- * Snap scrolling keeps a tile from stopping half in view. */
+/** Five KPIs in the same grid as the Overview's six: two across on
+ * phones, three on tablets, one row on desktop. */
 export function KpiStrip({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-5 [&>*]:w-[78%] [&>*]:flex-shrink-0 [&>*]:snap-start md:[&>*]:w-auto">
-      {children}
-    </div>
-  );
+  return <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">{children}</div>;
 }
 
 export function KpiStripSkeleton() {
   return (
     <KpiStrip>
       {[0, 1, 2, 3, 4].map((i) => (
-        <div key={i} className="h-[76px] animate-pulse rounded-xl border border-white/10 bg-deep-terrain md:h-[84px]" />
+        <div key={i} className="h-[92px] animate-pulse rounded-xl bg-charcoal/30" />
       ))}
     </KpiStrip>
   );

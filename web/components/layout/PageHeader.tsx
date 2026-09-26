@@ -5,21 +5,27 @@ import { usePathname } from "next/navigation";
 import { navItemFor } from "@/lib/nav";
 import { FilterBar } from "@/components/filters/FilterBar";
 
-/** Compact version of the Overview hero for every other page: the same
- * mountain image and gold eyebrow, the page's question, and the filters. */
-export function PageHeader() {
+/** The banner every page other than the Overview opens with: the same
+ * mountain image, overlay and padding as the Overview hero, the page's
+ * question on the left and the filters on the right. A page's KPI strip
+ * goes in as children and sits inside the banner, over the image, exactly
+ * where the Overview's KPI cards sit, so every page opens the same way. */
+export function PageHeader({ children }: { children?: React.ReactNode }) {
   const item = navItemFor(usePathname());
   return (
     <div className="relative flex-shrink-0 overflow-hidden rounded-2xl border border-white/10">
       <Image src="/images/hero-image-dark.webp" alt="" fill priority sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-r from-deep-terrain via-deep-terrain/85 to-deep-terrain/40" />
-      <div className="relative flex flex-col gap-4 p-4 md:flex-row md:items-end md:justify-between md:p-6">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-summit-gold">{item?.label ?? "Areta"}</p>
-          <h1 className="mt-1 text-lg font-medium leading-snug text-cloud md:text-xl">{item?.question}</h1>
-          <div className="mt-2 h-px w-8 bg-summit-gold" />
+      <div className="absolute inset-0 bg-gradient-to-r from-deep-terrain via-deep-terrain/75 to-deep-terrain/30" />
+      <div className="relative flex flex-col gap-5 p-4 md:gap-6 md:p-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-summit-gold md:text-xs">{item?.label ?? "Areta"}</p>
+            <h1 className="mt-2 max-w-md text-xl font-medium leading-snug text-cloud md:text-2xl">{item?.question}</h1>
+            <div className="mt-3 h-px w-10 bg-summit-gold" />
+          </div>
+          <FilterBar />
         </div>
-        <FilterBar />
+        {children}
       </div>
     </div>
   );

@@ -18,8 +18,9 @@ export default function SalesPage() {
 
   return (
     <PageFrame>
-      <PageHeader />
-      <SalesKpis state={page} />
+      <PageHeader>
+        <SalesKpis state={page} />
+      </PageHeader>
       <ChartGrid>
         <ChartCard
           title="Weekly sales"

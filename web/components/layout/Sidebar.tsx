@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS, FOOTER_ITEMS, type NavItem } from "@/lib/nav";
+import { NAV_ITEMS, FOOTER_ITEMS, GITHUB_LINK, type NavItem } from "@/lib/nav";
 import { useFilters } from "@/lib/hooks/useFilters";
 
 type SidebarProps = {
@@ -49,7 +49,8 @@ export function Sidebar({ variant = "responsive", onNavigate }: SidebarProps) {
       }`}
     >
       <div>
-        <div className={`mb-8 ${rail ? "px-1 xl:px-3" : "px-3"}`}>
+        {/* The logo goes home, keeping whatever filters are set. */}
+        <Link href={`/${query}`} onClick={onNavigate} className={`mb-8 block ${rail ? "px-1 xl:px-3" : "px-3"}`} aria-label="Areta Retail Analytics, go to Overview">
           <div className={`relative w-full ${rail ? "h-10 xl:h-24" : "h-24"}`}>
             <Image
               src="/images/areta-logo-mark-cropped.png"
@@ -60,14 +61,29 @@ export function Sidebar({ variant = "responsive", onNavigate }: SidebarProps) {
               priority
             />
           </div>
-        </div>
+        </Link>
         <nav className="flex flex-col gap-1" aria-label="Main">
           {NAV_ITEMS.map(renderLink)}
         </nav>
       </div>
 
       <div>
-        <div className="mb-4 flex flex-col gap-1 border-t border-white/10 pt-4">{FOOTER_ITEMS.map(renderLink)}</div>
+        <div className="mb-4 flex flex-col gap-1 border-t border-white/10 pt-4">
+          {FOOTER_ITEMS.map(renderLink)}
+          <a
+            href={GITHUB_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View the code on GitHub"
+            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-mist transition-colors hover:bg-white/5 hover:text-cloud ${
+              rail ? "justify-center xl:justify-start" : ""
+            }`}
+          >
+            <GITHUB_LINK.icon size={18} stroke={1.75} aria-hidden="true" className="flex-shrink-0" />
+            <span className={labelClass}>{GITHUB_LINK.label}</span>
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        </div>
         <p className={`mb-4 px-2 text-[11px] leading-relaxed text-mist ${labelClass}`}>
           Explore. Climb. Protect. Belong.
         </p>

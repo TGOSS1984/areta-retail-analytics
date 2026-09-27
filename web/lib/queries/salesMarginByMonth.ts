@@ -1,92 +1,62 @@
 import { queryDuckDB } from "@/lib/duckdb";
 import type { ResolvedFilters } from "@/lib/filters/filters";
-import { marketAnd } from "@/lib/filters/sql";
+import { marketAnd, tyDates } from "@/lib/filters/sql";
 
 export type SalesMarginPoint = {
-  monthNum: number;
-  monthName: string;
+  period: number;
+  label: string;
   salesGbp: number;
   marginPct: number;
+  /** The period still trading: shown, but marked, so a part-period total
+   * isn't read as a slump. */
+  isPartial: boolean;
 };
-
-export type SalesMarginByMonth = {
-  year: number;
-  points: SalesMarginPoint[];
-  /** Set when the trailing month got excluded for being incomplete —
-   * same reasoning as monthlyTrend.ts's excludedPartialMonth. */
-  excludedPartialMonth?: string;
-};
-
-function daysInMonth(year: number, monthNum: number): number {
-  return new Date(year, monthNum, 0).getDate();
-}
 
 /**
- * Calendar-year month-by-month sales (bars) and gross margin % (line)
- * for one selected year — same calendar-not-business-year choice as
- * monthlyTrend.ts and the same reasoning: a general "sales through the
- * year" view reads naturally in calendar months, nothing here depends
- * on business-period boundaries. Same trailing-partial-month exclusion
- * logic as monthlyTrend.ts too (plotting a mid-month total next to full
- * months creates a fake-looking crash) — not shared code with it, same
- * reason as elsewhere in this codebase: different shape (one year here,
- * current-vs-prior there), a shared helper would need the shape passed
- * in, which isn't simpler than repeating the logic.
+ * Sales (bars) and gross margin % (line) by business period, for the
+ * selected year, periods and market.
+ *
+ * This used to be calendar months with its own year picker. Once the
+ * global filters arrived that didn't fit: the filter is in business
+ * periods (P01 starts in March), so a calendar chart couldn't follow it,
+ * and a second year picker on one card contradicted the one at the top.
+ * Business periods also line up with every other chart in the app.
+ * The period still trading used to be dropped entirely; now it's kept and
+ * marked, the same way as on the Sales page.
  */
-export async function fetchSalesMarginByMonth(year: number, f: ResolvedFilters): Promise<SalesMarginByMonth> {
-  const lastDateRows = await queryDuckDB<{ last_date: string }>(`
-    SELECT MAX(f.date) AS last_date FROM fact_sales_daily f
-  `);
-  const lastDate = new Date(lastDateRows[0].last_date);
-  const lastYear = lastDate.getFullYear();
-  const lastMonthNum = lastDate.getMonth() + 1;
-  const isTrailingMonthPartial = lastYear === year && lastDate.getDate() < daysInMonth(lastYear, lastMonthNum);
-
+export async function fetchSalesMarginByPeriod(f: ResolvedFilters): Promise<SalesMarginPoint[]> {
   const rows = await queryDuckDB<{
-    month_num: number;
-    month_name: string;
+    period: number;
+    label: string;
+    period_end: string;
     net_sales_gbp: number;
     cost_gbp: number;
   }>(`
-    SELECT d.month_num, d.month_name,
-           CAST(SUM(f.net_sales_gbp) AS DOUBLE) AS net_sales_gbp,
-           CAST(SUM(f.cost_gbp) AS DOUBLE) AS cost_gbp
-    FROM fact_sales_daily f
-    JOIN dim_date d ON f.date = d.full_date
-    JOIN dim_store s ON f.store_id = s.store_id
-    WHERE d.calendar_year = ${year} ${marketAnd(f, "s")}
-    GROUP BY d.month_num, d.month_name
-    ORDER BY d.month_num
+    SELECT CAST(d.business_period_number AS INTEGER) AS period,
+           ANY_VALUE(d.business_period_label) AS label,
+           CAST(MAX(d.full_date) AS VARCHAR) AS period_end,
+           CAST(SUM(x.net_sales_gbp) AS DOUBLE) AS net_sales_gbp,
+           CAST(SUM(x.cost_gbp) AS DOUBLE) AS cost_gbp
+    FROM fact_sales_daily x
+    JOIN dim_date d ON x.date = d.full_date
+    JOIN dim_store s ON x.store_id = s.store_id
+    WHERE ${tyDates(f, "x.date")} ${marketAnd(f, "s")}
+    GROUP BY 1
+    ORDER BY 1
   `);
 
-  const points: SalesMarginPoint[] = rows
-    .filter((r) => !(isTrailingMonthPartial && r.month_num === lastMonthNum))
-    .map((r) => ({
-      monthNum: r.month_num,
-      monthName: r.month_name,
-      salesGbp: r.net_sales_gbp,
-      marginPct: r.net_sales_gbp > 0 ? (1 - r.cost_gbp / r.net_sales_gbp) * 100 : 0,
-    }));
-
-  return {
-    year,
-    points,
-    excludedPartialMonth: isTrailingMonthPartial
-      ? rows.find((r) => r.month_num === lastMonthNum)?.month_name
-      : undefined,
-  };
-}
-
-/** Distinct calendar years that actually have sales data — powers the
- * chart's year filter. Queried rather than hardcoded so a future
- * generator re-run that extends the date range doesn't silently leave
- * the filter stale. */
-export async function fetchAvailableYears(): Promise<number[]> {
-  const rows = await queryDuckDB<{ calendar_year: number }>(`
-    SELECT DISTINCT CAST(d.calendar_year AS INTEGER) AS calendar_year
-    FROM fact_sales_daily f
-    JOIN dim_date d ON f.date = d.full_date
-    ORDER BY calendar_year DESC
+  // A period is still trading if the selection ends before the period does.
+  const periodEnds = await queryDuckDB<{ period: number; period_end: string }>(`
+    SELECT CAST(business_period_number AS INTEGER) AS period, CAST(MAX(full_date) AS VARCHAR) AS period_end
+    FROM dim_date WHERE business_year = ${f.year} GROUP BY 1
   `);
-  return rows.map((r) => r.calendar_year);
+  const endOf = new Map(periodEnds.map((p) => [p.period, p.period_end]));
+
+  return rows.map((r) => ({
+    period: r.period,
+    label: r.label,
+    salesGbp: r.net_sales_gbp,
+    marginPct: r.net_sales_gbp > 0 ? (1 - r.cost_gbp / r.net_sales_gbp) * 100 : 0,
+    isPartial: (endOf.get(r.period) ?? "") > f.tyEnd,
+  }));
 }

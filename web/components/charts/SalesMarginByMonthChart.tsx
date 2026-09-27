@@ -1,119 +1,95 @@
 "use client";
 
-import { useState } from "react";
-import ReactECharts from "echarts-for-react";
-import { useAvailableYears, useSalesMarginByMonth } from "@/lib/hooks/useSalesMarginByMonth";
+import { EChart } from "@/components/charts/base/EChart";
+import { useSalesMarginByPeriod } from "@/lib/hooks/useSalesMarginByMonth";
+import { COLORS, COMPACT_WIDTH, axisLabel, axisLine, splitLine, tooltipBase } from "@/lib/chartTheme";
 import { formatGbpMillions, formatPct } from "@/lib/format";
 
+/** Sales and margin by business period, following the global filters.
+ * No year picker of its own any more: the filter bar at the top is the
+ * one place a year gets chosen. */
 export function SalesMarginByMonthChart() {
-  const years = useAvailableYears();
-  const [yearOverride, setYearOverride] = useState<number | null>(null);
-  // Defaults to the most recent year with data once the years list
-  // resolves (fetchAvailableYears returns them DESC) — no separate
-  // effect needed, this is just derived on every render until the user
-  // picks something else.
-  const effectiveYear = yearOverride ?? (years.status === "ready" ? years.data[0] : null);
+  const state = useSalesMarginByPeriod();
 
-  const trend = useSalesMarginByMonth(effectiveYear);
-
-  if (years.status === "loading" || trend.status === "loading") {
+  if (state.status === "loading") {
     return <div className="h-full animate-pulse rounded-xl border border-white/10 bg-white/5" />;
   }
-
-  if (years.status === "error" || trend.status === "error") {
-    const message = years.status === "error" ? years.message : trend.status === "error" ? trend.message : "";
+  if (state.status === "error") {
     return (
       <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm text-mist">
-        Couldn&apos;t load sales &amp; margin by month: {message}
+        Couldn&apos;t load sales &amp; margin: {state.message}
       </div>
     );
   }
 
-  const points = trend.data.points;
-
-  const option = {
-    textStyle: { fontFamily: "Montserrat, sans-serif" },
-    tooltip: {
-      trigger: "axis",
-      axisPointer: { type: "shadow" },
-      formatter: (params: Array<{ axisValue: string; seriesName: string; value: number }>) => {
-        const lines = params.map((p) =>
-          p.seriesName === "Margin %" ? `${p.seriesName}: ${formatPct(p.value)}` : `${p.seriesName}: ${formatGbpMillions(p.value)}`,
-        );
-        return `${params[0]?.axisValue}<br/>${lines.join("<br/>")}`;
-      },
-    },
-    legend: {
-      data: ["Sales", "Margin %"],
-      top: 0,
-      right: 0,
-      textStyle: { color: "#8D9AA1", fontSize: 11 },
-      itemWidth: 10,
-      itemHeight: 10,
-    },
-    grid: { left: 56, right: 48, top: 40, bottom: 28 },
-    xAxis: {
-      type: "category",
-      data: points.map((p) => p.monthName.slice(0, 3)),
-      axisLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
-      axisLabel: { color: "#8D9AA1", fontSize: 11 },
-    },
-    yAxis: [
-      {
-        type: "value",
-        axisLabel: { color: "#8D9AA1", fontSize: 11, formatter: (v: number) => formatGbpMillions(v) },
-        splitLine: { lineStyle: { color: "rgba(255,255,255,0.08)" } },
-      },
-      {
-        type: "value",
-        axisLabel: { color: "#8D9AA1", fontSize: 11, formatter: "{value}%" },
-        splitLine: { show: false },
-      },
-    ],
-    series: [
-      {
-        name: "Sales",
-        type: "bar",
-        data: points.map((p) => p.salesGbp),
-        itemStyle: { color: "#D0AA62", borderRadius: [3, 3, 0, 0] },
-        barMaxWidth: 28,
-      },
-      {
-        name: "Margin %",
-        type: "line",
-        yAxisIndex: 1,
-        data: points.map((p) => p.marginPct),
-        smooth: true,
-        symbolSize: 6,
-        lineStyle: { color: "#1F7486", width: 2 },
-        itemStyle: { color: "#1F7486" },
-      },
-    ],
-  };
+  const points = state.data;
+  const hasPartial = points.some((p) => p.isPartial);
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
-      <div className="mb-2 flex flex-shrink-0 items-center justify-between">
-        <h2 className="text-sm font-medium text-cloud">Sales &amp; margin by month</h2>
-        <select
-          value={effectiveYear ?? ""}
-          onChange={(e) => setYearOverride(Number(e.target.value))}
-          className="rounded-lg border border-white/20 bg-white/5 px-2 py-1 text-xs text-cloud"
-        >
-          {years.data.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-      </div>
-      {trend.data.excludedPartialMonth && (
-        <p className="mb-2 -mt-1 flex-shrink-0 text-xs text-mist">
-          {trend.data.excludedPartialMonth} isn&apos;t shown yet — the month&apos;s still in progress.
-        </p>
-      )}
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-4 md:p-5">
+      <h2 className="flex-shrink-0 text-sm font-medium text-cloud">Sales &amp; margin by period</h2>
+      <p className="mb-2 mt-0.5 flex-shrink-0 text-xs text-mist">
+        {hasPartial ? "* still trading, so its bar is to date" : "Business periods in the selection"}
+      </p>
       <div className="min-h-0 flex-1">
-        <ReactECharts option={option} style={{ height: "100%" }} notMerge />
+        <EChart
+          build={(width) => {
+            const compact = width < COMPACT_WIDTH;
+            return {
+              tooltip: {
+                ...tooltipBase,
+                trigger: "axis",
+                axisPointer: { type: "shadow" },
+                formatter: (params: Array<{ dataIndex: number }>) => {
+                  const p = points[params[0]?.dataIndex ?? 0];
+                  return `${p.label}${p.isPartial ? " (to date)" : ""}<br/>Sales: ${formatGbpMillions(p.salesGbp)}<br/>Margin: ${formatPct(p.marginPct)}`;
+                },
+              },
+              legend: {
+                data: ["Sales", "Margin %"],
+                top: 0,
+                right: 0,
+                textStyle: { color: COLORS.mist, fontSize: 11 },
+                itemWidth: 10,
+                itemHeight: 10,
+              },
+              grid: { left: compact ? 48 : 56, right: compact ? 40 : 48, top: 32, bottom: 28 },
+              xAxis: {
+                type: "category",
+                data: points.map((p) => `P${String(p.period).padStart(2, "0")}${p.isPartial ? "*" : ""}`),
+                axisLine,
+                axisLabel,
+              },
+              yAxis: [
+                { type: "value", axisLabel: { ...axisLabel, formatter: (v: number) => formatGbpMillions(v) }, splitLine },
+                { type: "value", axisLabel: { ...axisLabel, formatter: "{value}%" }, splitLine: { show: false } },
+              ],
+              series: [
+                {
+                  name: "Sales",
+                  type: "bar",
+                  data: points.map((p) => ({
+                    value: p.salesGbp,
+                    // The part-traded period is paler, so its short bar
+                    // reads as "so far" rather than "a bad period".
+                    itemStyle: { color: p.isPartial ? "rgba(208,170,98,0.45)" : COLORS.gold, borderRadius: [3, 3, 0, 0] },
+                  })),
+                  barMaxWidth: 28,
+                },
+                {
+                  name: "Margin %",
+                  type: "line",
+                  yAxisIndex: 1,
+                  data: points.map((p) => p.marginPct),
+                  smooth: true,
+                  symbolSize: 6,
+                  lineStyle: { color: COLORS.teal, width: 2 },
+                  itemStyle: { color: COLORS.teal },
+                },
+              ],
+            };
+          }}
+        />
       </div>
     </div>
   );

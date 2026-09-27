@@ -36,7 +36,8 @@ export function ProductRankingTable() {
           </button>
         ))}
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      {/* Right padding keeps the scrollbar clear of the sales and % columns. */}
+      <div className="min-h-0 flex-1 overflow-y-auto pr-3">
         <AsyncView state={state}>
           {(rows) => (
             <ol className="flex flex-col divide-y divide-white/5">

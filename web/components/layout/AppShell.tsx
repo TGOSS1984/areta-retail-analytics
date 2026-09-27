@@ -2,9 +2,11 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { useFilters } from "@/lib/hooks/useFilters";
 
 /**
  * The frame every page sits in, at three sizes:
@@ -18,6 +20,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { query } = useFilters();
 
   // Close the drawer when the route changes, and stop the page behind it
   // scrolling while it's open.
@@ -36,9 +39,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-deep-terrain/95 px-4 py-3 backdrop-blur md:hidden">
-        <div className="relative h-8 w-24">
+        <Link href={`/${query}`} className="relative block h-8 w-24" aria-label="Areta Retail Analytics, go to Overview">
           <Image src="/images/areta-logo-mark-cropped.png" alt="Areta" fill sizes="96px" className="object-contain object-left" />
-        </div>
+        </Link>
         <button
           type="button"
           onClick={() => setMenuOpen(true)}

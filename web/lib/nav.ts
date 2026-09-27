@@ -10,6 +10,7 @@ import {
   IconTrendingUp,
   IconFileText,
   IconDatabase,
+  IconBrandGithub,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -45,3 +46,11 @@ export function navItemFor(pathname: string): NavItem | undefined {
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
   );
 }
+
+/** The repo, linked from the bottom of the sidebar. It's external, so it
+ * sits apart from the page list (and off the Reports index). */
+export const GITHUB_LINK = {
+  label: "GitHub",
+  href: "https://github.com/TGOSS1984/areta-retail-analytics",
+  icon: IconBrandGithub,
+};

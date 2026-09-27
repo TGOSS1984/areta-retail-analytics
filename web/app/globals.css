@@ -6,3 +6,23 @@ body {
   background-color: theme("colors.cloud");
   color: theme("colors.charcoal");
 }
+/* Thin, dark scrollbars to suit the dark cards. The browser default is a
+   bright white bar that sits on top of the numbers in scrolling tables. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

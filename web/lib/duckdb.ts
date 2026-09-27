@@ -39,6 +39,12 @@ const TABLES = [
   "fact_targets",
   "fact_store_finance",
   "fact_sales_mix_daily",
+  "fact_baskets_daily",
+  "fact_digital_sales",
+  "fact_digital_traffic",
+  "fact_digital_targets",
+  "dq_check_results",
+  "dq_table_profile",
 ] as const;
 
 type TableName = (typeof TABLES)[number];

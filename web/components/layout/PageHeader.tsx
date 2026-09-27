@@ -9,8 +9,9 @@ import { FilterBar } from "@/components/filters/FilterBar";
  * mountain image, overlay and padding as the Overview hero, the page's
  * question on the left and the filters on the right. A page's KPI strip
  * goes in as children and sits inside the banner, over the image, exactly
- * where the Overview's KPI cards sit, so every page opens the same way. */
-export function PageHeader({ children }: { children?: React.ReactNode }) {
+ * where the Overview's KPI cards sit, so every page opens the same way.
+ * filters={false} hides the filter bar, for pages that don't use it. */
+export function PageHeader({ children, filters = true }: { children?: React.ReactNode; filters?: boolean }) {
   const item = navItemFor(usePathname());
   return (
     <div className="relative flex-shrink-0 overflow-hidden rounded-2xl border border-white/10">
@@ -23,7 +24,10 @@ export function PageHeader({ children }: { children?: React.ReactNode }) {
             <h1 className="mt-2 max-w-md text-xl font-medium leading-snug text-cloud md:text-2xl">{item?.question}</h1>
             <div className="mt-3 h-px w-10 bg-summit-gold" />
           </div>
-          <FilterBar />
+          {/* Pages about the whole warehouse (Data) or the app itself
+              (Reports) don't take the date or market filters, so they
+              don't show them. */}
+          {filters && <FilterBar />}
         </div>
         {children}
       </div>

@@ -227,7 +227,7 @@ def export_fact_sales_mix_daily() -> None:
     each, so the hierarchy can't be rebuilt from product group alone."""
     sales = pd.read_parquet(
         WAREHOUSE / "fact_sales.parquet",
-        columns=["date", "store_id", "sku", "promo_id", "discount_pct", "net_sales_gbp", "cost_gbp", "quantity"],
+        columns=["date", "store_id", "sku", "promo_id", "discount_pct", "net_sales_gbp", "cost_gbp", "quantity", "is_return"],
     )
     product = pd.read_parquet(
         WAREHOUSE / "dim_product.parquet", columns=["sku", "division", "major_product_group", "product_group"]
@@ -235,17 +235,79 @@ def export_fact_sales_mix_daily() -> None:
     store = pd.read_parquet(WAREHOUSE / "dim_store.parquet", columns=["store_id", "market_code", "channel"])
     sales = sales.merge(product, on="sku").merge(store, on="store_id")
     sales["discount_band"] = discount_band(sales["promo_id"], sales["discount_pct"])
+    # Returns as positive amounts alongside the net figures, so a return
+    # rate can be cut by category, market or channel. Net sales already
+    # have the returns taken off.
+    sales["returned_units"] = np.where(sales["is_return"], -sales["quantity"], 0)
+    sales["returned_sales_gbp"] = np.where(sales["is_return"], -sales["net_sales_gbp"], 0.0)
     out = (
         sales.groupby(
             ["date", "market_code", "channel", "division", "major_product_group", "product_group", "discount_band"],
             as_index=False,
         )
-        .agg(net_sales_gbp=("net_sales_gbp", "sum"), cost_gbp=("cost_gbp", "sum"), quantity=("quantity", "sum"))
+        .agg(
+            net_sales_gbp=("net_sales_gbp", "sum"),
+            cost_gbp=("cost_gbp", "sum"),
+            quantity=("quantity", "sum"),
+            returned_units=("returned_units", "sum"),
+            returned_sales_gbp=("returned_sales_gbp", "sum"),
+        )
     )
-    out["net_sales_gbp"] = out["net_sales_gbp"].round(2)
-    out["cost_gbp"] = out["cost_gbp"].round(2)
+    for col in ["net_sales_gbp", "cost_gbp", "returned_sales_gbp"]:
+        out[col] = out[col].round(2)
     out.to_parquet(EXPORTS / "fact_sales_mix_daily.parquet", index=False)
     print(f"fact_sales_mix_daily: {len(out):,} rows")
+
+
+BASKET_SIZE_CAP = 8  # 8 or more items share one bucket, labelled "8+"
+
+
+def export_fact_baskets_daily() -> None:
+    """Baskets by day, market, channel and basket size (items in the
+    basket, 8+ as one bucket), with their sales and units. It's how the
+    Customers page answers "how do people shop" without any customer
+    records: one invoice is one basket, one shopping trip. Returns are left
+    out, because a refund isn't a trip where someone bought something."""
+    sales = pd.read_parquet(
+        WAREHOUSE / "fact_sales.parquet",
+        columns=["date", "store_id", "invoice_id", "quantity", "net_sales_gbp", "is_return"],
+    )
+    sales = sales[~sales["is_return"]]
+    store = pd.read_parquet(WAREHOUSE / "dim_store.parquet", columns=["store_id", "market_code", "channel"])
+    baskets = (
+        sales.groupby(["date", "store_id", "invoice_id"], as_index=False)
+        .agg(items=("quantity", "sum"), net_sales_gbp=("net_sales_gbp", "sum"))
+        .merge(store, on="store_id")
+    )
+    baskets["basket_size"] = baskets["items"].clip(upper=BASKET_SIZE_CAP).astype("int64")
+    out = baskets.groupby(["date", "market_code", "channel", "basket_size"], as_index=False).agg(
+        baskets=("invoice_id", "count"), units=("items", "sum"), net_sales_gbp=("net_sales_gbp", "sum")
+    )
+    out["net_sales_gbp"] = out["net_sales_gbp"].round(2)
+    out.to_parquet(EXPORTS / "fact_baskets_daily.parquet", index=False)
+    print(f"fact_baskets_daily: {len(out):,} rows")
+
+
+def export_digital() -> None:
+    """The three digital facts as they are in the warehouse: they're
+    already small (day x market x device, plus browser for traffic)."""
+    for name in ["fact_digital_sales", "fact_digital_traffic", "fact_digital_targets"]:
+        df = pd.read_parquet(WAREHOUSE / f"{name}.parquet")
+        df.to_parquet(EXPORTS / f"{name}.parquet", index=False)
+        print(f"{name}: {len(df):,} rows")
+
+
+def export_data_quality() -> None:
+    """The data quality audit's two tables, for the web app's Data page.
+    The timestamps go out as text so the browser shows them exactly as the
+    audit wrote them."""
+    checks = pd.read_parquet(WAREHOUSE / "dq_check_results.parquet")
+    checks.to_parquet(EXPORTS / "dq_check_results.parquet", index=False)
+    profile = pd.read_parquet(WAREHOUSE / "dq_table_profile.parquet")
+    for col in ["earliest_data_date", "latest_data_date", "run_date"]:
+        profile[col] = profile[col].astype("string")
+    profile.to_parquet(EXPORTS / "dq_table_profile.parquet", index=False)
+    print(f"dq_check_results: {len(checks):,} rows, dq_table_profile: {len(profile):,} rows")
 
 
 def main() -> None:
@@ -259,6 +321,9 @@ def main() -> None:
     export_fact_targets()
     export_fact_store_finance()
     export_fact_sales_mix_daily()
+    export_fact_baskets_daily()
+    export_digital()
+    export_data_quality()
 
 
 if __name__ == "__main__":

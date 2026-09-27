@@ -1,7 +1,7 @@
 <p align="center">
   <img src="branding/areta-banner.png" alt="Areta Retail Analytics" width="100%" />
 </p>
-<!-- TODO: the logo's lettering is white, so it needs a dark background. branding/areta-banner.png is the logo on the brand's dark teal. Swap it for something else if you like. -->
+
 
 <h1 align="center">Areta Retail Analytics</h1>
 <p align="center"><i>Higher ground awaits.</i></p>
@@ -17,6 +17,7 @@
   <img alt="ECharts" src="https://img.shields.io/badge/ECharts-6-AA344D?logo=apacheecharts&logoColor=white" />
   <img alt="Parquet" src="https://img.shields.io/badge/Data-Parquet-003744" />
   <a href="https://github.com/TGOSS1984/areta-retail-analytics/actions/workflows/refresh-data.yml"><img alt="Weekly refresh" src="https://github.com/TGOSS1984/areta-retail-analytics/actions/workflows/refresh-data.yml/badge.svg" /></a>
+  <a href="https://areta-retail-analytics.vercel.app/"><img alt="Live web app" src="https://img.shields.io/badge/live%20web%20app-open-D0AA62?logo=vercel&logoColor=white" /></a>
   <img alt="Status" src="https://img.shields.io/badge/status-work%20in%20progress-D0AA62" />
   <img alt="Licence" src="https://img.shields.io/badge/licence-MIT-lightgrey" />
 </p>
@@ -28,10 +29,9 @@
   <a href="#run-it-yourself">Run it yourself</a> ·
   <a href="sql/README.md">SQL suite</a> ·
   <a href="#things-that-went-wrong-and-what-i-learnt">What went wrong</a> ·
-  <a href="#">Live web app</a>
+  <a href="https://areta-retail-analytics.vercel.app/">Live web app</a>
 </p>
-<!-- TODO: export the finished report to PDF and save it at docs/screenshots/areta-retail-analytics.pdf. -->
-<!-- TODO: add the live web app link once it's deployed. -->
+
 
 ---
 
@@ -125,10 +125,35 @@ I'm looking for data analyst, BI analyst, retail insight and commercial analytic
 > Screenshot placeholder: the model view in Power BI Desktop
 > <!-- ![Model view](docs/screenshots/pbi-model-view.png) -->
 
-**Web app**
+**Web app** ([live web app](#))
 
-> Screenshot placeholder: the dashboard
-> <!-- ![Web dashboard](docs/screenshots/web-dashboard.png) -->
+<!-- These are branded placeholders. Take each screenshot at 1600 x 900 or similar, and save it over the placeholder with the same file name; nothing here needs editing. -->
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/web-overview.png" alt="Web app: Overview" /><br /><sub><b>Overview.</b> KPIs, trend, channel mix, the Europe map, top products</sub></td>
+    <td width="50%"><img src="docs/screenshots/web-sales.png" alt="Web app: Sales" /><br /><sub><b>Sales.</b> Weekly trend, calendar heatmap, market waterfall, vs target</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/web-products.png" alt="Web app: Products" /><br /><sub><b>Products.</b> Style Pareto, treemap, price vs volume, best and slowest sellers</sub></td>
+    <td><img src="docs/screenshots/web-categories.png" alt="Web app: Categories" /><br /><sub><b>Categories.</b> Growth heatmap, sunburst, channel Sankey, risers and fallers</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/web-stores.png" alt="Web app: Stores" /><br /><sub><b>Stores.</b> Visitor funnel, footfall vs conversion, league table, weekly rhythm</sub></td>
+    <td><img src="docs/screenshots/web-digital.png" alt="Web app: Digital" /><br /><sub><b>Digital.</b> Sessions by device, conversion by device and market, browsers</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/web-customers.png" alt="Web app: Customers" /><br /><sub><b>Customers.</b> Basket sizes, spend per basket, multi-item trend, returns</sub></td>
+    <td><img src="docs/screenshots/web-margins.png" alt="Web app: Margins" /><br /><sub><b>Margins.</b> Store P&amp;L waterfall, discount bands, contribution box plot, matrix</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/web-forecasting.png" alt="Web app: Forecasting" /><br /><sub><b>Forecasting.</b> Projection with a range band, target gauge, period table</sub></td>
+    <td><img src="docs/screenshots/web-data.png" alt="Web app: Data" /><br /><sub><b>Data.</b> Quality score, reconciliations, freshness, every check</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/web-mobile.png" alt="Web app on a phone and a tablet" /><br /><sub><b>Phone and tablet.</b> The same pages, laid out for smaller screens</sub></td>
+  </tr>
+</table>
 
 ## How it fits together
 
@@ -323,13 +348,15 @@ Eleven pages, each with five KPI cards and a set of visuals. The full design, wi
 
 ## The web app
 
+**Try it: [live web app](#)** (link to follow once it's deployed).
+
 I built the web app because I didn't want to be someone who can only work inside Power BI. I've done full stack development (React and Django, mostly), and I wanted to see how far I could take retail analytics in a browser, with the commercial and data side and the development side in one project.
 
-It's in [`web/`](web/). Next.js (App Router) and TypeScript, Tailwind for styling, ECharts for the charts, Tabler icons, and the Montserrat brand font. It has an Overview dashboard (KPI cards with sparklines, sales trend, channel mix, a Europe map with market drill-down, top products with photos, sales and margin by month, category mix) and a growing set of pages behind it. Sales has a weekly filled line against last year, a calendar heatmap of every trading day, a waterfall from last year to this year by market, and sales against a phased target by period. Stores has a footfall-to-basket funnel, a footfall-versus-conversion scatter, a sortable league table with net contribution, and a weekday-by-period footfall heatmap. Products has a style Pareto marking the 80% line, a brand and category treemap, a price-versus-volume bubble scatter and a best-and-slowest sellers table with photos and sparklines. Categories has a growth heatmap by major group and market, a sunburst of the range, a Sankey from channel to category and a risers-and-fallers chart. Margins has the store P&L as a waterfall, sales and margin by discount band, a box plot of store contribution by store type and a product-group-by-period margin matrix. Digital has sessions by device as a stacked area, sessions against conversion by device, a market-by-device conversion heatmap and browser share. Customers works without any customer records, treating each invoice as one shopping trip: a basket size histogram, spend per basket as a dot plot across markets and channels, the weekly share of multi-item baskets and return rates as radial bars. Forecasting projects the rest of the year from last year's shape and this year's growth, with a range band, a gauge and a period table, and says how it works on the page. Data puts the quality audit in front of the user: the score, the reconciliations side by side, table freshness and every check. Reports is an index of all of it. The rest of the nav is planned page by page, and each one says what it will hold until it's built.
+It's in [`web/`](web/). Next.js (App Router) and TypeScript, Tailwind for styling, ECharts for the charts, Tabler icons, and the Montserrat brand font. It has an Overview dashboard (KPI cards with sparklines, sales trend, channel mix, a Europe map with market drill-down, top products with photos, sales and margin by period, category mix) and ten pages behind it. Sales has a weekly filled line against last year, a calendar heatmap of every trading day, a waterfall from last year to this year by market, and sales against a phased target by period. Stores has a footfall-to-basket funnel, a footfall-versus-conversion scatter, a sortable league table with net contribution, and a weekday-by-period footfall heatmap. Products has a style Pareto marking the 80% line, a brand and category treemap, a price-versus-volume bubble scatter and a best-and-slowest sellers table with photos and sparklines. Categories has a growth heatmap by major group and market, a sunburst of the range, a Sankey from channel to category and a risers-and-fallers chart. Margins has the store P&L as a waterfall, sales and margin by discount band, a box plot of store contribution by store type and a product-group-by-period margin matrix. Digital has sessions by device as a stacked area, sessions against conversion by device, a market-by-device conversion heatmap and browser share. Customers works without any customer records, treating each invoice as one shopping trip: a basket size histogram, spend per basket as a dot plot across markets and channels, the weekly share of multi-item baskets and return rates as radial bars. Forecasting projects the rest of the year from last year's shape and this year's growth, with a range band, a gauge and a period table, and says how it works on the page. Data puts the quality audit in front of the user: the score, the reconciliations side by side, table freshness and every check. Reports is an index of all of it.
 
 **Filters and layout.** Year, period range and market are real filters that every query on every page respects. They live in the URL, so a filtered view can be bookmarked or shared and follows you between pages. "This year" is always the selected periods up to the last day of data, and "last year" is always the same days 364 days earlier, so a part-traded period is never compared with a whole one. The layout is designed three times rather than left to reflow: every page opens with the same banner, its KPIs sitting over the mountain image like the Overview's; a phone gets a top bar, a slide-out menu and the KPIs two across; a tablet gets an icon rail and two columns; a desktop gets the full sidebar and, on a tall enough screen, a grid that fits the viewport exactly, like the reference board it was designed from. Charts watch their own width and change what they show when they're narrow (a waterfall turns on its side, a donut moves its legend underneath) rather than only shrinking.
 
-**How it gets its data.** There's no API and no server. The generator writes a few pre-aggregated Parquet files to `data/exports`, a small script (`scripts/sync-data.mjs`) copies them into `web/public/data` before `dev` and `build`, and the browser loads them into **DuckDB-wasm** and runs SQL against them. Each chart has a query in `web/lib/queries/` and a hook in `web/lib/hooks/`. Hosting is a static site, so it costs nothing.
+**How it gets its data.** There's no API and no server. The generator writes a few pre-aggregated Parquet files to `data/exports`, a small script (`scripts/sync-data.mjs`) copies them into `web/public/data` before `dev` and `build`, and the browser loads them into **DuckDB-wasm** and runs SQL against them. Each chart has a query in `web/lib/queries/` and a hook in `web/lib/hooks/`. Hosting is a static site, so it costs nothing: it's on Vercel, which rebuilds it on every push, so when the weekly GitHub Actions refresh commits new data, the live site picks it up on its own.
 
 The dashboard is dark themed on purpose, in the same teal and gold as the report. The two front ends read the same warehouse, so any figure on a card should match the same figure in Power BI. Checking that they do is one of my favourite tests.
 
@@ -451,7 +478,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. `npm run dev` copies `data/exports` into `web/public/data` first, so if it complains that there are no exports, run step 3.
+Open http://localhost:3000. `npm run dev` copies `data/exports` into `web/public/data` first, so if it complains that there are no exports, run step 3. If you only want to look around, the [live web app](#) needs none of this.
 
 ### 5. The SQL suite
 
@@ -556,7 +583,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [ ] Customer type (new, returning, trade, staff), which the model doesn't have at all yet
 
 **Tidying**
-- [ ] Update the docs that are now stale: `web/README.md`, `powerbi/README.md` and `docs/project-plan.md`
+- [ ] Update the docs that are now stale: `powerbi/README.md` and `docs/project-plan.md`
 - [ ] ADR 0002 says the web app uses Tremor and Zustand. It doesn't (see `web/package.json`), so the record needs correcting
 - [ ] ADR 0001 says there are no product images in the repo. The product photos need a sorted source and licence, and the record should say where they came from
 

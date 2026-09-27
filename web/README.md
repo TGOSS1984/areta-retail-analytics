@@ -12,6 +12,17 @@ npm run dev     # http://localhost:3000
 
 `predev` and `prebuild` run `scripts/sync-data.mjs`, which copies `data/exports/*.parquet` into `public/data/`. If that folder is empty, run `python generator/export_web_data.py` (or the full `generator/weekly_refresh.py`) first.
 
+## Deploying
+
+It's hosted on Vercel: [live web app](https://areta-retail-analytics.vercel.app/) (link to follow). Every page is prerendered and all the data work happens in the browser, so it's a static site with nothing to configure beyond where the app lives in the repo. To set it up from scratch:
+
+1. Sign in at [vercel.com](https://vercel.com) with GitHub, choose **Add New → Project**, and import `areta-retail-analytics`.
+2. Set **Root Directory** to `web`. Vercel spots Next.js and fills in the build settings itself.
+3. Leave the option to include files outside the root directory switched on (it is by default). The `prebuild` step copies `data/exports` from the repo root into `public/data`, so the build needs to see that folder.
+4. Deploy.
+
+After that, every push to `main` redeploys it. That includes the weekly GitHub Actions data refresh, so the live numbers move on without anyone touching the site. `web/public/data` is git-ignored on purpose: the Parquet files are only ever copied in at build time, from the one copy in `data/exports`.
+
 ## How it's put together
 
 **Data.** `generator/export_web_data.py` writes small pre-aggregated exports: daily sales by store, daily sales by style and colour, daily sales by market, channel, product hierarchy and discount band with returns alongside (the "mix" export), baskets by size, daily footfall with basket counts, the three digital facts, targets and store finance by period, the data quality audit's two tables, and the date, store and product dimensions. They stay a star schema and the SQL joins them, the same way Power BI does. `lib/duckdb.ts` registers a table the first time a query mentions it, so a page only downloads what it uses.

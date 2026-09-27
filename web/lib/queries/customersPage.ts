@@ -105,10 +105,13 @@ export type WeeklyMultiItem = { week: number; ty: number | null; ly: number | nu
 export async function fetchMultiItemTrend(f: ResolvedFilters): Promise<WeeklyMultiItem[]> {
   const rows = await queryDuckDB<{ week: number; b_ty: number | null; m_ty: number | null; b_ly: number | null; m_ly: number | null }>(`
     SELECT CAST(d.business_week_number AS INTEGER) AS week,
-           SUM(x.baskets) FILTER (WHERE ${tyDates(f, "x.date")}) AS b_ty,
-           SUM(x.baskets) FILTER (WHERE ${tyDates(f, "x.date")} AND x.basket_size >= 2) AS m_ty,
-           SUM(x.baskets) FILTER (WHERE ${lyDates(f, "x.date")}) AS b_ly,
-           SUM(x.baskets) FILTER (WHERE ${lyDates(f, "x.date")} AND x.basket_size >= 2) AS m_ly
+           -- Cast to DOUBLE: DuckDB-wasm returns a SUM of an integer column
+           -- as a 128-bit integer, which JavaScript can't read as a number,
+           -- and the chart comes out blank.
+           CAST(SUM(x.baskets) FILTER (WHERE ${tyDates(f, "x.date")}) AS DOUBLE) AS b_ty,
+           CAST(SUM(x.baskets) FILTER (WHERE ${tyDates(f, "x.date")} AND x.basket_size >= 2) AS DOUBLE) AS m_ty,
+           CAST(SUM(x.baskets) FILTER (WHERE ${lyDates(f, "x.date")}) AS DOUBLE) AS b_ly,
+           CAST(SUM(x.baskets) FILTER (WHERE ${lyDates(f, "x.date")} AND x.basket_size >= 2) AS DOUBLE) AS m_ly
     FROM fact_baskets_daily x
     JOIN dim_date d ON d.full_date = x.date
     WHERE (${tyDates(f, "x.date")} OR ${lyDates(f, "x.date")}) ${marketAnd(f, "x")}
@@ -117,8 +120,8 @@ export async function fetchMultiItemTrend(f: ResolvedFilters): Promise<WeeklyMul
   `);
   return rows.map((r) => ({
     week: r.week,
-    ty: r.b_ty ? Number(r.m_ty ?? 0) / Number(r.b_ty) : null,
-    ly: f.hasLastYear && r.b_ly ? Number(r.m_ly ?? 0) / Number(r.b_ly) : null,
+    ty: r.b_ty ? (r.m_ty ?? 0) / r.b_ty : null,
+    ly: f.hasLastYear && r.b_ly ? (r.m_ly ?? 0) / r.b_ly : null,
   }));
 }
 

@@ -125,7 +125,7 @@ I'm looking for data analyst, BI analyst, retail insight and commercial analytic
 > Screenshot placeholder: the model view in Power BI Desktop
 > <!-- ![Model view](docs/screenshots/pbi-model-view.png) -->
 
-**Web app** ([live web app](#))
+**Web app** ([live web app](https://areta-retail-analytics.vercel.app/))
 
 <!-- These are branded placeholders. Take each screenshot at 1600 x 900 or similar, and save it over the placeholder with the same file name; nothing here needs editing. -->
 
@@ -348,7 +348,7 @@ Eleven pages, each with five KPI cards and a set of visuals. The full design, wi
 
 ## The web app
 
-**Try it: [live web app](#)** (link to follow once it's deployed).
+**Try it: [live web app](https://areta-retail-analytics.vercel.app/)**
 
 I built the web app because I didn't want to be someone who can only work inside Power BI. I've done full stack development (React and Django, mostly), and I wanted to see how far I could take retail analytics in a browser, with the commercial and data side and the development side in one project.
 
@@ -478,7 +478,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. `npm run dev` copies `data/exports` into `web/public/data` first, so if it complains that there are no exports, run step 3. If you only want to look around, the [live web app](#) needs none of this.
+Open http://localhost:3000. `npm run dev` copies `data/exports` into `web/public/data` first, so if it complains that there are no exports, run step 3. If you only want to look around, the [live web app](https://areta-retail-analytics.vercel.app/) needs none of this.
 
 ### 5. The SQL suite
 
@@ -566,7 +566,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [ ] Build the remaining report pages in Power BI Desktop, then take the screenshots and export the PDF
 - [ ] Confirm the latest round of DAX changes in Desktop: the Any-Grain targets, the gross profit targets, the closing-balance stock measures, and the digital traffic and target fixes. They're tested against the real data, but I haven't seen them run in Desktop yet
 - [ ] Trigger the GitHub Actions workflow for real and fix whatever falls over
-- [ ] Deploy the web app and add the link at the top
+- [x] Deploy the web app to Vercel and add the link at the top
 - [ ] Fill in `docs/data-dictionary.md`
 
 **Improvements I want to make**

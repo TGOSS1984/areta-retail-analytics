@@ -14,7 +14,7 @@ npm run dev     # http://localhost:3000
 
 ## Deploying
 
-It's hosted on Vercel: [live web app](https://areta-retail-analytics.vercel.app/) (link to follow). Every page is prerendered and all the data work happens in the browser, so it's a static site with nothing to configure beyond where the app lives in the repo. To set it up from scratch:
+It's hosted on Vercel: [live web app](https://areta-retail-analytics.vercel.app/). Every page is prerendered and all the data work happens in the browser, so it's a static site with nothing to configure beyond where the app lives in the repo. To set it up from scratch:
 
 1. Sign in at [vercel.com](https://vercel.com) with GitHub, choose **Add New → Project**, and import `areta-retail-analytics`.
 2. Set **Root Directory** to `web`. Vercel spots Next.js and fills in the build settings itself.

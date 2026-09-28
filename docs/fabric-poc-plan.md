@@ -8,7 +8,7 @@ I'm doing this alongside DP-600, so each session maps to part of the exam. The p
 
 1. I can load the warehouse into a Lakehouse as Delta tables with a notebook, not by clicking through an upload.
 2. The SQL suite runs on the Lakehouse SQL endpoint, and I can explain where T-SQL and DuckDB differ.
-3. The full semantic model (399 measures, two calculation groups) works in **Direct Lake**, and gives the same numbers as the Import model in Desktop.
+3. The full semantic model (every measure and both calculation groups) works in **Direct Lake**, and gives the same numbers as the Import model in Desktop.
 4. The load and the model refresh run on a schedule without me.
 5. The Fabric workspace is in Git, so everything I build is in this repo, not just in a tenant that will eventually disappear.
 

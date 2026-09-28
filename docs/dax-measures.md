@@ -236,3 +236,93 @@ Distinct Invoices (from Sales) =
 CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
 ```
 ```
+### Range analysis
+
+These answer "have we got the right number of styles and colours for the sales we get?". Put any product attribute (gender, product group, major product group, brand, sub-brand, season) on rows, then the sales share next to the style and style-colour shares. A row where the range share is well above the sales share carries more range than it earns.
+
+```dax
+Styles Sold =
+CALCULATE (
+    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code] ) ),
+    fact_sales[is_return] = FALSE
+)
+
+Style-Colours Sold =
+CALCULATE (
+    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code], dim_product[colour_code] ) ),
+    fact_sales[is_return] = FALSE
+)
+
+Styles in Range =
+DISTINCTCOUNT ( dim_product[style_code] )
+
+Style-Colours in Range =
+COUNTROWS ( SUMMARIZE ( dim_product, dim_product[style_code], dim_product[colour_code] ) )
+
+Colours per Style =
+DIVIDE ( [Style-Colours Sold], [Styles Sold] )
+
+Net Sales Share % =
+DIVIDE ( [Net Sales (GBP)], CALCULATE ( [Net Sales (GBP)], ALLSELECTED ( dim_product ) ) )
+
+Styles Sold Share % =
+DIVIDE ( [Styles Sold], CALCULATE ( [Styles Sold], ALLSELECTED ( dim_product ) ) )
+
+Style-Colours Sold Share % =
+DIVIDE ( [Style-Colours Sold], CALCULATE ( [Style-Colours Sold], ALLSELECTED ( dim_product ) ) )
+
+Style Share Gap (pp) =
+[Net Sales Share %] - [Styles Sold Share %]
+
+Style-Colour Share Gap (pp) =
+[Net Sales Share %] - [Style-Colours Sold Share %]
+
+Style Productivity Index =
+DIVIDE ( [Net Sales Share %], [Styles Sold Share %] )
+
+Style-Colour Productivity Index =
+DIVIDE ( [Net Sales Share %], [Style-Colours Sold Share %] )
+
+Net Sales per Style (GBP) =
+DIVIDE ( [Net Sales (GBP)], [Styles Sold] )
+
+Net Sales per Style-Colour (GBP) =
+DIVIDE ( [Net Sales (GBP)], [Style-Colours Sold] )
+
+Gross Profit Share % =
+DIVIDE ( [Gross Profit (GBP)], CALCULATE ( [Gross Profit (GBP)], ALLSELECTED ( dim_product ) ) )
+
+Style Productivity Index (GP) =
+DIVIDE ( [Gross Profit Share %], [Styles Sold Share %] )
+
+Styles for 80% of Sales % =
+VAR StyleSales =
+    FILTER (
+        ADDCOLUMNS ( VALUES ( dim_product[style_code] ), "@Sales", [Net Sales (GBP)] ),
+        [@Sales] > 0
+    )
+VAR Target = SUMX ( StyleSales, [@Sales] ) * 0.8
+VAR WithCumulative =
+    ADDCOLUMNS (
+        StyleSales,
+        "@Cumulative",
+            VAR ThisSales = [@Sales]
+            RETURN SUMX ( FILTER ( StyleSales, [@Sales] >= ThisSales ), [@Sales] )
+    )
+VAR Threshold = MINX ( FILTER ( WithCumulative, [@Cumulative] >= Target ), [@Cumulative] )
+VAR StylesNeeded = COUNTROWS ( FILTER ( WithCumulative, [@Cumulative] <= Threshold ) )
+RETURN
+    DIVIDE ( StylesNeeded, COUNTROWS ( StyleSales ) )
+```
+
+A few things worth knowing before using these:
+
+- **"Sold" vs "in Range".** The Sold counts only include styles with a sale line in the current filters, so they follow the date, store and market slicers. The in-Range counts are the whole catalogue for the product filters and ignore dates, because `dim_product` has no dates. The shares and indices use Sold, so a period comparison compares what actually traded.
+- **The shares add up to 100%** down gender, product group, major group, brand, sub-brand and season, because each style sits in exactly one of each. The style shares don't add up against colour or size, since a style spans several; the style-colour shares do add up against colour.
+- **ALLSELECTED** means a product slicer on the page sets the 100%. With a brand slicer on one brand, the Mens row is Mens' share of that brand.
+- **Reading a low index.** The index is relative to the business average, so it tells you where to look, not that a group definitely has too many styles. Two measures help with the next question. **Gross Profit Share %** and **Style Productivity Index (GP)** show whether a lower-selling group earns its range on margin. **Styles for 80% of Sales %** shows the shape: a low figure means a few strong styles and a tail worth cutting, and a high figure means sales are spread thinly across the whole group.
+- **VAT and currency.** The shares are ex-VAT by design, so they don't move because one market has a higher VAT rate. The two per-style averages are on the VAT View whitelist, and the Currency Conversion group converts them because they carry a £ format.
+
+As a sanity check, over the last year on the current data, Accessories makes about 3% of sales from about 16% of the selling styles, and Outerwear about 34% of sales from about 23%. So the measures tell a story straight away.
+
+On the same year, Tops need about half their styles to reach 80% of their sales, against about 38–42% for most groups, so Tops sales are spread thinly across the range. Gross Profit share tracks sales share almost exactly for every group, because the generator gives every product group a similar margin. The GP measures are right; the synthetic data just doesn't give them much to find yet.

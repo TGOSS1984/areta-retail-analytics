@@ -853,6 +853,185 @@ table fact_sales
 		displayFolder: Pareto Analysis
 		lineageTag: fe97a040-fa71-4ec7-96ee-a37fe7c3bee8
 
+	/// Styles with at least one sale line in the current context. Returns are left out, so
+	/// a style that only had a refund in the period doesn't count as selling. The fact table
+	/// is only filtered one way to dim_product, so a plain DISTINCTCOUNT on the dimension
+	/// would count the whole catalogue. Summarising fact_sales keeps it to what actually sold.
+	measure 'Styles Sold' =
+			CALCULATE (
+			    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code] ) ),
+			    fact_sales[is_return] = FALSE
+			)
+		formatString: #,0
+		displayFolder: Range Analysis
+		lineageTag: 1c57819b-0dad-43f4-92bb-c015bba9dc79
+
+	/// Same as Styles Sold, one level down. There's no style-colour key in dim_product, so
+	/// the pair of style_code and colour_code is the key. 907 styles come in 2,251 colourways.
+	measure 'Style-Colours Sold' =
+			CALCULATE (
+			    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code], dim_product[colour_code] ) ),
+			    fact_sales[is_return] = FALSE
+			)
+		formatString: #,0
+		displayFolder: Range Analysis
+		lineageTag: 07e9f7b6-f700-4781-a5dd-350a4f6c0a98
+
+	/// Every style in the catalogue for the current product filters, sold or not. It doesn't
+	/// move with the date slicer, because dim_product has no dates. It's the "how big is the
+	/// range" number, next to Styles Sold as the "how much of it traded" number.
+	measure 'Styles in Range' = DISTINCTCOUNT ( dim_product[style_code] )
+		formatString: #,0
+		displayFolder: Range Analysis
+		lineageTag: 698367b9-365f-459e-85fa-3dc57a0c8db8
+
+	/// Catalogue count of style-colours, the range-side twin of Style-Colours Sold.
+	measure 'Style-Colours in Range' = COUNTROWS ( SUMMARIZE ( dim_product, dim_product[style_code], dim_product[colour_code] ) )
+		formatString: #,0
+		displayFolder: Range Analysis
+		lineageTag: d4a0bf3f-6bea-469b-bef2-6ab9c0edbcfe
+
+	/// How many colourways each selling style carries on average. A high number next to a
+	/// low sales share is the "too many colours" signal.
+	measure 'Colours per Style' = DIVIDE ( [Style-Colours Sold], [Styles Sold] )
+		formatString: 0.0
+		displayFolder: Range Analysis
+		lineageTag: 470a3b62-3278-40a8-9c96-90bdfd3cbd44
+
+	/// This row's share of Net Sales across every product in the visual. ALLSELECTED keeps
+	/// any product slicers on the page, so with a brand slicer set to one brand it answers
+	/// "what share of that brand's sales is Mens". Date, store and market filters stay as
+	/// they are. It's ex-VAT by design: VAT rates differ by country, and a mix measure
+	/// shouldn't shift because one market has a higher rate.
+	measure 'Net Sales Share %' =
+			DIVIDE (
+			    [Net Sales (GBP)],
+			    CALCULATE ( [Net Sales (GBP)], ALLSELECTED ( dim_product ) )
+			)
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: 56555e9d-aecf-4a78-ac4b-06d9e56d84d6
+
+	/// This row's share of the selling styles. Every style sits in exactly one gender,
+	/// product group, major group and brand (I checked), so these add up to 100% down any
+	/// of those attributes. Colour and size are the exceptions: a style spans several, so
+	/// don't use this against those.
+	measure 'Styles Sold Share %' =
+			DIVIDE (
+			    [Styles Sold],
+			    CALCULATE ( [Styles Sold], ALLSELECTED ( dim_product ) )
+			)
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: c3f5609b-78d2-4946-922e-3909069af791
+
+	/// This row's share of the selling style-colours. It works against colour as well,
+	/// since each style-colour has exactly one colour.
+	measure 'Style-Colours Sold Share %' =
+			DIVIDE (
+			    [Style-Colours Sold],
+			    CALCULATE ( [Style-Colours Sold], ALLSELECTED ( dim_product ) )
+			)
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: d7364aac-15de-4d9c-9594-27232abb3478
+
+	/// Sales share minus style share. Positive means the group earns more than its share of
+	/// the range (under-ranged, or just strong); negative means it carries more styles than
+	/// its sales justify. Formatted like the other pp measures, as a percentage.
+	measure 'Style Share Gap (pp)' = [Net Sales Share %] - [Styles Sold Share %]
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: 85e974db-a8fd-4497-a1e6-53028c2056a6
+
+	/// The same gap measured against style-colours.
+	measure 'Style-Colour Share Gap (pp)' = [Net Sales Share %] - [Style-Colours Sold Share %]
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: 4c365463-e780-4f49-8d58-2ea4c8dcc6ff
+
+	/// Sales share divided by style share. 1.00 means the group sells exactly its share of
+	/// the range, above 1 means each style works harder than average, below 1 means too
+	/// many styles for the sales. Unlike the pp gap it reads the same for a small group as
+	/// a big one, which is why I kept both.
+	measure 'Style Productivity Index' = DIVIDE ( [Net Sales Share %], [Styles Sold Share %] )
+		formatString: 0.00
+		displayFolder: Range Analysis
+		lineageTag: 165eaceb-61ff-4699-b869-cb9c7019529b
+
+	/// The productivity index against style-colours.
+	measure 'Style-Colour Productivity Index' = DIVIDE ( [Net Sales Share %], [Style-Colours Sold Share %] )
+		formatString: 0.00
+		displayFolder: Range Analysis
+		lineageTag: 377e6c26-d9d4-4e15-b9c9-6fea168b181e
+
+	/// Average Net Sales per selling style. It's on the VAT View whitelist, so it follows the
+	/// VAT toggle, and the £ format means the currency group converts it too.
+	measure 'Net Sales per Style (GBP)' = DIVIDE ( [Net Sales (GBP)], [Styles Sold] )
+		formatString: "£"#,0
+		displayFolder: Range Analysis
+		lineageTag: ed483f9a-3649-485b-b26a-a76047828421
+
+	/// Average Net Sales per selling style-colour, with the same VAT and currency behaviour.
+	measure 'Net Sales per Style-Colour (GBP)' = DIVIDE ( [Net Sales (GBP)], [Style-Colours Sold] )
+		formatString: "£"#,0
+		displayFolder: Range Analysis
+		lineageTag: 88bfd92b-ced9-45c0-b9a9-30e76386c124
+
+	/// This row's share of Gross Profit, with the same ALLSELECTED denominator as Net Sales
+	/// Share %. Set next to the style share, it says whether a group earns its range on
+	/// margin as well as sales, since a lower-selling group can still justify its styles if
+	/// it's more profitable. Gross Profit is ex-VAT by definition, so VAT View leaves it alone.
+	measure 'Gross Profit Share %' =
+			DIVIDE (
+			    [Gross Profit (GBP)],
+			    CALCULATE ( [Gross Profit (GBP)], ALLSELECTED ( dim_product ) )
+			)
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: 64c2b99f-24d9-4696-b3e5-8aac4cd2bc12
+
+	/// Style Productivity Index on margin instead of sales: Gross Profit share divided by
+	/// style share. When this is higher than the sales-based index, the group's styles
+	/// make more money than their sales alone suggest.
+	measure 'Style Productivity Index (GP)' = DIVIDE ( [Gross Profit Share %], [Styles Sold Share %] )
+		formatString: 0.00
+		displayFolder: Range Analysis
+		lineageTag: 0c629fa7-a45b-4e86-8b61-db7fd2cc1a24
+
+	/// The share of a group's own selling styles that make up 80% of its Net Sales. It
+	/// shows the shape behind a low productivity index: a low figure means a few strong
+	/// styles and a long tail (cut the tail), a high figure means sales are spread thinly
+	/// across everything (the group itself is weak). It works on whatever styles are in
+	/// the current row, so on a product group row it's that group's styles only.
+	///
+	/// Styles only count if their Net Sales is above zero; a style that's net negative
+	/// from returns can't contribute to 80% of anything. Cumulative sales use the same
+	/// "every style selling at least as much as this one" trick as Style Pareto
+	/// Cumulative Sales, and the answer is the smallest group of styles whose running
+	/// total reaches 80%. Tied styles go in together, so ties never split.
+	measure 'Styles for 80% of Sales %' =
+			VAR StyleSales =
+			    FILTER (
+			        ADDCOLUMNS ( VALUES ( dim_product[style_code] ), "@Sales", [Net Sales (GBP)] ),
+			        [@Sales] > 0
+			    )
+			VAR Target = SUMX ( StyleSales, [@Sales] ) * 0.8
+			VAR WithCumulative =
+			    ADDCOLUMNS (
+			        StyleSales,
+			        "@Cumulative",
+			            VAR ThisSales = [@Sales]
+			            RETURN SUMX ( FILTER ( StyleSales, [@Sales] >= ThisSales ), [@Sales] )
+			    )
+			VAR Threshold = MINX ( FILTER ( WithCumulative, [@Cumulative] >= Target ), [@Cumulative] )
+			VAR StylesNeeded = COUNTROWS ( FILTER ( WithCumulative, [@Cumulative] <= Threshold ) )
+			RETURN
+			    DIVIDE ( StylesNeeded, COUNTROWS ( StyleSales ) )
+		formatString: 0.0%
+		displayFolder: Range Analysis
+		lineageTag: 611447f2-8057-4197-ab8a-b7a7cf04adde
+
 	column date
 		dataType: dateTime
 		isHidden

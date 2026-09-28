@@ -9,6 +9,7 @@ table 'VAT View'
 		calculationItem 'Including VAT' =
 				// Whitelist of every base sales-VALUE measure the report exposes: current, last year and
 				// YoY diff for each sales family, plus the plain and Any-Grain sales targets and variances.
+				// Also the two Range Analysis per-style averages, which are sales values divided by a count.
 				// Deliberately excludes anything ex-VAT by definition (Gross Profit, margin, cost, contribution,
 				// stock value) and the P&L Bridge (VAT on one bridge step would break the waterfall's arithmetic).
 				IF (
@@ -47,7 +48,9 @@ table 'VAT View'
 				        [Target Digital Net Sales (GBP)],
 				        [Digital Net Sales Target Variance (GBP)],
 				        [Target Digital Net Sales (GBP), Any Grain],
-				        [Digital Net Sales Target Variance (Any Grain, GBP)]
+				        [Digital Net Sales Target Variance (Any Grain, GBP)],
+				        [Net Sales per Style (GBP)],
+				        [Net Sales per Style-Colour (GBP)]
 				    ),
 				    SELECTEDMEASURE ( )
 				        * DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),

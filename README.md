@@ -577,6 +577,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [x] Web app: Products, Categories and Margins pages
 - [x] Web app: Digital, Customers, Forecasting, Reports and Data pages
 - [ ] A GitHub project board
+- [ ] Microsoft Fabric proof of concept: Lakehouse, Direct Lake model and a scheduled pipeline, alongside DP-600 (plan in [`docs/fabric-poc-plan.md`](docs/fabric-poc-plan.md))
 
 **Parked on purpose**
 - [ ] A systematic "always compare like for like" fix for the LY measures (they work at any grain today, but they don't cap themselves to elapsed periods)

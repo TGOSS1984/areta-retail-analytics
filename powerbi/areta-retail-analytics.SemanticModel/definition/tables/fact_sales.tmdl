@@ -567,6 +567,56 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: a588022c-54a1-4c68-b373-a7a77522c983
 
+	/// Net Sales per net unit, so it's the price actually realised per unit kept,
+	/// after discounts and returns. It falls when promotions deepen or the mix
+	/// shifts to cheaper lines. On the VAT View whitelist and £-formatted, so it
+	/// follows both the VAT toggle and the currency group.
+	measure 'Average Selling Price (GBP)' = DIVIDE ( [Net Sales (GBP)], [Net Units Sold] )
+		formatString: "£"#,0.00
+		displayFolder: Sales & Margin
+		lineageTag: a45cc817-db7f-4ca1-971f-7e1c6eb68343
+
+	/// Built from Net Sales LY and Net Units Sold LY rather than its own TREATAS
+	/// block, so it inherits their weekday-aligned LY logic.
+	measure 'Average Selling Price LY' = DIVIDE ( [Net Sales LY], [Net Units Sold LY] )
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: eb856408-3dec-4a1e-9679-330291e32598
+
+	measure 'Average Selling Price YoY (GBP)' = [Average Selling Price (GBP)] - [Average Selling Price LY]
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 6b7ca204-f142-4711-a373-c64838ae2be1
+
+	measure 'Average Selling Price YoY %' = DIVIDE ( [Average Selling Price (GBP)] - [Average Selling Price LY], [Average Selling Price LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 12731c86-1a21-42ba-a8e8-dafb5a8bbd04
+
+	measure 'Average Selling Price Trend Arrow' = IF ( [Average Selling Price YoY %] > 0, "▲", IF ( [Average Selling Price YoY %] < 0, "▼", "▬" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: 195b4610-5859-4993-b3e0-a8933d570597
+
+	measure 'Average Selling Price Trend Colour' = IF ( [Average Selling Price YoY %] > 0, "#2E7D32", IF ( [Average Selling Price YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: f427bbdd-032b-4575-958d-76ca31f1ab35
+
+	/// Pence, not whole pounds like the other money combos: a price around £30
+	/// moving by 40p would otherwise read as "£0".
+	measure 'Average Selling Price YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Average Selling Price Trend Arrow] & " £" & FORMAT ( ABS ( [Average Selling Price YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Average Selling Price YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: KPI Trend Indicators
+		lineageTag: a80dc7aa-30a7-4158-8c36-ff2a3b673bd6
+
 	measure 'Multi-buy Sales LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
@@ -1004,7 +1054,7 @@ table fact_sales
 	/// styles and a long tail (cut the tail), a high figure means sales are spread thinly
 	/// across everything (the group itself is weak). It works on whatever styles are in
 	/// the current row, so on a product group row it's that group's styles only.
-	/// 
+	///
 	/// Styles only count if their Net Sales is above zero; a style that's net negative
 	/// from returns can't contribute to 80% of anything. Cumulative sales use the same
 	/// "every style selling at least as much as this one" trick as Style Pareto

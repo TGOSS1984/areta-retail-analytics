@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "b7d2964b477100e41631",
   "position": {
     "x": 19.232053422370619,
@@ -180,6 +180,11 @@
           }
         }
       ]
+    },
+    "syncGroup": {
+      "groupName": "business_week_number",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }

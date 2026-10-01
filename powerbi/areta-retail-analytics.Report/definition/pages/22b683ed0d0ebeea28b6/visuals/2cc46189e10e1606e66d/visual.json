@@ -181,6 +181,11 @@
         }
       ]
     },
+    "syncGroup": {
+      "groupName": "business_week_number",
+      "fieldChanges": true,
+      "filterChanges": true
+    },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {

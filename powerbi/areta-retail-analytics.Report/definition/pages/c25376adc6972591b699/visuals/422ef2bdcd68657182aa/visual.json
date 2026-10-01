@@ -1,0 +1,201 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "422ef2bdcd68657182aa",
+  "position": {
+    "x": 790.49372384937237,
+    "y": 618.57740585774059,
+    "z": 29019,
+    "height": 451.48117154811712,
+    "width": 1110.2259414225941,
+    "tabOrder": 29019
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_promo"
+                    }
+                  },
+                  "Property": "promo_name"
+                }
+              },
+              "queryRef": "dim_promo.promo_name",
+              "nativeQueryRef": "promo_name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_promo"
+                    }
+                  },
+                  "Property": "promo_type"
+                }
+              },
+              "queryRef": "dim_promo.promo_type",
+              "nativeQueryRef": "promo_type"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_promo"
+                    }
+                  },
+                  "Property": "discount_pct"
+                }
+              },
+              "queryRef": "dim_promo.discount_pct",
+              "nativeQueryRef": "discount_pct"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
+            },
+            {
+              "field": {
+                "Arithmetic": {
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_sales"
+                        }
+                      },
+                      "Property": "Net Sales (GBP)"
+                    }
+                  },
+                  "Right": {
+                    "ScopedEval": {
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Entity": "fact_sales"
+                            }
+                          },
+                          "Property": "Net Sales (GBP)"
+                        }
+                      },
+                      "Scope": []
+                    }
+                  },
+                  "Operator": 3
+                }
+              },
+              "queryRef": "Divide(fact_sales.Net Sales (GBP), ScopedEval(fact_sales.Net Sales (GBP), []))",
+              "nativeQueryRef": "%GT Net Sales (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Units Sold"
+                }
+              },
+              "queryRef": "fact_sales.Net Units Sold",
+              "nativeQueryRef": "Net Units Sold"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Gross Margin %"
+                }
+              },
+              "queryRef": "fact_sales.Gross Margin %",
+              "nativeQueryRef": "Gross Margin %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Distinct Invoices (from Sales)"
+                }
+              },
+              "queryRef": "fact_sales.Distinct Invoices (from Sales)",
+              "nativeQueryRef": "Distinct Invoices (from Sales)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_promo"
+                    }
+                  },
+                  "Property": "start_date"
+                }
+              },
+              "queryRef": "dim_promo.start_date",
+              "nativeQueryRef": "start_date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_promo"
+                    }
+                  },
+                  "Property": "end_date"
+                }
+              },
+              "queryRef": "dim_promo.end_date",
+              "nativeQueryRef": "end_date"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "Net Sales (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

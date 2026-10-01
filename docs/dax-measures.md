@@ -325,4 +325,4 @@ A few things worth knowing before using these:
 
 As a sanity check, over the last year on the current data, Accessories makes about 3% of sales from about 16% of the selling styles, and Outerwear about 34% of sales from about 23%. So the measures tell a story straight away.
 
-On the same year, Tops need about half their styles to reach 80% of their sales, against about 38–42% for most groups, so Tops sales are spread thinly across the range. Gross Profit share tracks sales share almost exactly for every group, because the generator gives every product group a similar margin. The GP measures are right; the synthetic data just doesn't give them much to find yet.
+On the same year, Tops need about 39% of their styles to reach 80% of their sales, against 26–32% for most groups, so Tops sales are spread thinly across the range rather than carried by a few heroes. Margin now varies by category, so the GP view has something to say too: Footwear makes about 21% of sales but under 20% of gross profit, and Outerwear's margin share runs slightly ahead of its sales share.

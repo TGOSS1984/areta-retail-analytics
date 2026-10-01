@@ -214,15 +214,88 @@ RETURN_RATE = 0.03
 # median one. Real ranges have hero styles and a long tail. Each style_code
 # gets a lognormal weight on its demand. I tested sigma against the real
 # style totals before picking it: 0.8 puts ~58% of sales in the top 20% of
-# styles, 1.0 ~64%, 1.2 ~71%. 1.1 sits in the middle of that.
+# styles, 1.0 ~64%, 1.2 ~71%. I started at 1.1 (~62%), but the curve still
+# looked too gentle next to a real range, where the top fifth of styles
+# usually carries 70-80% of sales and a single hero style can do several
+# percent on its own. It's now 1.45, which lands the top 20% of styles at
+# about three quarters of sales.
 #
 # The weights are rescaled inside every brand x product_group so each
 # group's expected revenue doesn't move. That keeps BRAND_DEMAND_MULT and
 # PRODUCT_GROUP_DEMAND_MULT doing the job they were calibrated for; this
 # only changes which styles inside a group do the selling. It has its own
 # seeded generator so none of the other random draws shift.
-STYLE_POPULARITY_SIGMA = 1.1
+STYLE_POPULARITY_SIGMA = 1.65
 STYLE_POPULARITY_SEED = RANDOM_SEED + 30
+
+# The same idea one level down. Every colour of a style used to sell equally,
+# which isn't how it works: black and navy outsell the seasonal brights, and
+# that's exactly what a "too many colours" conversation is about. Each
+# style-colour gets a lognormal weight, rescaled inside its style so the
+# style's own total doesn't move. Drawn over the catalogue in sorted order on
+# its own seed, like the style weights.
+COLOUR_POPULARITY_SIGMA = 0.7
+COLOUR_POPULARITY_SEED = RANDOM_SEED + 31
+
+# --- year-on-year trends ------------------------------------------------
+# Before this the only thing that changed from year to year was the random
+# draw, so every business year came out at about £39M and every year-on-year
+# figure, at any level, sat within a point or two of zero. A real business
+# grows overall while some parts of it go backwards, and that's what the
+# variance measures are for.
+#
+# Each line of the assortment gets a demand level per business year, built
+# from growth rates that stack: the whole business, its channel, its major
+# product group, its brand and its market, plus seeded noise per product
+# group, market and store so no two rows move quite alike. Levels are
+# anchored on 1 September (mid business year, the same anchor the margin
+# drift uses) and interpolated day by day in log space, so growth is smooth
+# and there's no step at the year boundary. The 2022 anchor only exists so
+# the first months of data have something to interpolate from.
+#
+# Growth rates are for the year ENDING at that anchor. The total line is the
+# story I wanted: a weak 2024 while cost inflation bit, a strong 2025, and
+# steadier growth since. The channel, group, brand and market lines move
+# their part of the business against that. They were tuned by checking the
+# real output, so that Online stays inside its 15-25% band, Areta stays the
+# biggest brand and the product-group ranking from PRODUCT_GROUP_DEMAND_MULT
+# holds.
+TREND_ANCHOR_YEARS = [2022, 2023, 2024, 2025, 2026, 2027]
+TREND_TOTAL = {2023: 0.010, 2024: -0.005, 2025: 0.020, 2026: 0.018, 2027: 0.020}
+TREND_CHANNEL = {
+    "Online": {2023: 0.04, 2024: 0.05, 2025: 0.05, 2026: 0.04, 2027: 0.04},
+    "Retail": {2023: -0.01, 2024: -0.02, 2025: -0.01, 2026: -0.01, 2027: -0.01},
+    "Concession": {2023: 0.00, 2024: 0.01, 2025: -0.02, 2026: -0.02, 2027: -0.01},
+}
+TREND_MAJOR_GROUP = {
+    "Outerwear": {2023: 0.00, 2024: -0.03, 2025: 0.03, 2026: 0.00, 2027: 0.01},
+    "Footwear": {2023: 0.02, 2024: 0.03, 2025: 0.03, 2026: 0.02, 2027: 0.02},
+    "Midlayer": {2023: 0.00, 2024: -0.02, 2025: 0.01, 2026: -0.03, 2027: 0.00},
+    "Legwear": {2023: 0.01, 2024: 0.01, 2025: 0.02, 2026: 0.00, 2027: 0.01},
+    "Tops": {2023: 0.01, 2024: 0.02, 2025: -0.02, 2026: 0.02, 2027: 0.01},
+    "Accessories": {2023: -0.01, 2024: -0.03, 2025: -0.04, 2026: -0.03, 2027: -0.02},
+    "Camping & Equipment": {2023: -0.04, 2024: -0.08, 2025: -0.05, 2026: -0.06, 2027: -0.04},
+}
+# Constant every year: Areta Pro is the brand on the up, Basecamp the one
+# losing ground. Kept small so the brand split barely moves.
+TREND_BRAND = {"Areta": 0.005, "Areta Pro": 0.02, "Kestrel Ridge": 0.0, "Basecamp": -0.02}
+# Constant every year too: central and eastern Europe growing, Germany and
+# France harder going, the UK roughly in line with the business.
+TREND_MARKET = {
+    "UK": 0.00, "IE": 0.02, "DE": -0.03, "NL": 0.01, "FR": -0.02, "IT": 0.01,
+    "PL": 0.06, "CZ": 0.04, "SK": 0.03, "LV": 0.02, "LT": 0.01,
+}
+# Standard deviations of the seeded noise. Product groups and markets get a
+# fresh draw every year. A store gets a lasting trajectory (some stores are
+# on the way up, some down) plus a smaller yearly wobble, which is what makes
+# a like-for-like league table spread out.
+TREND_PRODUCT_GROUP_NOISE = 0.03
+TREND_MARKET_NOISE = 0.015
+TREND_STORE_PERSISTENT = 0.035
+TREND_STORE_YEARLY = 0.03
+TREND_SEED = RANDOM_SEED + 40
+# The business year where the calibrated mix holds exactly. See build_trend.
+TREND_PIN_YEAR = 2025
 
 # --- key trading days ---------------------------------------------------
 # dim_date has had is_black_friday / is_christmas_day / is_boxing_day for a
@@ -269,10 +342,29 @@ MULTIBUY_SCHEMES = [
     },
     {
         "scheme_id": "MB002",
-        "product_groups": ["Hats", "Gloves", "Scarves", "Socks", "Accessory Sets"],
+        "product_groups": ["Hats", "Gloves", "Scarves", "Accessory Sets"],
         "mechanic": "cheapest_free",
         "qty_required": 3,
         "months": {10, 11, 12},  # gifting season
+    },
+    # Socks used to sit in MB002 and only got a deal from October. A standing
+    # 3 for 2 on socks is about the most common multi-buy in outdoor retail,
+    # so they have their own scheme now, all year. A product group must only
+    # be in one scheme per month, or apply_multibuy_promos would duplicate rows.
+    {
+        "scheme_id": "MB003",
+        "product_groups": ["Socks"],
+        "mechanic": "cheapest_free",
+        "qty_required": 3,
+        "months": set(range(1, 13)),
+    },
+    {
+        "scheme_id": "MB004",
+        "product_groups": ["Base Layer"],
+        "mechanic": "bundle_price",
+        "qty_required": 2,
+        "bundle_price_gbp": 40.0,
+        "months": {10, 11, 12, 1, 2},  # winter layering
     },
 ]
 
@@ -284,9 +376,17 @@ MULTIBUY_SCHEMES = [
 # readily than a pricier fleece, and accessories need three items not two,
 # a meaningfully higher bar. Tuned by checking the actual resulting
 # category-level % after running, not derived algebraically.
+#
+# Multi-buys were about 1.4% of sales. There's no published benchmark I
+# could find for an outdoor specialist. Value-led chains run multi-buys on
+# most of the range all year; premium brands barely use them. Areta sits in
+# between, so I aimed for about 3% of sales, coming mostly from basics. That
+# meant raising the take-up rates below and adding the two schemes above.
 ATTACH_PROBABILITY = {
-    "MB001": {"Fleece": 0.10, "T-Shirts": 0.22},
-    "MB002": 0.09,
+    "MB001": {"Fleece": 0.15, "T-Shirts": 0.30},
+    "MB002": 0.15,
+    "MB003": 0.22,
+    "MB004": 0.22,
 }
 
 # invoice grouping — average distinct product lines per transaction.
@@ -326,6 +426,38 @@ MARGIN_DRIFT_ANCHORS = [
     (dt.date(2027, 9, 1), 0.004),
     (dt.date(2028, 9, 1), 0.006),
 ]
+# Margin by product. Until now every product group made the same margin,
+# because the tier ranges above only know about discount, so a gross profit
+# share always matched the sales share and a category margin matrix was one
+# flat colour. Real ranges don't work like that: hardgoods and branded
+# footwear make less, accessories and tops more at full price (though
+# accessories give a lot of it back through multi-buys), and a premium
+# technical brand earns more than a value one. These are offsets in
+# fractions (0.01 = 1 point) added to every sale's margin, on top of the
+# discount tier and the company-wide drift.
+#
+# The fixed offsets are re-centred on the revenue-weighted mean before use,
+# so the company's overall margin, and the year-on-year story the
+# MARGIN_DRIFT_ANCHORS tell, stay where they were calibrated. Each major
+# group also gets its own seeded wobble per year (also re-centred), so a
+# category's margin can go the other way to the company's.
+MARGIN_MAJOR_GROUP_OFFSET = {
+    "Outerwear": 0.010,
+    "Midlayer": 0.005,
+    "Legwear": 0.000,
+    "Tops": 0.015,
+    "Footwear": -0.030,
+    "Accessories": 0.025,
+    "Camping & Equipment": -0.050,
+}
+MARGIN_BRAND_OFFSET = {"Areta Pro": 0.015, "Kestrel Ridge": 0.005, "Areta": 0.000, "Basecamp": -0.015}
+MARGIN_PRODUCT_GROUP_STD = 0.008
+MARGIN_GROUP_YEAR_STD = 0.006
+MARGIN_OFFSET_SEED = RANDOM_SEED + 50
+# A floor and ceiling on the final margin, so no combination of offsets can
+# produce a silly number.
+MARGIN_CLIP = (0.45, 0.80)
+
 _DRIFT_DAYS = np.array([np.datetime64(d, "D").astype(int) for d, _ in MARGIN_DRIFT_ANCHORS], dtype=float)
 _DRIFT_VALUES = np.array([v for _, v in MARGIN_DRIFT_ANCHORS], dtype=float)
 
@@ -334,6 +466,131 @@ def margin_drift(dates) -> np.ndarray:
     """Margin shift for one date or an array/Series of dates (interpolated between the anchors)."""
     days = np.atleast_1d(np.asarray(dates, dtype="datetime64[D]")).astype(float)
     return np.interp(days, _DRIFT_DAYS, _DRIFT_VALUES)
+
+
+_TREND_ANCHOR_DAYS = np.array(
+    [np.datetime64(dt.date(y, 9, 1), "D").astype(int) for y in TREND_ANCHOR_YEARS], dtype=float
+)
+
+
+def _anchor_weights(dates) -> tuple[np.ndarray, np.ndarray]:
+    """For each date: the index of the anchor before it and how far it is towards the next (0-1).
+
+    Dates outside the anchors hold at the first or last one.
+    """
+    days = np.atleast_1d(np.asarray(dates, dtype="datetime64[D]")).astype(float)
+    pos = np.interp(days, _TREND_ANCHOR_DAYS, np.arange(len(_TREND_ANCHOR_DAYS), dtype=float))
+    k = np.minimum(np.floor(pos).astype(int), len(_TREND_ANCHOR_DAYS) - 2)
+    return k, pos - k
+
+
+class MarginModel:
+    """Per-SKU margin offsets: a fixed one plus a per-major-group one that moves by year."""
+
+    def __init__(self, static_by_sku: pd.Series, group_by_sku: pd.Series, group_year: pd.DataFrame):
+        self.static_by_sku = static_by_sku
+        self.group_by_sku = group_by_sku
+        self.group_year = group_year  # rows: major group, columns: anchor index
+
+    def offset(self, skus, dates) -> np.ndarray:
+        skus = pd.Series(np.asarray(skus))
+        static = skus.map(self.static_by_sku).fillna(0.0).to_numpy()
+        groups = skus.map(self.group_by_sku).to_numpy()
+        k, w = _anchor_weights(dates)
+        if k.size == 1 and len(skus) > 1:
+            k, w = np.repeat(k, len(skus)), np.repeat(w, len(skus))
+        table = self.group_year.reindex(groups).to_numpy()
+        rows = np.arange(len(skus))
+        moving = table[rows, k] * (1 - w) + table[rows, k + 1] * w
+        return static + np.nan_to_num(moving)
+
+
+def build_margin_model(dim_product: pd.DataFrame, assortment: pd.DataFrame) -> MarginModel:
+    """Fixed and moving margin offsets, re-centred on expected revenue so the company margin holds."""
+    rng = np.random.default_rng(MARGIN_OFFSET_SEED)
+    product_groups = np.sort(dim_product["product_group"].unique())
+    pg_noise = pd.Series(rng.normal(0.0, MARGIN_PRODUCT_GROUP_STD, len(product_groups)), index=product_groups)
+
+    products = dim_product.set_index("sku")
+    static = (
+        products["major_product_group"].map(MARGIN_MAJOR_GROUP_OFFSET).fillna(0.0)
+        + products["brand_name"].map(MARGIN_BRAND_OFFSET).fillna(0.0)
+        + products["product_group"].map(pg_noise)
+    )
+
+    revenue = (assortment["base_rate"] * assortment["base_price_gbp"] * assortment["price_index"]).groupby(
+        assortment["sku"]
+    ).sum()
+    revenue = revenue.reindex(static.index).fillna(0.0)
+    static = static - np.average(static, weights=revenue)
+
+    groups = np.sort(dim_product["major_product_group"].unique())
+    group_year = pd.DataFrame(
+        rng.normal(0.0, MARGIN_GROUP_YEAR_STD, (len(groups), len(TREND_ANCHOR_YEARS))), index=groups
+    )
+    group_revenue = revenue.groupby(products["major_product_group"]).sum().reindex(groups).fillna(0.0)
+    group_year = group_year - np.average(group_year, axis=0, weights=group_revenue)
+
+    return MarginModel(static, products["major_product_group"], group_year)
+
+
+def _sample_margin(rng: np.random.Generator, lo, hi, skus, dates, margin_model: MarginModel) -> np.ndarray:
+    """Discount-tier draw + company drift + product offsets, clipped to MARGIN_CLIP."""
+    margin = rng.uniform(lo, hi) + margin_drift(dates) + margin_model.offset(skus, dates)
+    return np.clip(margin, *MARGIN_CLIP)
+
+
+def build_trend(assortment: pd.DataFrame) -> np.ndarray:
+    """Log demand level per assortment row at each trend anchor, pinned to 1.0 at TREND_PIN_YEAR.
+
+    Returns an array of shape (rows, anchors).
+    """
+    rng = np.random.default_rng(TREND_SEED)
+    years = TREND_ANCHOR_YEARS[1:]
+    n = len(assortment)
+
+    pgs = np.sort(assortment["product_group"].unique())
+    markets = np.sort(assortment["market_code"].unique())
+    stores = np.sort(assortment["store_id"].unique())
+    pg_noise = pd.DataFrame(rng.normal(0, TREND_PRODUCT_GROUP_NOISE, (len(pgs), len(years))), index=pgs, columns=years)
+    mkt_noise = pd.DataFrame(rng.normal(0, TREND_MARKET_NOISE, (len(markets), len(years))), index=markets, columns=years)
+    store_persist = pd.Series(rng.normal(0, TREND_STORE_PERSISTENT, len(stores)), index=stores)
+    store_yearly = pd.DataFrame(rng.normal(0, TREND_STORE_YEARLY, (len(stores), len(years))), index=stores, columns=years)
+
+    log_growth = np.zeros((n, len(years)))
+    for j, y in enumerate(years):
+        g = (
+            np.log1p(TREND_TOTAL[y])
+            + np.log1p(assortment["channel"].map(lambda c: TREND_CHANNEL[c][y]))
+            + np.log1p(assortment["major_product_group"].map(lambda m: TREND_MAJOR_GROUP[m][y]))
+            + np.log1p(assortment["brand_name"].map(TREND_BRAND).fillna(0.0))
+            + np.log1p(assortment["market_code"].map(TREND_MARKET).fillna(0.0))
+            + assortment["product_group"].map(pg_noise[y])
+            + assortment["market_code"].map(mkt_noise[y])
+            + assortment["store_id"].map(store_persist)
+            + assortment["store_id"].map(store_yearly[y])
+        )
+        log_growth[:, j] = g.to_numpy()
+
+    log_level = np.hstack([np.zeros((n, 1)), np.cumsum(log_growth, axis=1)])
+
+    # Pin every product group within every channel to an average level of 1.0
+    # at TREND_PIN_YEAR, weighted by expected revenue. The trends then decide
+    # how each one got there and where it goes next, but in that year the
+    # category ranking and channel split are exactly what they were calibrated
+    # to. My first version pinned only the company total, and Footwear's growth
+    # pushed Boots and Shoes above Waterproof Insulated Jacket and Fleece by
+    # 2025, which undid the researched order. Stores, markets and brands still
+    # move freely inside each group, so their trends come through as they are.
+    revenue = pd.Series(
+        (assortment["base_rate"] * assortment["base_price_gbp"] * assortment["price_index"]).to_numpy()
+    )
+    k_pin = TREND_ANCHOR_YEARS.index(TREND_PIN_YEAR)
+    cell = [assortment["product_group"].to_numpy(), assortment["channel"].to_numpy()]
+    pinned = pd.Series(np.exp(log_level[:, k_pin])) * revenue
+    cell_level = pinned.groupby(cell).transform("sum") / revenue.groupby(cell).transform("sum")
+    log_level -= np.log(cell_level.to_numpy())[:, None]
+    return log_level
 
 
 def _seasonal_mult(major_group: str, month: int) -> float:
@@ -412,6 +669,14 @@ def apply_style_popularity(assortment: pd.DataFrame, base_rate: pd.Series, dim_p
     weights = pd.Series(rng.lognormal(0.0, STYLE_POPULARITY_SIGMA, len(styles)), index=styles)
 
     w = assortment["style_code"].map(weights)
+
+    colours = dim_product[["style_code", "colour_code"]].drop_duplicates().sort_values(["style_code", "colour_code"])
+    colour_rng = np.random.default_rng(COLOUR_POPULARITY_SEED)
+    colours["w"] = colour_rng.lognormal(0.0, COLOUR_POPULARITY_SIGMA, len(colours))
+    colours["w"] = colours["w"] / colours.groupby("style_code")["w"].transform("mean")
+    colour_w = assortment.merge(colours, on=["style_code", "colour_code"], how="left")["w"].fillna(1.0)
+    w = w * colour_w.to_numpy()
+
     expected_revenue = base_rate * assortment["base_price_gbp"] * assortment["price_index"]
     group = [assortment["brand_name"], assortment["product_group"]]
     rescale = (
@@ -478,7 +743,15 @@ def assign_invoices(store_id_arr: np.ndarray, rng: np.random.Generator) -> np.nd
     return invoice_num
 
 
-def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_lookup, key_day_lookup) -> pd.DataFrame:
+def simulate(
+    assortment: pd.DataFrame,
+    dim_date: pd.DataFrame,
+    promo_lookup,
+    fx_lookup,
+    key_day_lookup,
+    trend_log_level: np.ndarray,
+    margin_model: MarginModel,
+) -> pd.DataFrame:
     rng = np.random.default_rng(RANDOM_SEED + 1)
     invoice_rng = np.random.default_rng(RANDOM_SEED + 10)
     margin_rng = np.random.default_rng(RANDOM_SEED + 11)
@@ -510,6 +783,9 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
             promo_mult = np.where(promo_eligible_arr, 1 + discount_pct / 100 * PROMO_UPLIFT_FACTOR, 1.0)
             rate = base_rate_arr * season_arr * weekday_mult * promo_mult
 
+        k, w = _anchor_weights(d)
+        rate = rate * np.exp(trend_log_level[:, k[0]] * (1 - w[0]) + trend_log_level[:, k[0] + 1] * w[0])
+
         key_day = key_day_lookup.get(d)
         if key_day is not None:
             rate = rate * np.where(is_online_arr, key_day[1], key_day[0])
@@ -538,7 +814,7 @@ def simulate(assortment: pd.DataFrame, dim_date: pd.DataFrame, promo_lookup, fx_
         net_sales_gbp = np.round(net_unit_price_gbp * q, 2)
 
         margin_lo, margin_hi = _margin_bounds(applied_discount)
-        target_margin = margin_rng.uniform(margin_lo, margin_hi) + margin_drift(d)[0]
+        target_margin = _sample_margin(margin_rng, margin_lo, margin_hi, sku_arr[idx], d, margin_model)
         cost_gbp = np.round(net_sales_gbp * (1 - target_margin), 2)
 
         vat = vat_rate_arr[idx]
@@ -584,6 +860,7 @@ def synthesize_multibuy_attachments(
     dim_product: pd.DataFrame,
     assortment: pd.DataFrame,
     fx_lookup: dict,
+    margin_model: MarginModel,
 ) -> pd.DataFrame:
     """Adds a companion line item to some share of single-item qualifying
     purchases, so multi-buy prevalence reflects genuine uptake — a
@@ -658,7 +935,14 @@ def synthesize_multibuy_attachments(
 
     margin_rng = np.random.default_rng(RANDOM_SEED + 21)
     full_price_lo, full_price_hi = MARGIN_TIER_RANGES[0]
-    target_margin = margin_rng.uniform(full_price_lo, full_price_hi, size=len(companions)) + margin_drift(companions["date"])
+    target_margin = _sample_margin(
+        margin_rng,
+        np.full(len(companions), full_price_lo),
+        np.full(len(companions), full_price_hi),
+        companions["sku"],
+        companions["date"],
+        margin_model,
+    )
     companions["cost_gbp"] = np.round(companions["net_sales_gbp"] * (1 - target_margin), 2)
     companions["is_return"] = False
 
@@ -668,7 +952,7 @@ def synthesize_multibuy_attachments(
     return combined
 
 
-def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame) -> pd.DataFrame:
+def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame, margin_model: MarginModel) -> pd.DataFrame:
     """Post-processing pass over completed invoices — finds baskets that
     qualify for a multi-buy scheme and adjusts pricing on the qualifying
     lines. Runs after the main simulation, before returns/messiness;
@@ -740,7 +1024,7 @@ def apply_multibuy_promos(df: pd.DataFrame, dim_product: pd.DataFrame) -> pd.Dat
 
     margin_lo, margin_hi = _margin_bounds(df.loc[idx, "discount_pct"].to_numpy())
     margin_rng = np.random.default_rng(RANDOM_SEED + 12)
-    target_margin = margin_rng.uniform(margin_lo, margin_hi) + margin_drift(df.loc[idx, "date"])
+    target_margin = _sample_margin(margin_rng, margin_lo, margin_hi, df.loc[idx, "sku"], df.loc[idx, "date"], margin_model)
     df.loc[idx, "cost_gbp"] = np.round(new_net_sales_gbp * (1 - target_margin), 2)
 
     df.loc[idx, "vat_gbp"] = np.round(new_net_sales_gbp * vat_rate_implied.to_numpy(), 2)
@@ -828,7 +1112,9 @@ def main() -> None:
     fx_lookup = build_fx_lookup(fx_rate)
 
     key_day_lookup = build_key_day_lookup(dim_date)
-    df = simulate(assortment, dim_date, promo_lookup, fx_lookup, key_day_lookup)
+    trend_log_level = build_trend(assortment)
+    margin_model = build_margin_model(dim_product, assortment)
+    df = simulate(assortment, dim_date, promo_lookup, fx_lookup, key_day_lookup, trend_log_level, margin_model)
     print(f"simulated: {len(df):,} positive-quantity rows, {df['invoice_id'].nunique():,} invoices")
 
     # Channel split, before returns/messiness — the number that actually
@@ -853,8 +1139,8 @@ def main() -> None:
         + ", ".join(f"{b}={p:.1%}" for b, p in brand_share.sort_values(ascending=False).items())
     )
 
-    df = synthesize_multibuy_attachments(df, dim_product, assortment, fx_lookup)
-    df = apply_multibuy_promos(df, dim_product)
+    df = synthesize_multibuy_attachments(df, dim_product, assortment, fx_lookup, margin_model)
+    df = apply_multibuy_promos(df, dim_product, margin_model)
     n_multibuy = (df["promo_id"].str.startswith("MULTIBUY-")).sum()
     print(f"multi-buy adjusted: {n_multibuy:,} lines")
 

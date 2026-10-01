@@ -1004,7 +1004,7 @@ table fact_sales
 	/// styles and a long tail (cut the tail), a high figure means sales are spread thinly
 	/// across everything (the group itself is weak). It works on whatever styles are in
 	/// the current row, so on a product group row it's that group's styles only.
-	///
+	/// 
 	/// Styles only count if their Net Sales is above zero; a style that's net negative
 	/// from returns can't contribute to 80% of anything. Cumulative sales use the same
 	/// "every style selling at least as much as this one" trick as Style Pareto

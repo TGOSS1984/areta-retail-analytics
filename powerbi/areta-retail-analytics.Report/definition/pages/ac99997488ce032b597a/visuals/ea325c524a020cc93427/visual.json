@@ -1,19 +1,19 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "fb449f1146ce210a7c04",
+  "name": "ea325c524a020cc93427",
   "position": {
-    "x": 257.88929889298896,
-    "y": 501.60885608856091,
-    "z": 30000,
-    "height": 539.86715867158671,
-    "width": 573.87453874538744,
-    "tabOrder": 30000
+    "x": 845.95851665619114,
+    "y": 631.1502199874293,
+    "z": 30001,
+    "height": 403.06725329981145,
+    "width": 841.13136392206161,
+    "tabOrder": 30001
   },
   "visual": {
-    "visualType": "lineClusteredColumnComboChart",
+    "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Category": {
+        "Rows": {
           "projections": [
             {
               "field": {
@@ -23,62 +23,16 @@
                       "Entity": "dim_product"
                     }
                   },
-                  "Property": "style_label"
+                  "Property": "product_group"
                 }
               },
-              "queryRef": "dim_product.style_label",
-              "nativeQueryRef": "style_label",
+              "queryRef": "dim_product.product_group",
+              "nativeQueryRef": "product_group",
               "active": true
             }
           ]
         },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_sales"
-                    }
-                  },
-                  "Property": "Style Pareto Rank"
-                }
-              },
-              "queryRef": "fact_sales.Style Pareto Rank",
-              "nativeQueryRef": "Style Pareto Rank"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_sales"
-                    }
-                  },
-                  "Property": "Style Pareto Cumulative Sales (GBP)"
-                }
-              },
-              "queryRef": "fact_sales.Style Pareto Cumulative Sales (GBP)",
-              "nativeQueryRef": "Style Pareto Cumulative Sales (GBP)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_sales"
-                    }
-                  },
-                  "Property": "Style Pareto Cumulative %"
-                }
-              },
-              "queryRef": "fact_sales.Style Pareto Cumulative %",
-              "nativeQueryRef": "Style Pareto Cumulative %"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -93,11 +47,7 @@
               },
               "queryRef": "fact_sales.Net Sales (GBP)",
               "nativeQueryRef": "Net Sales (GBP)"
-            }
-          ]
-        },
-        "Y2": {
-          "projections": [
+            },
             {
               "field": {
                 "Measure": {
@@ -106,11 +56,39 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Style Pareto Cumulative %"
+                  "Property": "Gross Profit Share %"
                 }
               },
-              "queryRef": "fact_sales.Style Pareto Cumulative %",
-              "nativeQueryRef": "Style Pareto Cumulative %"
+              "queryRef": "fact_sales.Gross Profit Share %",
+              "nativeQueryRef": "Gross Profit Share %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Style Productivity Index (GP)"
+                }
+              },
+              "queryRef": "fact_sales.Style Productivity Index (GP)",
+              "nativeQueryRef": "Style Productivity Index (GP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Styles for 80% of Sales %"
+                }
+              },
+              "queryRef": "fact_sales.Styles for 80% of Sales %",
+              "nativeQueryRef": "Styles for 80% of Sales %"
             }
           ]
         }
@@ -125,13 +103,12 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Net Sales (GBP)"
+                "Property": "Gross Profit Share %"
               }
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": true
+        ]
       }
     },
     "drillFilterOtherVisuals": true

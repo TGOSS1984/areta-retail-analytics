@@ -84,6 +84,22 @@ def build() -> pd.DataFrame:
             "end_date": None,
             "discount_pct": None,
         },
+        {
+            "promo_id": "MULTIBUY-MB003",
+            "promo_name": "Socks 3 for 2",
+            "promo_type": "Multi-buy",
+            "start_date": None,
+            "end_date": None,
+            "discount_pct": None,
+        },
+        {
+            "promo_id": "MULTIBUY-MB004",
+            "promo_name": "Base Layers 2 for GBP40",
+            "promo_type": "Multi-buy",
+            "start_date": None,
+            "end_date": None,
+            "discount_pct": None,
+        },
     ]
 
     promo_seq = 1

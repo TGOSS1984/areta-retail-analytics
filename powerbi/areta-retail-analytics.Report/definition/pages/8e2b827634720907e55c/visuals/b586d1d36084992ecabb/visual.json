@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "b586d1d36084992ecabb",
+  "position": {
+    "x": 226.45324347093512,
+    "y": 689.06486941870253,
+    "z": 29017,
+    "height": 381.73546756529061,
+    "width": 582.30834035383316,
+    "tabOrder": 29017
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_store"
+                    }
+                  },
+                  "Property": "market_name"
+                }
+              },
+              "queryRef": "dim_store.market_name",
+              "nativeQueryRef": "market_name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock Value (Retail, GBP)"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
+              "nativeQueryRef": "Stock Value (Retail, GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock Value Retail YoY (GBP)"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock Value Retail YoY (GBP)",
+              "nativeQueryRef": "Stock Value Retail YoY (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Weeks of Cover"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Weeks of Cover",
+              "nativeQueryRef": "Weeks of Cover"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_stock_snapshot"
+                  }
+                },
+                "Property": "Stock Value (Retail, GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

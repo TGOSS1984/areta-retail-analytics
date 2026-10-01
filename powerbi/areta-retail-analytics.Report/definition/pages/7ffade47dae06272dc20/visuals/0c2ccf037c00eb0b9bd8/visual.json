@@ -1,0 +1,224 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "0c2ccf037c00eb0b9bd8",
+  "position": {
+    "x": 940.69187449718436,
+    "y": 644.119066773934,
+    "z": 29017,
+    "height": 426.3234111021722,
+    "width": 443.31456154465008,
+    "tabOrder": 29017
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "table_name"
+                }
+              },
+              "queryRef": "dq_table_profile.table_name",
+              "nativeQueryRef": "table_name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "table_type"
+                }
+              },
+              "queryRef": "dq_table_profile.table_type",
+              "nativeQueryRef": "table_type"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "DQ Total Rows"
+                }
+              },
+              "queryRef": "dq_table_profile.DQ Total Rows",
+              "nativeQueryRef": "DQ Total Rows"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "DQ Null %"
+                }
+              },
+              "queryRef": "dq_table_profile.DQ Null %",
+              "nativeQueryRef": "DQ Null %"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "latest_data_date"
+                }
+              },
+              "queryRef": "dq_table_profile.latest_data_date",
+              "nativeQueryRef": "latest_data_date"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "DQ Days Behind"
+                }
+              },
+              "queryRef": "dq_table_profile.DQ Days Behind",
+              "nativeQueryRef": "DQ Days Behind"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_table_profile"
+                    }
+                  },
+                  "Property": "freshness_status"
+                }
+              },
+              "queryRef": "dq_table_profile.freshness_status",
+              "nativeQueryRef": "freshness_status"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f5badeca841d7843423a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "table_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b0f7d39315db36da8b67",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "table_type"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "ab6e1fca20e5e301d90e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "DQ Total Rows"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c3744eeb3a2782612644",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "DQ Null %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "129df2c370849e188337",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "latest_data_date"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "4a6d43110185135b7b64",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "DQ Days Behind"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "00d56a7ad255d3b26808",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dq_table_profile"
+              }
+            },
+            "Property": "freshness_status"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

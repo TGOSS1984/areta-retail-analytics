@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "71ac90be74d8e0560b6d",
+  "position": {
+    "x": 233.60691144708426,
+    "y": 266.78185745140388,
+    "z": 29012,
+    "height": 362.15982721382289,
+    "width": 439.56803455723542,
+    "tabOrder": 29012
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_check_results"
+                    }
+                  },
+                  "Property": "status"
+                }
+              },
+              "queryRef": "dq_check_results.status",
+              "nativeQueryRef": "status",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dq_check_results"
+                    }
+                  },
+                  "Property": "DQ Checks Run"
+                }
+              },
+              "queryRef": "dq_check_results.DQ Checks Run",
+              "nativeQueryRef": "DQ Checks Run"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

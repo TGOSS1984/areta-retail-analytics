@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "d043df859123075ded85",
   "position": {
     "x": 427.75333573746849,
@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_sales"
+                      "Entity": "fact_store_finance"
                     }
                   },
-                  "Property": "Net Sales (GBP)"
+                  "Property": "Turnover (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Net Sales (GBP)",
-              "nativeQueryRef": "Net Sales (GBP)"
+              "queryRef": "fact_store_finance.Turnover (GBP)",
+              "nativeQueryRef": "Turnover (GBP)"
             }
           ]
         }
@@ -58,10 +58,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_sales"
+                    "Entity": "fact_store_finance"
                   }
                 },
-                "Property": "Net Sales (GBP)"
+                "Property": "Turnover (GBP)"
               }
             },
             "direction": "Descending"
@@ -226,5 +226,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2f515c44819bb7260e63",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_week_number"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

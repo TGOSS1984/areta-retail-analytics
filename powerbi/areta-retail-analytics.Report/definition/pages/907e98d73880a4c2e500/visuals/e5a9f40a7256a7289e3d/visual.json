@@ -1,0 +1,93 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "e5a9f40a7256a7289e3d",
+  "position": {
+    "x": 227.59878419452889,
+    "y": 274.28571428571428,
+    "z": 46000,
+    "height": 291.79331306990883,
+    "width": 604.984802431611,
+    "tabOrder": 46000
+  },
+  "visual": {
+    "visualType": "lineClusteredColumnComboChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_store"
+                    }
+                  },
+                  "Property": "market_name"
+                }
+              },
+              "queryRef": "dim_store.market_name",
+              "nativeQueryRef": "market_name",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_footfall"
+                    }
+                  },
+                  "Property": "Average Transaction Value (GBP)"
+                }
+              },
+              "queryRef": "fact_footfall.Average Transaction Value (GBP)",
+              "nativeQueryRef": "Average Transaction Value (GBP)"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_footfall"
+                    }
+                  },
+                  "Property": "Items per Transaction"
+                }
+              },
+              "queryRef": "fact_footfall.Items per Transaction",
+              "nativeQueryRef": "Items per Transaction"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_footfall"
+                  }
+                },
+                "Property": "Average Transaction Value (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "90b916f502bdc1220149",
   "position": {
-    "x": 231.66361974405848,
-    "y": 265.00914076782448,
+    "x": 232.61171797418072,
+    "y": 265.0248262164846,
     "z": 30000,
-    "height": 366.80073126142594,
-    "width": 974.04021937842776,
+    "height": 428.9970208540218,
+    "width": 972.393247269116,
     "tabOrder": 30000
   },
   "visual": {
@@ -228,5 +228,135 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "00d06210ce61b2790543",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "image_url"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "f061002135020e176e23",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "style_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "aa0d13b18cdb210b68d2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "colour"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "bed592be9775b04391a5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b7a0f8c4b25ae1adcc31",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Margin %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "79779d923260d3570e1e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Average Selling Price (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3db03f9bc25b908d0b64",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Units Sold"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bed1f2fbe6000a9e3963",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Stock Units"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c41d657767e7255081a9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Weeks of Cover"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

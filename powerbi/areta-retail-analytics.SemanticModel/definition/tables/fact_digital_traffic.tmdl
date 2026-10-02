@@ -469,5 +469,3 @@ table fact_digital_traffic
 
 	annotation PBI_ResultType = Table
 
-
-

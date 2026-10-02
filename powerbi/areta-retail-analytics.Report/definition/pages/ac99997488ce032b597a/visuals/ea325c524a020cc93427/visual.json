@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "ea325c524a020cc93427",
   "position": {
-    "x": 1080.3715170278638,
-    "y": 644.953560371517,
+    "x": 1081.0724925521349,
+    "y": 707.36842105263156,
     "z": 28000,
-    "height": 420.55727554179566,
-    "width": 824.767801857585,
+    "height": 358.45084409136047,
+    "width": 823.67428003972191,
     "tabOrder": 28000
   },
   "visual": {
@@ -112,5 +112,79 @@
       }
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "8f59e9fa7ad07acc40e6",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "18854512a052cee14acd",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "377f69050d3d51e0accb",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Profit Share %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a08c11a9990acc8b3664",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Style Productivity Index (GP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b15c8db64695c0c0dcc8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Styles for 80% of Sales %"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

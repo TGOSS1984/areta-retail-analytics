@@ -84,9 +84,9 @@ The only job left on this page is the VAT slicer swap.
 |---|---|---|---|
 | Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
 | vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` | `target-arrow` |
-| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` | `moneybag` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
 | Transactions | `Distinct Invoices (from Sales)` | `Distinct Invoices YoY Combo` | `receipt` |
+| Average Order Value | `Average Order Value (GBP)` | `Average Order Value YoY Combo` | `wallet` |
+| Online Share | `Online Share %` | `Online Share YoY Combo` | `world` |
 
 | # | Visual | Type | Position (x, y, w, h) | Fields |
 |---|---|---|---|---|
@@ -96,6 +96,9 @@ The only job left on this page is the VAT slicer swap.
 
 **Notes**
 
+- The cards split the headline rather than repeat Overview: Net Sales = Transactions × Average Order Value, and Online Share shows the channel shift (about 17.6% in BY24, 18.3% in BY25). Gross Profit and Gross Margin were here in the first draft, but they're on Overview already.
+- Use `Average Order Value (GBP)` here, never `Average Transaction Value (GBP)`. ATV divides by store transactions from `fact_footfall`, so with Online in the filter it counts online sales but not online orders: about £98 for BY25 instead of the true £81. ATV and Items per Transaction belong on the Retail page, which is filtered to stores.
+- Online Share's trend colour is always grey. A rising online share can mean online is thriving or stores are struggling, so the card doesn't treat either direction as good news.
 - Visual 1 needs the Any Grain target. The plain target measure returns the whole period's target on every week and draws a staircase.
 - I dropped the "sales & margin by month" chart from the first draft because it duplicated the Overview combo.
 - I also dropped the channel donut and the market map, since Overview covers both.
@@ -108,11 +111,11 @@ The only job left on this page is the VAT slicer swap.
 
 | KPI card | Value | Reference label | Icon |
 |---|---|---|---|
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
-| Units | `Net Units Sold` | `Net Units Sold YoY Combo` | `package` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
+| Top Style | `Top Style` | `Top Style Share %` (label it "of sales") | `award` |
+| Average Selling Price | `Average Selling Price (GBP)` | `Average Selling Price YoY Combo` | `currency-pound` |
+| Range concentration | `Styles for 80% of Sales %` | none | `chart-pie` |
 | Return Rate | `Return Rate %` | `Return Rate YoY Combo` | `rotate` |
-| Gross Profit | `Gross Profit (GBP)` | `Gross Profit YoY Combo` | `moneybag` |
+| Style-colours | `Style-Colours Sold` | `Colours per Style` (label it "colours per style") | `hanger` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
@@ -123,7 +126,8 @@ The only job left on this page is the VAT slicer swap.
 
 **Notes**
 
-- Expect a proper Pareto bow. Since the generator gave styles a popularity weight, the top 20% of styles do about 62% of sales and 331 of 907 reach 80%. Before that it took 502, which is why the first version of this chart looked nearly flat.
+- The cards are all product-specific rather than repeating Overview's Net Sales, Units, Margin and Profit. Top Style and Styles for 80% sum up the Pareto in two numbers, and Style-Colours Sold ties to the range-analysis table.
+- Expect a proper Pareto bow. After the generator's popularity changes, the top 20% of styles do about 73% of sales and about 26% of styles reach 80%. Before style popularity existed it took 502 of 907, which is why the first version of this chart looked flat.
 - The first draft had a Style-Colour Pareto. There's no Style-Colour Pareto measure in the model, and three Paretos on one page was repetitive anyway, so I cut it.
 - The Product Group Pareto lives on Categories.
 - I used 33 product groups for the scatter rather than brands. There are only four brands, which isn't enough dots to show a relationship.

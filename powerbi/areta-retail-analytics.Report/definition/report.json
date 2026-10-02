@@ -40,7 +40,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
@@ -90,11 +90,6 @@
         {
           "name": "box08286388638186704.png",
           "path": "box08286388638186704.png",
-          "type": "Image"
-        },
-        {
-          "name": "browser23041227053476288.png",
-          "path": "browser23041227053476288.png",
           "type": "Image"
         },
         {
@@ -153,6 +148,11 @@
           "type": "Image"
         },
         {
+          "name": "chart-pie048417562328249675.png",
+          "path": "chart-pie048417562328249675.png",
+          "type": "Image"
+        },
+        {
           "name": "chart-pie8098415957631344.png",
           "path": "chart-pie8098415957631344.png",
           "type": "Image"
@@ -185,6 +185,11 @@
         {
           "name": "coin9892319170240548.png",
           "path": "coin9892319170240548.png",
+          "type": "Image"
+        },
+        {
+          "name": "currency-pound14091688336181307.png",
+          "path": "currency-pound14091688336181307.png",
           "type": "Image"
         },
         {
@@ -285,6 +290,11 @@
         {
           "name": "shopping-bag8222555676684767.png",
           "path": "shopping-bag8222555676684767.png",
+          "type": "Image"
+        },
+        {
+          "name": "shopping-cart-x752766876377335.png",
+          "path": "shopping-cart-x752766876377335.png",
           "type": "Image"
         },
         {

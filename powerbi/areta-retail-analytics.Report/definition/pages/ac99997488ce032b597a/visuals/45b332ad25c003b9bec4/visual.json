@@ -42,11 +42,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Units Sold"
+                  "Property": "Average Selling Price (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Net Units Sold",
-              "nativeQueryRef": "Net Units Sold"
+              "queryRef": "fact_sales.Average Selling Price (GBP)",
+              "nativeQueryRef": "Average Selling Price (GBP)"
             }
           ]
         }
@@ -61,7 +61,7 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Net Units Sold"
+                "Property": "Average Selling Price (GBP)"
               }
             },
             "direction": "Descending"

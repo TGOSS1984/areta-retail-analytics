@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "3d2f7aced2d67da5e1d5",
   "position": {
     "x": 1771.651865008881,
@@ -42,11 +42,11 @@
                       "Entity": "fact_digital_traffic"
                     }
                   },
-                  "Property": "Pages per Session"
+                  "Property": "Basket Abandonment %"
                 }
               },
-              "queryRef": "fact_digital_traffic.Pages per Session",
-              "nativeQueryRef": "Pages per Session"
+              "queryRef": "fact_digital_traffic.Basket Abandonment %",
+              "nativeQueryRef": "Basket Abandonment %"
             }
           ]
         }
@@ -61,7 +61,7 @@
                     "Entity": "fact_digital_traffic"
                   }
                 },
-                "Property": "Pages per Session"
+                "Property": "Basket Abandonment %"
               }
             },
             "direction": "Descending"

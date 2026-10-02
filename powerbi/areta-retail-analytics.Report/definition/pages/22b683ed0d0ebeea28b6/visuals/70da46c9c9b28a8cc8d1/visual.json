@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "70da46c9c9b28a8cc8d1",
   "position": {
     "x": 227.05653021442495,
@@ -121,22 +121,17 @@
           "projections": [
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "fact_sales"
-                        }
-                      },
-                      "Property": "net_sales_gbp"
+                    "SourceRef": {
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Function": 0
+                  "Property": "Net Sales (GBP)"
                 }
               },
-              "queryRef": "Sum(fact_sales.net_sales_gbp)",
-              "nativeQueryRef": "net_sales_gbp"
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
             }
           ]
         },

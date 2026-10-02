@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'percentage.png'"
+                      "Value": "'chart-pie.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "percentage6599610557329134.png"
+                      "ItemName": "chart-pie048417562328249675.png"
                     }
                   }
                 },

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "bbb4dd3e6650844e7c59",
+  "position": {
+    "x": 700.65359477124184,
+    "y": 706.92810457516339,
+    "z": 47000,
+    "height": 366.01307189542484,
+    "width": 501.96078431372547,
+    "tabOrder": 47000
+  },
+  "visual": {
+    "visualType": "funnel",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_funnel_stage"
+                    }
+                  },
+                  "Property": "stage_name"
+                }
+              },
+              "queryRef": "dim_funnel_stage.stage_name",
+              "nativeQueryRef": "stage_name",
+              "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_traffic"
+                    }
+                  },
+                  "Property": "Funnel % of Previous Stage"
+                }
+              },
+              "queryRef": "fact_digital_traffic.Funnel % of Previous Stage",
+              "nativeQueryRef": "Funnel % of Previous Stage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_traffic"
+                    }
+                  },
+                  "Property": "Funnel Value"
+                }
+              },
+              "queryRef": "fact_digital_traffic.Funnel Value",
+              "nativeQueryRef": "Funnel Value"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1000D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -10,10 +10,10 @@
     "tabOrder": 9000
   },
   "visual": {
-    "visualType": "tableEx",
+    "visualType": "waterfallChart",
     "query": {
       "queryState": {
-        "Values": {
+        "Category": {
           "projections": [
             {
               "field": {
@@ -23,11 +23,12 @@
                       "Entity": "dim_product"
                     }
                   },
-                  "Property": "style_name"
+                  "Property": "brand_name"
                 }
               },
-              "queryRef": "dim_product.style_name",
-              "nativeQueryRef": "style_name"
+              "queryRef": "dim_product.brand_name",
+              "nativeQueryRef": "brand_name",
+              "active": false
             },
             {
               "field": {
@@ -37,11 +38,12 @@
                       "Entity": "dim_product"
                     }
                   },
-                  "Property": "colour"
+                  "Property": "major_product_group"
                 }
               },
-              "queryRef": "dim_product.colour",
-              "nativeQueryRef": "colour"
+              "queryRef": "dim_product.major_product_group",
+              "nativeQueryRef": "major_product_group",
+              "active": true
             },
             {
               "field": {
@@ -55,8 +57,13 @@
                 }
               },
               "queryRef": "dim_product.product_group",
-              "nativeQueryRef": "product_group"
-            },
+              "nativeQueryRef": "product_group",
+              "active": false
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
             {
               "field": {
                 "Measure": {
@@ -65,25 +72,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Sales (GBP)"
+                  "Property": "Net Sales YoY (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Net Sales (GBP)",
-              "nativeQueryRef": "Net Sales (GBP)"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "dim_product"
-                    }
-                  },
-                  "Property": "image_url"
-                }
-              },
-              "queryRef": "dim_product.image_url",
-              "nativeQueryRef": "image_url"
+              "queryRef": "fact_sales.Net Sales YoY (GBP)",
+              "nativeQueryRef": "Net Sales YoY (GBP)"
             }
           ]
         }
@@ -98,7 +91,7 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Net Sales (GBP)"
+                "Property": "Net Sales YoY (GBP)"
               }
             },
             "direction": "Descending"
@@ -108,39 +101,31 @@
       }
     },
     "objects": {
-      "columnWidth": [
+      "labels": [
         {
           "properties": {
-            "value": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "138.13855740567564D"
+                  "Value": "true"
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auto'"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1000D"
                 }
               }
             }
-          },
-          "selector": {
-            "metadata": "dim_product.product_group"
           }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "198.3839726858449D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "dim_product.style_name"
-          }
-        }
-      ],
-      "columnHeaders": [
-        {
-          "properties": {}
         }
       ]
     },
@@ -160,112 +145,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b30c26a6410072eca9d4",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
-              }
-            },
-            "Property": "style_colour_code"
-          }
-        },
-        "type": "TopN",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "subquery",
-              "Expression": {
-                "Subquery": {
-                  "Query": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "d",
-                        "Entity": "dim_product",
-                        "Type": 0
-                      },
-                      {
-                        "Name": "f",
-                        "Entity": "fact_sales",
-                        "Type": 0
-                      }
-                    ],
-                    "Select": [
-                      {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "d"
-                            }
-                          },
-                          "Property": "style_colour_code"
-                        },
-                        "Name": "field"
-                      }
-                    ],
-                    "OrderBy": [
-                      {
-                        "Direction": 2,
-                        "Expression": {
-                          "Measure": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "f"
-                              }
-                            },
-                            "Property": "Net Sales (GBP)"
-                          }
-                        }
-                      }
-                    ],
-                    "Top": 10
-                  }
-                }
-              },
-              "Type": 2
-            },
-            {
-              "Name": "d",
-              "Entity": "dim_product",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "d"
-                          }
-                        },
-                        "Property": "style_colour_code"
-                      }
-                    }
-                  ],
-                  "Table": {
-                    "SourceRef": {
-                      "Source": "subquery"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User",
-        "isLockedInViewMode": true
-      }
-    ]
   }
 }

@@ -11,6 +11,46 @@
   },
   "visual": {
     "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Average Selling Price (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Average Selling Price (GBP)",
+              "nativeQueryRef": "Average Selling Price (GBP)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "Average Selling Price (GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
     "objects": {
       "layout": [
         {
@@ -138,6 +178,84 @@
           },
           "selector": {
             "id": "default"
+          }
+        }
+      ],
+      "referenceLabel": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Average Selling Price LY"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Average Selling Price (GBP)",
+            "id": "field-0f78a804-c717-73f7-d7dc-be127acaaf5a",
+            "order": 0
+          }
+        }
+      ],
+      "referenceLabelValue": [
+        {
+          "properties": {
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Average Selling Price (GBP)",
+            "id": "field-0f78a804-c717-73f7-d7dc-be127acaaf5a"
+          }
+        }
+      ],
+      "referenceLabelTitle": [
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Average Selling Price (GBP)",
+            "id": "field-0f78a804-c717-73f7-d7dc-be127acaaf5a"
           }
         }
       ]

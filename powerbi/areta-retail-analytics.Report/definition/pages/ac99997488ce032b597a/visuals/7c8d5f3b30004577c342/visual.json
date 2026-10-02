@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'package.png'"
+                      "Value": "'currency-pound.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "package7605865592423576.png"
+                      "ItemName": "currency-pound14091688336181307.png"
                     }
                   }
                 },

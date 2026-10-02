@@ -189,6 +189,9 @@ ICONS = {
     # Digital funnel. shopping-cart is already Units sold, so the basket
     # abandonment KPI gets the cart with a cross through it.
     "shopping-cart-x": "Basket abandonment",
+    # Sales page: receipt-2 is the store-only ATV on Retail, so the
+    # all-channel Average Order Value gets its own icon.
+    "wallet": "Average order value",
 }
 
 # Which icon goes with which report page, so I'm not guessing at the nav

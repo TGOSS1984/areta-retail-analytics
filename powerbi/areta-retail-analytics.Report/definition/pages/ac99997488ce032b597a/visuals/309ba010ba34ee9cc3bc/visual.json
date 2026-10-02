@@ -42,11 +42,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Gross Margin %"
+                  "Property": "Styles for 80% of Sales %"
                 }
               },
-              "queryRef": "fact_sales.Gross Margin %",
-              "nativeQueryRef": "Gross Margin %"
+              "queryRef": "fact_sales.Styles for 80% of Sales %",
+              "nativeQueryRef": "Styles for 80% of Sales %"
             }
           ]
         }
@@ -61,7 +61,7 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Gross Margin %"
+                "Property": "Styles for 80% of Sales %"
               }
             },
             "direction": "Descending"

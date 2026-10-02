@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "9f026e47c50298205100",
   "position": {
-    "x": 1484.0174672489084,
-    "y": 266.89956331877733,
+    "x": 1374.1176470588234,
+    "y": 267.71241830065361,
     "z": 38000,
-    "height": 433.18777292576419,
-    "width": 416.41921397379917,
+    "height": 432.94117647058823,
+    "width": 527.05882352941171,
     "tabOrder": 38000
   },
   "visual": {
@@ -70,6 +70,20 @@
               },
               "queryRef": "fact_digital_traffic.Pages per Session",
               "nativeQueryRef": "Pages per Session"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_traffic"
+                    }
+                  },
+                  "Property": "Funnel Conversion Rate %"
+                }
+              },
+              "queryRef": "fact_digital_traffic.Funnel Conversion Rate %",
+              "nativeQueryRef": "Funnel Conversion Rate %"
             }
           ]
         }
@@ -169,6 +183,27 @@
               }
             }
           }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "125.82353390320868D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_traffic.Funnel Conversion Rate %"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
         }
       ]
     },

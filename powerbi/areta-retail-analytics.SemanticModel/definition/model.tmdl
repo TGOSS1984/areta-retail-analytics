@@ -31,7 +31,6 @@ ref table fact_digital_sales
 ref table fact_digital_traffic
 ref table dim_browser
 ref table dim_pnl_bridge
-ref table dim_funnel_stage
 ref table dim_report_metadata
 ref table dim_vat_view
 ref table dim_currency_view
@@ -40,6 +39,7 @@ ref table fact_digital_targets
 ref table dq_check_results
 ref table dq_table_profile
 ref table 'VAT View'
+ref table dim_funnel_stage
 
 ref cultureInfo en-GB
 

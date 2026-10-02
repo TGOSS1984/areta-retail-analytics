@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "4f9738de657013d5e6ee",
   "position": {
     "x": 903.23586744639385,
@@ -36,22 +36,17 @@
           "projections": [
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "fact_sales"
-                        }
-                      },
-                      "Property": "net_sales_gbp"
+                    "SourceRef": {
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Function": 0
+                  "Property": "Net Sales (GBP)"
                 }
               },
-              "queryRef": "Sum(fact_sales.net_sales_gbp)",
-              "nativeQueryRef": "Sum of net_sales_gbp"
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
             }
           ]
         }
@@ -60,18 +55,13 @@
         "sort": [
           {
             "field": {
-              "Aggregation": {
+              "Measure": {
                 "Expression": {
-                  "Column": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "fact_sales"
-                      }
-                    },
-                    "Property": "net_sales_gbp"
+                  "SourceRef": {
+                    "Entity": "fact_sales"
                   }
                 },
-                "Function": 0
+                "Property": "Net Sales (GBP)"
               }
             },
             "direction": "Descending"

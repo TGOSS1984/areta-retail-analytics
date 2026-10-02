@@ -9,7 +9,7 @@ table 'VAT View'
 		calculationItem 'Including VAT' =
 				// Whitelist of every base sales-VALUE measure the report exposes: current, last year and
 				// YoY diff for each sales family, plus the plain and Any-Grain sales targets and variances.
-				// Also the two Range Analysis per-style averages and Average Selling Price, which are
+				// Also the two Range Analysis per-style averages, Average Selling Price and Average Order Value, which are
 				// sales values divided by a count.
 				// Deliberately excludes anything ex-VAT by definition (Gross Profit, margin, cost, contribution,
 				// stock value) and the P&L Bridge (VAT on one bridge step would break the waterfall's arithmetic).
@@ -54,7 +54,10 @@ table 'VAT View'
 				        [Net Sales per Style-Colour (GBP)],
 				        [Average Selling Price (GBP)],
 				        [Average Selling Price LY],
-				        [Average Selling Price YoY (GBP)]
+				        [Average Selling Price YoY (GBP)],
+				        [Average Order Value (GBP)],
+				        [Average Order Value LY],
+				        [Average Order Value YoY (GBP)]
 				    ),
 				    SELECTEDMEASURE ( )
 				        * DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),

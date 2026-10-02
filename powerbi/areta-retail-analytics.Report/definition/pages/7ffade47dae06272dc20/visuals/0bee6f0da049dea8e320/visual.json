@@ -4,10 +4,10 @@
   "position": {
     "x": 690.4585679806919,
     "y": 267.22445695897028,
-    "z": 29015,
+    "z": 40000,
     "height": 361.44810941271123,
     "width": 574.60981496379736,
-    "tabOrder": 29015
+    "tabOrder": 40000
   },
   "visual": {
     "visualType": "tableEx",
@@ -149,121 +149,5 @@
       }
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "f2c88625506b60338e00",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "check_id"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "d40c9fa68cd8c84dac0a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "category"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "63a9ccb58d00a4c65061",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "table_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "86040f46d769d7dde419",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "check_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "8bd0a33409a051e61ceb",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Rows Tested"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0fde3bc043201938439d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Rows Failed"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "931ae9ad4a711717c0be",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Row Pass Rate %"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d0b17d351b20b3cee248",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "status"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

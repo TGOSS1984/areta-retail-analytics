@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "1b546347b1262e0c1be2",
   "position": {
     "x": 227.05653021442495,
     "y": 93.5672514619883,
-    "z": 29001,
+    "z": 27000,
     "height": 162.04255319148936,
     "width": 324.08510638297872,
-    "tabOrder": 29001
+    "tabOrder": 27000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -309,23 +309,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "c80315a39998cb23080a",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_footfall"
-              }
-            },
-            "Property": "Total Footfall"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

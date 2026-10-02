@@ -226,23 +226,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "2f515c44819bb7260e63",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "fb449f1146ce210a7c04",
   "position": {
-    "x": 231.66361974405848,
-    "y": 644.09506398537474,
-    "z": 30000,
-    "height": 422.96160877513711,
-    "width": 817.84277879341857,
-    "tabOrder": 30000
+    "x": 231.82662538699688,
+    "y": 643.46749226006182,
+    "z": 27000,
+    "height": 423.52941176470586,
+    "width": 558.76160990712071,
+    "tabOrder": 27000
   },
   "visual": {
     "visualType": "lineClusteredColumnComboChart",
@@ -238,62 +238,6 @@
             }
           ]
         }
-      },
-      {
-        "name": "c373d8d4b3b0d089a72e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Rank"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5e66229cae29e1156b24",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Cumulative Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f7230f2c109194d91d52",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Cumulative %"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "73eb06ae31e9ec8d1364",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

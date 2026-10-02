@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "5736fb3bade54be2c11b",
   "position": {
-    "x": 227.16723549488054,
-    "y": 275.22184300341297,
-    "z": 29004,
-    "height": 795.08532423208192,
-    "width": 733.92491467576792,
-    "tabOrder": 29004
+    "x": 227.32538330494037,
+    "y": 274.75298126064735,
+    "z": 30000,
+    "height": 794.82112436115847,
+    "width": 837.34241908006811,
+    "tabOrder": 30000
   },
   "visual": {
     "visualType": "tableEx",
@@ -70,6 +70,42 @@
               },
               "queryRef": "dim_store.store_type",
               "nativeQueryRef": "store_type"
+            },
+            {
+              "field": {
+                "SparklineData": {
+                  "Measure": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_sales"
+                        }
+                      },
+                      "Property": "Net Sales (GBP)"
+                    }
+                  },
+                  "Groupings": [
+                    {
+                      "HierarchyLevel": {
+                        "Expression": {
+                          "Hierarchy": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Entity": "dim_date"
+                              }
+                            },
+                            "Hierarchy": "Business Calendar"
+                          }
+                        },
+                        "Level": "Business Week"
+                      }
+                    }
+                  ],
+                  "ApplyCalculationGroupTo": "Point"
+                }
+              },
+              "queryRef": "SparklineData(fact_sales.Net Sales (GBP)_[dim_date.Business Calendar.Business Week])",
+              "nativeQueryRef": "Net Sales (GBP) by Business Calendar Business Week"
             },
             {
               "field": {
@@ -292,194 +328,136 @@
             "metadata": "fact_sales.Net Sales YoY Combo"
           }
         }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "94.49882111706506D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "SparklineData(fact_sales.Net Sales (GBP)_[dim_date.Business Calendar.Business Week])"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "138D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_targets.Net Sales Target Combo (Any Grain)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "136D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Net Sales YoY Combo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "76D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Gross Margin %"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "82D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Gross Margin YoY (pp)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_footfall.Conversion Rate %"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "93D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_footfall.Conversion Rate YoY Combo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "81D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_store.Sales per Sq Ft"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "127D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_footfall.Total Footfall YoY Combo"
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "722a43a213722bac0067",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "store_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "0cc1c1d4a220455c63ab",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "region"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "4bbf2f31b6d3652c03d7",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "store_type"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "7f0075b50b561d368713",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "3851fcc6d09b3d73dc25",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales YoY Combo"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "e5a989ccc4bbc9130d65",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_footfall"
-              }
-            },
-            "Property": "Conversion Rate %"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0281f72b196cd6212c1a",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "Sales per Sq Ft"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b78495f08b8e4187314c",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Gross Margin %"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1a1b16538d07b7d10c2b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Gross Margin YoY (pp)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "8c073741e14c4d22096b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "channel"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "6492971e5c746bb9c93a",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_footfall"
-              }
-            },
-            "Property": "Total Footfall YoY Combo"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "237429d730229cacc480",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_footfall"
-              }
-            },
-            "Property": "Conversion Rate YoY Combo"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "2f365d1cd1c79265a818",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_targets"
-              }
-            },
-            "Property": "Net Sales Target Combo (Any Grain)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -4,10 +4,10 @@
   "position": {
     "x": 1404.0868865647628,
     "y": 645.66371681415933,
-    "z": 29016,
+    "z": 41000,
     "height": 424.77876106194691,
     "width": 497.37731295253423,
-    "tabOrder": 29016
+    "tabOrder": 41000
   },
   "visual": {
     "visualType": "tableEx",
@@ -146,76 +146,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "1a359b1ea2eb515e67b6",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "check_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "909e7503603a6e0e577b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Source A Value"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "9bd7472402e3ea00d0b3",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Source B Value"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "e94810c166ee14ada786",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Recon Variance"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b0d1d1206bc40cd1530e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "status"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

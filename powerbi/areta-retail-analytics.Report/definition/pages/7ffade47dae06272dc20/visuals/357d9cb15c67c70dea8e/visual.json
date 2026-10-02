@@ -4,10 +4,10 @@
   "position": {
     "x": 1283.6041834271923,
     "y": 267.22445695897028,
-    "z": 29013,
+    "z": 38000,
     "height": 362.15982721382289,
     "width": 613.73650107991364,
-    "tabOrder": 29013
+    "tabOrder": 38000
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -89,34 +89,6 @@
   },
   "filterConfig": {
     "filters": [
-      {
-        "name": "7f90fdd8108aa4401b44",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "check_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "cf389afe5a7869902006",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dq_check_results"
-              }
-            },
-            "Property": "DQ Rows Failed"
-          }
-        },
-        "type": "Advanced"
-      },
       {
         "name": "a6af2fa77a15ecc96aea",
         "field": {

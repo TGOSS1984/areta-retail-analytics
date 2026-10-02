@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "cb0286bcb5ce05150254",
   "position": {
-    "x": 982.608695652174,
-    "y": 586.08695652173913,
-    "z": 29006,
-    "height": 485.21739130434787,
-    "width": 914.78260869565224,
-    "tabOrder": 29006
+    "x": 1079.3867120954003,
+    "y": 585.48551959114138,
+    "z": 31000,
+    "height": 485.72402044293017,
+    "width": 817.717206132879,
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "scatterChart",
@@ -138,65 +138,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "4b40d81fd966d2380622",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "store_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "42257fc6aeb17410e418",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "store_type"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "ce3510043ed55008a02c",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales YoY (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f7bb8c0b45a28cc6a098",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_footfall"
-              }
-            },
-            "Property": "Total Footfall YoY"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

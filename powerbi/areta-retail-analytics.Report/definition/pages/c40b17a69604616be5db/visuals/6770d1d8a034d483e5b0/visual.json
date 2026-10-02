@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "6770d1d8a034d483e5b0",
   "position": {
     "x": 232.01472612394483,
     "y": 90.964461617551976,
-    "z": 29001,
+    "z": 27000,
     "height": 162.04255319148936,
     "width": 324.08510638297872,
-    "tabOrder": 29001
+    "tabOrder": 27000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -235,20 +235,6 @@
   },
   "filterConfig": {
     "filters": [
-      {
-        "name": "94512854ab0bc540dd07",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Top Product Group"
-          }
-        },
-        "type": "Advanced"
-      },
       {
         "name": "fd96c99154c002ec2be5",
         "field": {

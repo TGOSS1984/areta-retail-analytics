@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "530d82215d988dda4e83",
   "position": {
-    "x": 862.45014245014238,
-    "y": 585.29914529914527,
-    "z": 29005,
-    "height": 466.78062678062679,
-    "width": 1039.3162393162393,
-    "tabOrder": 29005
+    "x": 1140.26825633383,
+    "y": 547.95827123695972,
+    "z": 31000,
+    "height": 503.60655737704917,
+    "width": 761.13263785394929,
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "lineClusteredColumnComboChart",
@@ -29,6 +29,38 @@
               "queryRef": "dim_product.product_group",
               "nativeQueryRef": "product_group",
               "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Product Group Pareto Cumulative %"
+                }
+              },
+              "queryRef": "fact_sales.Product Group Pareto Cumulative %",
+              "nativeQueryRef": "Product Group Pareto Cumulative %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Product Group Pareto Rank"
+                }
+              },
+              "queryRef": "fact_sales.Product Group Pareto Rank",
+              "nativeQueryRef": "Product Group Pareto Rank"
             }
           ]
         },

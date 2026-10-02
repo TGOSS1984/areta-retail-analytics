@@ -4,10 +4,10 @@
   "position": {
     "x": 232.01472612394483,
     "y": 90.964461617551976,
-    "z": 30004,
+    "z": 31000,
     "height": 162.04255319148936,
     "width": 324.08510638297872,
-    "tabOrder": 30004
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -194,6 +194,36 @@
             "id": "field-3b96a6e8-3f6b-b602-2e12-169b3aeb270c",
             "order": 0
           }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Top Style",
+            "id": "field-c2efdaf6-f06f-701b-4984-d05eadf60b9c",
+            "order": 1
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Top Style",
+            "id": "field-50885494-abb3-0543-3892-2608d76b5ef5",
+            "order": 1
+          }
         }
       ]
     },
@@ -249,20 +279,6 @@
         },
         "type": "TopN",
         "howCreated": "User"
-      },
-      {
-        "name": "8a196c0b15889343da50",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Top Style"
-          }
-        },
-        "type": "Advanced"
       },
       {
         "name": "744d832e09902ba340a1",

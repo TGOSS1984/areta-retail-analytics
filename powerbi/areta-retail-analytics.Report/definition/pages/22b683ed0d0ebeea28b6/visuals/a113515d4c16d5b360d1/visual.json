@@ -164,7 +164,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "3193fbee261005b17c07",
+        "name": "b30c26a6410072eca9d4",
         "field": {
           "Column": {
             "Expression": {
@@ -172,66 +172,99 @@
                 "Entity": "dim_product"
               }
             },
-            "Property": "style_name"
+            "Property": "style_colour_code"
           }
         },
-        "type": "TopN"
-      },
-      {
-        "name": "b4bcfb0dc34ac0174a50",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
-              }
+        "type": "TopN",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "subquery",
+              "Expression": {
+                "Subquery": {
+                  "Query": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "d",
+                        "Entity": "dim_product",
+                        "Type": 0
+                      },
+                      {
+                        "Name": "f",
+                        "Entity": "fact_sales",
+                        "Type": 0
+                      }
+                    ],
+                    "Select": [
+                      {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "d"
+                            }
+                          },
+                          "Property": "style_colour_code"
+                        },
+                        "Name": "field"
+                      }
+                    ],
+                    "OrderBy": [
+                      {
+                        "Direction": 2,
+                        "Expression": {
+                          "Measure": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "f"
+                              }
+                            },
+                            "Property": "Net Sales (GBP)"
+                          }
+                        }
+                      }
+                    ],
+                    "Top": 10
+                  }
+                }
+              },
+              "Type": 2
             },
-            "Property": "colour"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "d371301c3806de0ba88e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
+            {
+              "Name": "d",
+              "Entity": "dim_product",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "style_colour_code"
+                      }
+                    }
+                  ],
+                  "Table": {
+                    "SourceRef": {
+                      "Source": "subquery"
+                    }
+                  }
+                }
               }
-            },
-            "Property": "product_group"
-          }
+            }
+          ]
         },
-        "type": "Categorical"
-      },
-      {
-        "name": "ee428687ce10996d99ba",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b84c2d26a0139b3509ad",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
-              }
-            },
-            "Property": "image_url"
-          }
-        },
-        "type": "Categorical"
+        "howCreated": "User",
+        "isLockedInViewMode": true
       }
     ]
   }

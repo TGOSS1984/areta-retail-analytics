@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "f93c3c56e9024ba9448d",
   "position": {
     "x": 1472,
     "y": 16.340425531914892,
-    "z": 7000,
+    "z": 6000,
     "height": 51.035747021081576,
     "width": 429.40421631530705,
-    "tabOrder": 5000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "advancedSlicerVisual",
@@ -183,23 +183,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "f4be3320ba8829a0b081",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_year"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

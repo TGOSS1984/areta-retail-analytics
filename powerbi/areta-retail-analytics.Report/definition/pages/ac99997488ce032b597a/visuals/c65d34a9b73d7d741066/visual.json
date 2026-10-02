@@ -4,10 +4,10 @@
   "position": {
     "x": 426.73813037926413,
     "y": 154.964461617552,
-    "z": 30005,
+    "z": 32000,
     "height": 110.29787234042553,
     "width": 129.36170212765958,
-    "tabOrder": 30005
+    "tabOrder": 32000
   },
   "visual": {
     "visualType": "lineChart",
@@ -229,34 +229,6 @@
   },
   "filterConfig": {
     "filters": [
-      {
-        "name": "773ec500d3136d618044",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f1f8ee498203263070a3",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
       {
         "name": "1c2c769a1688ad7257da",
         "field": {

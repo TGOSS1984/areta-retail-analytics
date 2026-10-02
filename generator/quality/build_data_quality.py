@@ -345,6 +345,16 @@ def check_validity(audit: Audit, t: dict[str, pd.DataFrame]) -> None:
       (tr["sessions"] < tr["visitors"]).sum(), severity="Advisory")
     v("VAL-20", "fact_digital_traffic", "Page views at least sessions",
       "Every session views at least one page.", len(tr), (tr["page_views"] < tr["sessions"]).sum())
+    funnel_broken = ~(
+        (tr["sessions"] >= tr["product_view_sessions"])
+        & (tr["product_view_sessions"] >= tr["basket_sessions"])
+        & (tr["basket_sessions"] >= tr["checkout_sessions"])
+        & (tr["checkout_sessions"] >= tr["order_sessions"])
+        & (tr["order_sessions"] >= 0)
+    )
+    v("VAL-24", "fact_digital_traffic", "Funnel stages only narrow",
+      "Sessions >= product views >= baskets >= checkouts >= orders on every row: nobody reaches a stage without passing the one before.",
+      len(tr), funnel_broken.sum())
 
     p = t["dim_product"]
     v("VAL-21", "dim_product", "Base price above cost price above zero",
@@ -495,6 +505,14 @@ def check_reconciliation(audit: Audit, t: dict[str, pd.DataFrame]) -> None:
     tie("REC-03", "fact_digital_sales", "Digital orders = Online invoices before returns",
         "Per market-day, digital orders equal the number of non-return Online invoices.",
         "Online invoices", online_day["invoices"].astype(float), "fact_digital_sales orders", digital_day["orders"].astype(float), 0.5)
+
+    # the funnel's last stage vs digital orders, per market-device-day
+    tr = t["fact_digital_traffic"].assign(day=as_datetime(t["fact_digital_traffic"]["date"]))
+    funnel_orders = tr.groupby(["day", "market_code", "device_type"])["order_sessions"].sum()
+    device_orders = dg.groupby(["day", "market_code", "device_type"])["orders"].sum()
+    tie("REC-07", "fact_digital_traffic", "Funnel order sessions = digital orders",
+        "Per market-device-day, the funnel's order_sessions, summed over browsers, equal fact_digital_sales orders, so the funnel ends where the conversion rate does.",
+        "fact_digital_sales orders", device_orders.astype(float), "fact_digital_traffic order_sessions", funnel_orders.astype(float), 0.5)
 
     # footfall vs sales, per store-day, BEFORE returns
     ff = t["fact_footfall"].assign(day=as_datetime(t["fact_footfall"]["date"])).set_index(["day", "store_id"])

@@ -1,0 +1,289 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "203855681999211b0957",
+  "position": {
+    "x": 227.48137108792847,
+    "y": 660.983606557377,
+    "z": 30000,
+    "height": 402.3168654173765,
+    "width": 785.00851788756393,
+    "tabOrder": 30000
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "full_date"
+                }
+              },
+              "queryRef": "dim_date.full_date",
+              "nativeQueryRef": "full_date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "day_name"
+                }
+              },
+              "queryRef": "dim_date.day_name",
+              "nativeQueryRef": "day_name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "day_of_week_num"
+                }
+              },
+              "queryRef": "dim_date.day_of_week_num",
+              "nativeQueryRef": "day_of_week_num"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "business_year"
+                }
+              },
+              "queryRef": "dim_date.business_year",
+              "nativeQueryRef": "business_year"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "business_week_number"
+                }
+              },
+              "queryRef": "dim_date.business_week_number",
+              "nativeQueryRef": "business_week_number"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "business_period_label"
+                }
+              },
+              "queryRef": "dim_date.business_period_label",
+              "nativeQueryRef": "business_period_label"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "is_black_friday"
+                }
+              },
+              "queryRef": "dim_date.is_black_friday",
+              "nativeQueryRef": "is_black_friday"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "is_christmas_day"
+                }
+              },
+              "queryRef": "dim_date.is_christmas_day",
+              "nativeQueryRef": "is_christmas_day"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_date"
+                    }
+                  },
+                  "Property": "is_boxing_day"
+                }
+              },
+              "queryRef": "dim_date.is_boxing_day",
+              "nativeQueryRef": "is_boxing_day"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales (GBP)",
+              "nativeQueryRef": "Net Sales (GBP)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\n  \"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\",\n  \"description\": \"Daily trading calendar. EDIT ONLY the first block of ''transform'': point ''value'' at your measure and change the ''label'' format if it isn''t money. Needs these dim_date fields in the Values well too: full_date, day_name, business_year, business_week_number, business_period_label. is_black_friday, is_christmas_day and is_boxing_day are optional and outline those days if present. Shows the latest business year in the filter context.\",\n  \"background\": \"transparent\",\n  \"width\": \"container\",\n  \"height\": \"container\",\n  \"data\": {\n    \"name\": \"dataset\"\n  },\n  \"config\": {\n    \"view\": {\n      \"stroke\": null\n    },\n    \"axis\": {\n      \"domain\": false,\n      \"ticks\": false,\n      \"grid\": false,\n      \"labelColor\": \"#5B6A72\",\n      \"titleColor\": \"#5B6A72\",\n      \"labelFont\": \"Segoe UI, Arial, sans-serif\",\n      \"titleFont\": \"Segoe UI, Arial, sans-serif\",\n      \"labelFontSize\": 11\n    },\n    \"legend\": {\n      \"labelColor\": \"#5B6A72\",\n      \"labelFont\": \"Segoe UI, Arial, sans-serif\",\n      \"labelFontSize\": 10\n    }\n  },\n  \"transform\": [\n    {\n      \"calculate\": \"datum[''Net Sales (GBP)'']\",\n      \"as\": \"value\"\n    },\n    {\n      \"calculate\": \"datum.value == null ? ''No trading yet'' : ''£'' + format(datum.value, '',.0f'')\",\n      \"as\": \"label\"\n    },\n    {\n      \"joinaggregate\": [\n        {\n          \"op\": \"max\",\n          \"field\": \"business_year\",\n          \"as\": \"latest_year\"\n        }\n      ]\n    },\n    {\n      \"filter\": \"datum.business_year == datum.latest_year\"\n    },\n    {\n      \"calculate\": \"timeFormat(toDate(datum.full_date), ''%a %d %b %Y'')\",\n      \"as\": \"date_text\"\n    },\n    {\n      \"calculate\": \"datum.is_christmas_day == true ? ''Christmas Day'' : datum.is_boxing_day == true ? ''Boxing Day'' : datum.is_black_friday == true ? ''Black Friday'' : ''''\",\n      \"as\": \"key_day\"\n    }\n  ],\n  \"encoding\": {\n    \"x\": {\n      \"field\": \"business_week_number\",\n      \"type\": \"ordinal\",\n      \"title\": null,\n      \"axis\": {\n        \"orient\": \"top\",\n        \"labelAngle\": 0,\n        \"labelExpr\": \"datum.value % 4 == 1 ? ''Wk '' + datum.value : ''''\"\n      }\n    },\n    \"y\": {\n      \"field\": \"day_name\",\n      \"type\": \"ordinal\",\n      \"title\": null,\n      \"sort\": [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"],\n      \"axis\": {\n        \"labelExpr\": \"slice(datum.value, 0, 3)\"\n      }\n    },\n    \"tooltip\": [\n      {\n        \"field\": \"date_text\",\n        \"type\": \"nominal\",\n        \"title\": \"Date\"\n      },\n      {\n        \"field\": \"business_period_label\",\n        \"type\": \"nominal\",\n        \"title\": \"Period\"\n      },\n      {\n        \"field\": \"label\",\n        \"type\": \"nominal\",\n        \"title\": \"Value\"\n      },\n      {\n        \"field\": \"key_day\",\n        \"type\": \"nominal\",\n        \"title\": \"Note\"\n      }\n    ]\n  },\n  \"layer\": [\n    {\n      \"mark\": {\n        \"type\": \"rect\",\n        \"cornerRadius\": 2,\n        \"stroke\": \"#FFFFFF\",\n        \"strokeWidth\": 1.5\n      },\n      \"encoding\": {\n        \"color\": {\n          \"condition\": {\n            \"test\": \"datum.value == null\",\n            \"value\": \"#EEE9E1\"\n          },\n          \"field\": \"value\",\n          \"type\": \"quantitative\",\n          \"title\": null,\n          \"scale\": {\n            \"type\": \"sqrt\",\n            \"range\": [\n              \"#EAF2F3\",\n              \"#B1CED5\",\n              \"#1F7486\",\n              \"#0B3B45\"\n            ]\n          },\n          \"legend\": {\n            \"orient\": \"bottom\",\n            \"direction\": \"horizontal\",\n            \"gradientLength\": 220,\n            \"gradientThickness\": 8,\n            \"format\": \"~s\",\n            \"labelExpr\": \"''£'' + datum.label\"\n          }\n        },\n        \"opacity\": {\n          \"condition\": {\n            \"test\": \"datum[''__selected__''] == ''off''\",\n            \"value\": 0.35\n          },\n          \"value\": 1\n        }\n      }\n    },\n    {\n      \"transform\": [\n        {\n          \"filter\": \"datum.key_day != '''' && datum.value != null\"\n        }\n      ],\n      \"mark\": {\n        \"type\": \"rect\",\n        \"filled\": false,\n        \"cornerRadius\": 2,\n        \"stroke\": \"#C8962E\",\n        \"strokeWidth\": 2\n      }\n    }\n  ]\n}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenuSelector": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "selectionMaxDataPoints": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            },
+            "selectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'simple'"
+                }
+              }
+            },
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'6.4.3'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "viewportHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "370D"
+                }
+              }
+            },
+            "viewportWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "751D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2.0.0.0'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

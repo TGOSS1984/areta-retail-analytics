@@ -903,6 +903,35 @@ table fact_sales
 		displayFolder: Pareto Analysis
 		lineageTag: fe97a040-fa71-4ec7-96ee-a37fe7c3bee8
 
+	/// Top Style one level down: ranks on style_colour_code, then shows name and
+	/// colour, which is what reads on a card. The code is left off for room. If two
+	/// brands ever shared a name and colour the card would read the same for both,
+	/// but the ranking itself can't merge them, because it runs on the code.
+	measure 'Top Style-Colour' =
+			VAR StyleColourSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
+			VAR TopCode =
+			    MAXX ( TOPN ( 1, StyleColourSales, [@Sales], DESC ), dim_product[style_colour_code] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( [Net Sales (GBP)] ),
+			        LOOKUPVALUE ( dim_product[style_name], dim_product[style_colour_code], TopCode )
+			            & " · "
+			            & LOOKUPVALUE ( dim_product[colour], dim_product[style_colour_code], TopCode )
+			    )
+		displayFolder: Pareto Analysis
+		lineageTag: 13e667ba-18c3-4385-ab6d-f01873a7c161
+
+	/// The top style-colour's share of Net Sales in the same context, for the reference label.
+	measure 'Top Style-Colour Share %' =
+			VAR StyleColourSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
+			RETURN
+			    DIVIDE ( MAXX ( StyleColourSales, [@Sales] ), [Net Sales (GBP)] )
+		formatString: 0.0%
+		displayFolder: Pareto Analysis
+		lineageTag: 9c0d3601-cd45-4cd5-8308-1f68e85b6163
+
 	/// Styles with at least one sale line in the current context. Returns are left out, so
 	/// a style that only had a refund in the period doesn't count as selling. The fact table
 	/// is only filtered one way to dim_product, so a plain DISTINCTCOUNT on the dimension
@@ -916,11 +945,11 @@ table fact_sales
 		displayFolder: Range Analysis
 		lineageTag: 1c57819b-0dad-43f4-92bb-c015bba9dc79
 
-	/// Same as Styles Sold, one level down. There's no style-colour key in dim_product, so
-	/// the pair of style_code and colour_code is the key. 907 styles come in 2,251 colourways.
+	/// Same as Styles Sold, one level down, counted on dim_product[style_colour_code].
+	/// 907 styles come in 2,251 colourways.
 	measure 'Style-Colours Sold' =
 			CALCULATE (
-			    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code], dim_product[colour_code] ) ),
+			    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_colour_code] ) ),
 			    fact_sales[is_return] = FALSE
 			)
 		formatString: #,0
@@ -936,7 +965,7 @@ table fact_sales
 		lineageTag: 698367b9-365f-459e-85fa-3dc57a0c8db8
 
 	/// Catalogue count of style-colours, the range-side twin of Style-Colours Sold.
-	measure 'Style-Colours in Range' = COUNTROWS ( SUMMARIZE ( dim_product, dim_product[style_code], dim_product[colour_code] ) )
+	measure 'Style-Colours in Range' = DISTINCTCOUNT ( dim_product[style_colour_code] )
 		formatString: #,0
 		displayFolder: Range Analysis
 		lineageTag: d4a0bf3f-6bea-469b-bef2-6ab9c0edbcfe

@@ -114,6 +114,27 @@ table dim_product
 
 		annotation SummarizationSetBy = Automatic
 
+	/// One row per SKU, so this repeats across sizes. It's the style-colour key the
+	/// range measures count and Top Style-Colour ranks on.
+	column style_colour_code
+		dataType: string
+		lineageTag: 45c7f26a-d215-43a2-b2d6-94457ac75472
+		summarizeBy: none
+		sourceColumn: style_colour_code
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Name · colour · code. The code stays on the end for the same reason as
+	/// style_label: names repeat across brands, and an axis on name and colour alone
+	/// would merge different products into one bar.
+	column style_colour_label
+		dataType: string
+		lineageTag: 85cad630-f230-42e0-bfd5-1ed7a4faa09a
+		summarizeBy: none
+		sourceColumn: style_colour_label
+
+		annotation SummarizationSetBy = Automatic
+
 	column size_code
 		dataType: string
 		lineageTag: e4ecaebd-b57c-43e7-9300-8df05c79156e

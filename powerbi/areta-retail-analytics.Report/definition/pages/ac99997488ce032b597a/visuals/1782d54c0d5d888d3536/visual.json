@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "1782d54c0d5d888d3536",
   "position": {
-    "x": 226.70299727520435,
-    "y": 235.42234332425068,
+    "x": 1221.2526997840173,
+    "y": 267.47300215982722,
     "z": 30002,
-    "height": 391.304347826087,
-    "width": 667.82608695652175,
+    "height": 364.92440604751619,
+    "width": 682.15982721382284,
     "tabOrder": 30002
   },
   "visual": {
@@ -108,5 +108,79 @@
       }
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "289d258b0060cd010ea9",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "e43fe79d52631d6610a4",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "major_product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "052f102214d7b9e007ac",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Units Sold"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fc53b163990b9103955e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "92b59f1e6084ec2cea7c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Margin %"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

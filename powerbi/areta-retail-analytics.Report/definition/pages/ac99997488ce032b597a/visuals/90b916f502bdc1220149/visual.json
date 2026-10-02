@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "90b916f502bdc1220149",
   "position": {
-    "x": 974.82288828337869,
-    "y": 320.8719346049046,
+    "x": 231.66361974405848,
+    "y": 265.00914076782448,
     "z": 30003,
-    "height": 282.50681198910081,
-    "width": 887.62942779291541,
+    "height": 366.80073126142594,
+    "width": 974.04021937842776,
     "tabOrder": 30003
   },
   "visual": {
@@ -93,11 +93,53 @@
                       "Entity": "fact_sales"
                     }
                   },
+                  "Property": "Average Selling Price (GBP)"
+                }
+              },
+              "queryRef": "fact_sales.Average Selling Price (GBP)",
+              "nativeQueryRef": "Average Selling Price (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
                   "Property": "Net Units Sold"
                 }
               },
               "queryRef": "fact_sales.Net Units Sold",
               "nativeQueryRef": "Net Units Sold"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock Units"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock Units",
+              "nativeQueryRef": "Stock Units"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Weeks of Cover"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Weeks of Cover",
+              "nativeQueryRef": "Weeks of Cover"
             }
           ]
         }
@@ -119,6 +161,71 @@
           }
         ]
       }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "112.08408289955634D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Average Selling Price (GBP)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "183.08409592205695D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dim_product.style_name"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "68.22485149479014D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_stock_snapshot.Stock Units"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "80.18464192821405D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_stock_snapshot.Weeks of Cover"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   }

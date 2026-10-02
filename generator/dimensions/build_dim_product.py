@@ -254,6 +254,12 @@ def build() -> pd.DataFrame:
                                             "season_label": season_label,
                                             "colour": colour,
                                             "colour_code": COLOUR_CODES[colour],
+                                            # One key for the style-colour (the SKU minus its
+                                            # size), plus a readable label. The label keeps the
+                                            # code on the end because style names repeat across
+                                            # brands, same as style_label in the Power BI model.
+                                            "style_colour_code": f"{style_code}-{COLOUR_CODES[colour]}",
+                                            "style_colour_label": f"{style_name} · {colour} · {style_code}",
                                             "size_code": size,
                                             "size_description": size_description_for(size),
                                             "base_price_gbp": base_price,

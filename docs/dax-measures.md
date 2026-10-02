@@ -249,7 +249,7 @@ CALCULATE (
 
 Style-Colours Sold =
 CALCULATE (
-    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_code], dim_product[colour_code] ) ),
+    COUNTROWS ( SUMMARIZE ( fact_sales, dim_product[style_colour_code] ) ),
     fact_sales[is_return] = FALSE
 )
 
@@ -257,7 +257,7 @@ Styles in Range =
 DISTINCTCOUNT ( dim_product[style_code] )
 
 Style-Colours in Range =
-COUNTROWS ( SUMMARIZE ( dim_product, dim_product[style_code], dim_product[colour_code] ) )
+DISTINCTCOUNT ( dim_product[style_colour_code] )
 
 Colours per Style =
 DIVIDE ( [Style-Colours Sold], [Styles Sold] )
@@ -326,3 +326,57 @@ A few things worth knowing before using these:
 As a sanity check, over the last year on the current data, Accessories makes about 3% of sales from about 16% of the selling styles, and Outerwear about 34% of sales from about 23%. So the measures tell a story straight away.
 
 On the same year, Tops need about 39% of their styles to reach 80% of their sales, against 26–32% for most groups, so Tops sales are spread thinly across the range rather than carried by a few heroes. Margin now varies by category, so the GP view has something to say too: Footwear makes about 21% of sales but under 20% of gross profit, and Outerwear's margin share runs slightly ahead of its sales share.
+
+### Digital funnel
+
+The funnel stages are columns on `fact_digital_traffic`, so every measure here comes from one table and slices by device and browser as well as market and date. Each stage counts sessions that got at least that far, so they only narrow (data quality check VAL-24), and `Order Sessions` adds up to `Digital Orders` (REC-07).
+
+```dax
+Basket Sessions =
+CALCULATE (
+    SUM ( fact_digital_traffic[basket_sessions] ),
+    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+)
+-- Product View Sessions, Checkout Sessions and Order Sessions follow the same pattern.
+
+Add to Basket Rate % =
+DIVIDE ( [Basket Sessions], [Total Sessions] )
+
+Basket Abandonment % =
+VAR Baskets = [Basket Sessions]
+RETURN
+    IF ( Baskets > 0, 1 - DIVIDE ( [Order Sessions], Baskets ) )
+
+Checkout Abandonment % =
+VAR Checkouts = [Checkout Sessions]
+RETURN
+    IF ( Checkouts > 0, 1 - DIVIDE ( [Order Sessions], Checkouts ) )
+
+Funnel Conversion Rate % =
+DIVIDE ( [Order Sessions], [Total Sessions] )
+
+Funnel Value =
+SWITCH (
+    SELECTEDVALUE ( dim_funnel_stage[stage_name] ),
+    "Sessions", [Total Sessions],
+    "Viewed a product", [Product View Sessions],
+    "Added to basket", [Basket Sessions],
+    "Reached checkout", [Checkout Sessions],
+    "Ordered", [Order Sessions]
+)
+
+Funnel % of Previous Stage =
+VAR Stage = SELECTEDVALUE ( dim_funnel_stage[stage_order] )
+VAR ThisStage = [Funnel Value]
+VAR PreviousStage =
+    CALCULATE ( [Funnel Value], REMOVEFILTERS ( dim_funnel_stage ), dim_funnel_stage[stage_order] = Stage - 1 )
+RETURN
+    IF ( Stage > 1, DIVIDE ( ThisStage, PreviousStage ) )
+```
+
+A few things worth knowing:
+
+- **Funnel Conversion Rate % vs Digital Conversion Rate %.** They agree in total. The original measure divides orders from `fact_digital_sales` by sessions from `fact_digital_traffic`, and with no shared device dimension it can't be split by device. The funnel version is all one table, so it can.
+- **The stage table.** `dim_funnel_stage` is five hand-typed rows, disconnected, with `stage_name` sorted by a hidden `stage_order`. It's the same trick as `dim_pnl_bridge`: a native funnel given five separate measures can't name or order the stages properly.
+- **Reversed colours.** Add to Basket Rate, Basket Abandonment and Checkout Abandonment each have the usual LY, YoY (pp), arrow, colour and combo set. For the two abandonment measures, down is good, so the trend colour is green when they fall. The arrow still points the way the number moved.
+- **What it shows.** On BY25, mobile adds to basket on about 7.8% of sessions and desktop 9.4%. Basket abandonment is around 74–77% and checkout abandonment around 43–48%. The one-page checkout launched in April 2025 takes mobile checkout abandonment from about 50% to 46% against the same weeks a year earlier.

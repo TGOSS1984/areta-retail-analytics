@@ -23,7 +23,7 @@ To run just the audit: `python generator/quality/build_data_quality.py` (about 3
 | `severity` | `Critical` (any failing row = Fail) or `Advisory` (Warn) |
 | `rows_tested`, `rows_failed` | how many rows were checked and how many broke the rule |
 | `status` | Pass, Warn, Fail, or Fixed (Cleaning rows only) |
-| `counts_toward_score` | 1 for the 74 scored checks, 0 for the Cleaning rows |
+| `counts_toward_score` | 1 for the 76 scored checks, 0 for the Cleaning rows |
 | `source_a_label/value`, `source_b_label/value`, `variance` | the two sides of a reconciliation |
 | `run_timestamp` | when the audit ran, in UTC |
 
@@ -33,19 +33,20 @@ To run just the audit: `python generator/quality/build_data_quality.py` (about 3
 
 78 checks in total: 15 Integrity, 12 Uniqueness, 23 Validity, 13 Completeness, 6 Reconciliation, 5 Freshness and 4 Cleaning.
 
-The reconciliations compare like with like. Digital sales, footfall transactions and footfall units tie to sales **before returns**, because returns only exist as lines in `fact_sales`. That means Online net sales including returns is about £0.84M lower than Digital Net Sales. Neither number is wrong, but the page carries a footnote so nobody trips over it.
+The reconciliations compare like with like. Digital sales, footfall transactions and footfall units tie to sales **before returns**, because returns only exist as lines in `fact_sales`. That means Online net sales including returns is about £0.76M lower than Digital Net Sales. Neither number is wrong, but the page carries a footnote so nobody trips over it.
 
-Results from my run on 20 Sep 2026: 74 scored checks, 71 passed, 3 warnings, 0 failed.
+Results from my run on 2 Oct 2026: 76 scored checks, 74 passed, 2 warnings, 0 failed. The two newest checks are VAL-24 (the digital funnel only narrows, stage to stage) and REC-07 (funnel order sessions equal digital orders per market, device and day).
 
 | Warning | What it is |
 |---|---|
-| `VAL-19` Sessions at least visitors | 43 of 213,840 traffic rows have fewer sessions than visitors. A rounding artefact in the simulation. |
-| `CMP-11` Every SKU has sold | 4 of 12,151 SKUs never sold. |
-| `CMP-13` Store-days with visitors have sales | 20,581 of 453,600 store-days had visitors but no transactions. |
+| `CMP-11` Every SKU has sold | 143 of 12,151 SKUs never sold. That's the dead tail you'd expect from a range where a quarter of the styles do 80% of sales. |
+| `CMP-13` Store-days with visitors have sales | 23,183 of 457,800 store-days had visitors but no transactions. |
 
-The Cleaning rows show what `clean_fact_sales.py` fixed in the raw file, out of 3,948,592 raw lines: 11,810 duplicates dropped, 118,458 lowercase store IDs corrected, 78,972 currency codes stripped of whitespace and 153,912 blank discounts set to 0%.
+`VAL-19` (sessions at least visitors) used to warn on about 40 traffic rows, a rounding artefact from splitting visitors across browsers separately from sessions. Visitors now come from each browser's own sessions, so it passes.
 
-The 1,064 null cells in the profile are by design. `fact_targets` has no footfall or contribution target for Online (1,056), and `dim_promo` has no date window or discount for the base and multi-buy promotions (8).
+The Cleaning rows show what `clean_fact_sales.py` fixed in the raw file, out of 3,896,433 raw lines: 11,654 duplicates dropped, 116,893 lowercase store IDs corrected, 77,929 currency codes stripped of whitespace and 140,001 blank discounts set to 0%.
+
+The 1,070 null cells in the profile are by design. `fact_targets` has no footfall or contribution target for Online (1,056), and `dim_promo` has no date window or discount for the base and multi-buy promotions (14).
 
 ## Build sheet
 
@@ -115,15 +116,15 @@ The KPI cards sit at x = 227, 570, 903, 1241 and 1577, which is the same grid as
 
 ## Numbers to check against
 
-From my 25 Sep 2026 run, after the style popularity and key trading day changes to the generator. If you regenerate on a later day the data runs up to that day, so the row counts and dates will move.
+From my 2 Oct 2026 run, after the growth, margin, multi-buy and digital funnel changes to the generator. If you regenerate on a later day the data runs up to that day, so the row counts, dates and rows tested will move. The score, status and check counts shouldn't.
 
 | Measure | Should show |
 |---|---|
-| Data Quality Score | 95.9% (71 of 74 checks passed) |
-| DQ Overall Status | 3 warnings |
-| DQ Scored Rows Tested | 84,398,281 |
-| DQ Latest Data Date | 25 Sep 2026 |
-| DQ Rows Fixed in Cleaning | 358,686 (of 3,912,282 raw lines) |
-| DQ Tables Profiled / DQ Total Rows | 15 / 11,463,131 |
+| Data Quality Score | 97.4% (74 of 76 checks passed) |
+| DQ Overall Status | 2 warnings (CMP-11 unsold SKUs, CMP-13 store-days with visitors but no sales) |
+| DQ Scored Rows Tested | 84,588,795 |
+| DQ Latest Data Date | 2 Oct 2026 |
+| DQ Rows Fixed in Cleaning | 346,477 (of 3,896,433 raw lines) |
+| DQ Tables Profiled / DQ Total Rows | 15 / 11,488,288 |
 | DQ Null % | 0.001% |
-| Score by category | Completeness 84.6%, Validity 95.7%, everything else 100% |
+| Score by category | Completeness 84.6%, everything else 100% |

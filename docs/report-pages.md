@@ -214,7 +214,7 @@ The only job left on this page is the VAT slicer swap.
 
 ## 7. Digital Performance
 
-*How is the website trading and converting, by device, browser and market?*
+*How is the website trading and converting, by device, browser and market, and where do shoppers drop out?*
 
 Rail slicers on this page: week, month and `dim_market[market_name]`.
 
@@ -224,20 +224,21 @@ Rail slicers on this page: week, month and `dim_market[market_name]`.
 | Sessions | `Total Sessions` | `Total Sessions YoY Combo` | `click` |
 | Conversion | `Digital Conversion Rate %` | `Digital Conversion Rate YoY Combo` | `chart-funnel` |
 | Basket | `Average Basket Value (GBP)` | `Average Basket Value YoY Combo` | `basket` |
-| Engagement | `Pages per Session` | none | `browser` |
+| Basket abandonment | `Basket Abandonment %` | `Basket Abandonment YoY Combo` | `shopping-cart-x` |
 
 | # | Visual | Type | Position | Fields |
 |---|---|---|---|---|
 | 1 | Sales and conversion | Line and clustered column | 227, 268, 1107, 400 | X `business_week_number`. Columns `Digital Net Sales (GBP)`. Line `Digital Conversion Rate %` |
-| 2 | Sessions by device | Donut | 1346, 268, 555, 400 | Legend `fact_digital_traffic[device_type]`. Values `Total Sessions` |
-| 3 | Browsers | Table | 227, 680, 550, 390 | `dim_browser[icon_url]` (Image URL), `browser`, `Total Sessions`, `Pages per Session`. Data bars on Sessions. |
+| 2 | Shopping funnel | Funnel | 1346, 268, 555, 400 | Category `dim_funnel_stage[stage_name]`. Values `Funnel Value`. Tooltips `Funnel % of Previous Stage`. Data labels on, showing value and "% of first". |
+| 3 | Browsers | Table | 227, 680, 550, 390 | `dim_browser[icon_url]` (Image URL), `browser`, `Total Sessions`, `Pages per Session`, `Funnel Conversion Rate %`. Data bars on Sessions. |
 | 4 | Basket by device | Deneb gradient bars | 789, 680, 550, 390 | Category `fact_digital_sales[device_type]`, value `Average Basket Value (GBP)` |
 | 5 | Target by market | Bar (horizontal) | 1351, 680, 550, 390 | Y `dim_market[market_name]`. X `Digital Net Sales Target Variance % (Any Grain)`. Rules colour red below 0, green 0 and above. |
 
 **Notes**
 
-- The first draft had "conversion by device". The model can't do that honestly yet. Orders sit on `fact_digital_sales[device_type]` and sessions on `fact_digital_traffic[device_type]`, with no shared device dimension, so conversion by device would divide one device's orders by every device's sessions.
-- Fixing it means a small `dim_device` table and two relationships. Run the cycle check first. I've parked it.
+- The funnel replaces the "Sessions by device" donut. The device split is still one click away: a device slicer, or cross-filtering from visual 4, redraws the whole funnel for that device.
+- `Basket Abandonment %` replaces the Engagement card, which had no YoY reference. Lower is better, so its combo colour is reversed: green when it falls. `Checkout Abandonment %` has the same set if you'd rather show that one. It's the measure the April 2025 one-page checkout moves most.
+- Conversion by device works now. `Digital Conversion Rate %` still can't do it (orders on `fact_digital_sales`, sessions on `fact_digital_traffic`, no shared device dimension), but `Funnel Conversion Rate %` comes entirely from the traffic table, so it slices by device and browser. The two agree in total. The parked `dim_device` table isn't needed any more.
 - Use `dim_market` here, not `dim_store`. The digital facts don't go through stores.
 
 ---
@@ -344,7 +345,6 @@ Values well, all from `dim_date` plus the measure:
 
 - `full_date`
 - `day_name`
-- `day_of_week_num`
 - `business_year`
 - `business_week_number`
 - `business_period_label`

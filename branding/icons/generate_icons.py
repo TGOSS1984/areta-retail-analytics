@@ -186,6 +186,9 @@ ICONS = {
     "star": "Best sellers",
     "brand-github": "GitHub repo",
     "brand-linkedin": "LinkedIn",
+    # Digital funnel. shopping-cart is already Units sold, so the basket
+    # abandonment KPI gets the cart with a cross through it.
+    "shopping-cart-x": "Basket abandonment",
 }
 
 # Which icon goes with which report page, so I'm not guessing at the nav

@@ -39,25 +39,24 @@ FROM orders o
 JOIN sessions s ON o.market_code = s.market_code
 ORDER BY conversion_rate DESC;
 
--- ## 3. The funnel: visitors to sessions to orders, by device
+-- ## 3. The shopping funnel by device
+-- Every stage lives on fact_digital_traffic, so unlike question 2 there's no
+-- second table to join. Each stage is a count of sessions that got at least
+-- that far, so they only narrow, and order_sessions adds up to digital orders.
+-- Abandonment is the share of baskets (or checkouts) that never became an order.
 SELECT
-    t.device_type,
-    t.visitors,
-    t.sessions,
-    o.orders,
-    ROUND(t.sessions * 1.0 / t.visitors, 2) AS sessions_per_visitor,
-    ROUND(o.orders * 1.0 / t.sessions, 4)   AS conversion_rate
-FROM (
-    SELECT dt.device_type, SUM(dt.visitors) AS visitors, SUM(dt.sessions) AS sessions
-    FROM fact_digital_traffic dt JOIN dim_date d ON dt.date = d.full_date
-    WHERE d.business_year = 2025 GROUP BY dt.device_type
-) t
-JOIN (
-    SELECT ds.device_type, SUM(ds.orders) AS orders
-    FROM fact_digital_sales ds JOIN dim_date d ON ds.date = d.full_date
-    WHERE d.business_year = 2025 GROUP BY ds.device_type
-) o ON t.device_type = o.device_type
-ORDER BY t.sessions DESC;
+    dt.device_type,
+    SUM(dt.sessions)                                                       AS sessions,
+    ROUND(SUM(dt.product_view_sessions) * 1.0 / SUM(dt.sessions), 3)      AS product_view_rate,
+    ROUND(SUM(dt.basket_sessions) * 1.0 / SUM(dt.sessions), 4)            AS add_to_basket_rate,
+    ROUND(1 - SUM(dt.order_sessions) * 1.0 / SUM(dt.basket_sessions), 3)  AS basket_abandonment,
+    ROUND(1 - SUM(dt.order_sessions) * 1.0 / SUM(dt.checkout_sessions), 3) AS checkout_abandonment,
+    ROUND(SUM(dt.order_sessions) * 1.0 / SUM(dt.sessions), 4)             AS conversion_rate
+FROM fact_digital_traffic dt
+JOIN dim_date d ON dt.date = d.full_date
+WHERE d.business_year = 2025
+GROUP BY dt.device_type
+ORDER BY sessions DESC;
 
 -- ## 4. Browser share of sessions, and how engaged each browser is
 SELECT
@@ -186,3 +185,29 @@ JOIN dim_store s    ON s.store_id = fin.store_id
 WHERE fin.business_year = 2025
 GROUP BY s.market_name
 ORDER BY achievement DESC;
+
+-- ## 12. Did the one-page checkout work?
+-- It launched on 14 April 2025 and took four weeks to bed in. This compares
+-- checkout abandonment by device over the twelve weeks after that, against the
+-- same twelve weeks a year earlier, so the season is the same on both sides.
+-- The drop should be biggest on mobile.
+WITH windows AS (
+    SELECT
+        dt.device_type,
+        CASE
+            WHEN dt.date BETWEEN DATE '2024-05-12' AND DATE '2024-08-03' THEN 'before (2024)'
+            WHEN dt.date BETWEEN DATE '2025-05-12' AND DATE '2025-08-03' THEN 'after (2025)'
+        END AS period,
+        dt.checkout_sessions,
+        dt.order_sessions
+    FROM fact_digital_traffic dt
+)
+SELECT
+    device_type,
+    period,
+    SUM(checkout_sessions)                                              AS checkouts,
+    ROUND(1 - SUM(order_sessions) * 1.0 / SUM(checkout_sessions), 3)    AS checkout_abandonment
+FROM windows
+WHERE period IS NOT NULL
+GROUP BY device_type, period
+ORDER BY device_type, period DESC;

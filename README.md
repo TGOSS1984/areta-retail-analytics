@@ -258,7 +258,7 @@ What's in the simulation:
 - **Promotions and margin.** Seasonal sales, clearance, flash events and multi-buys, all written into the sales lines with their VAT and cost. Margin comes from a range per discount depth, with a small year-on-year drift on top (a squeeze from cost inflation, then a recovery) so the margin KPIs have something to show. Each category and brand sits above or below that (footwear and hardgoods lower, premium brands higher), and each category's margin moves its own way from year to year. Multi-buys run on basics (socks, base layers, fleece, tees and accessories) and make up about 3% of sales.
 - **Stock, footfall and finance** built from the sales, so they agree with it. Footfall transactions are real invoice counts. Stock follows a simple reorder policy, selling down against each week's actual units and topping back up when it runs low. The store P&Ls are calibrated so gross and net contribution land in sensible ranges.
 - **Targets** for five metrics, built from prior-year actuals plus a growth assumption.
-- **A website**, with the online channel's actual sales split across desktop, mobile and tablet, and traffic simulated separately and calibrated to real conversion-rate benchmarks.
+- **A website**, with the online channel's actual sales split across desktop, mobile and tablet, and traffic worked back from those orders through a full shopping funnel (product views, baskets, checkouts) calibrated to typical e-commerce rates. A one-page checkout launched in April 2025 cuts checkout abandonment, most of all on mobile, so conversion moves year on year.
 
 I got a lot of the calibration wrong before I got it right, and the two examples I remember best are worth writing down:
 
@@ -281,11 +281,11 @@ Real data is never clean, and I didn't want a portfolio dataset that was suspici
 
 The cleaning step also runs a foreign-key check, so an orphan store, SKU or promo stops the build instead of quietly reaching the report.
 
-Then a separate audit ([`generator/quality/build_data_quality.py`](generator/quality/build_data_quality.py)) runs at the end of every refresh and writes two small tables that feed the Data Quality page. It runs 78 checks in seven groups: integrity, uniqueness, validity, completeness, reconciliation, freshness and cleaning. The latest run has 74 scored checks, 71 passing, 3 advisory warnings and none failing.
+Then a separate audit ([`generator/quality/build_data_quality.py`](generator/quality/build_data_quality.py)) runs at the end of every refresh and writes two small tables that feed the Data Quality page. It runs 80 checks in seven groups: integrity, uniqueness, validity, completeness, reconciliation, freshness and cleaning. The latest run has 76 scored checks, 74 passing, 2 advisory warnings and none failing.
 
-The three warnings are things I'd want to know about anyway: 43 traffic rows where sessions are fewer than visitors (a rounding artefact in the simulation), 4 SKUs that have never sold, and 20,581 store-days where visitors came in and nobody bought.
+The two warnings are things I'd want to know about anyway: 143 SKUs that have never sold (the dead tail of a range where a quarter of the styles do 80% of sales), and 23,183 store-days where visitors came in and nobody bought.
 
-The reconciliations taught me the most. Digital sales, footfall transactions and footfall units all tie to `fact_sales` exactly, but only **before returns**, because returns live only in `fact_sales`. Compare them after returns and three healthy tables look broken. The Online channel in `fact_sales` comes to about £0.84M less than the digital table for exactly that reason, and the Data Quality page carries a footnote saying so.
+The reconciliations taught me the most. Digital sales, footfall transactions and footfall units all tie to `fact_sales` exactly, but only **before returns**, because returns live only in `fact_sales`. Compare them after returns and three healthy tables look broken. The Online channel in `fact_sales` comes to about £0.76M less than the digital table for exactly that reason, and the Data Quality page carries a footnote saying so.
 
 I also mutation-tested the audit: I injected an orphan store, duplicate rows, a £100 finance discrepancy and stale digital data into a copy of the warehouse, and checked that every one of them was caught. A check that can't fail isn't worth much. Full design and build sheet: [`docs/data-quality-page.md`](docs/data-quality-page.md).
 
@@ -431,11 +431,13 @@ Separately, the same error showed up once on a refresh when nothing had changed.
 
 **17. Every year was the same year.** Once the margin drift was in, I looked at year-on-year sales and it was the same problem again: every business year came out at about £39M, and every category, market and store sat within a point or two of last year. Nothing in the generator knew about growth, so every variance was just random noise around zero, and a like-for-like league table had nothing to rank. I added a demand trend that stacks a company growth rate with one for each channel, category, brand and market, plus seeded noise for each product group, market and store. My first version kept the company total where I'd calibrated it, but Footwear's growth quietly pushed Boots and Shoes above Waterproof Insulated Jacket and Fleece by 2025, undoing the category order I'd researched. Pinning every product group in every channel to its calibrated level in 2025, and letting the trends decide how it got there and where it goes next, fixed it. The lesson matches number 16: test data has to be able to move the measure. A variance measure tested on data that doesn't vary only proves it can show zero.
 
+**18. A funnel that couldn't move.** I added a shopping funnel to the digital traffic (product views, baskets, checkouts) and wanted a story in it: a one-page checkout in spring 2025 that cuts abandonment. Then I realised sessions were worked out *from* orders using a fixed conversion rate, so a better checkout couldn't change anything. Orders are fixed by the sales data, so if more visitors buy, there must have been fewer sessions behind the same orders. Making the redesign real meant letting sessions change, which I'd told myself I wouldn't do. My first version also made the uplift too big: 2025 sessions fell while sales rose, which reads as a traffic problem, not a better checkout, so I halved it. Building it also turned up two older problems. Tablet days with no orders were getting more traffic than days with orders, which had been quietly dragging Tablet's conversion down. And splitting visitors across browsers separately from sessions was the cause of the long-standing VAL-19 warning. Both are fixed, and VAL-19 passes now.
+
 ### The web app and tooling
 
-**17. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
+**19. DuckDB-wasm and "Invalid URL"**, covered in the [web app section](#the-web-app).
 
-**18. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
+**20. The AI's suggested gradient trick didn't work.** The idea of a constant measure plus conditional formatting gave one solid colour per bar, not a fade inside each bar. I only knew because I tried it. Deneb does it properly.
 
 **Overall, what I'd tell myself at the start:** get the relationship graph right before writing any DAX, test with a filter applied every time, keep numbers reconcilable against a second source (the web app and SQL both did that job), and write the audit before you need it.
 
@@ -580,6 +582,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [x] Web app: Products, Categories and Margins pages
 - [x] Web app: Digital, Customers, Forecasting, Reports and Data pages
 - [ ] A GitHub project board
+- [ ] Web app: add the shopping funnel and abandonment KPIs to the Digital page (they're in the data and the Power BI model already)
 - [ ] Microsoft Fabric proof of concept: Lakehouse, Direct Lake model and a scheduled pipeline, alongside DP-600 (plan in [`docs/fabric-poc-plan.md`](docs/fabric-poc-plan.md))
 
 **Parked on purpose**

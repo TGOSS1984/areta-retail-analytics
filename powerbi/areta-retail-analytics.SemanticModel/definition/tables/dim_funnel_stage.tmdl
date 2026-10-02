@@ -1,0 +1,44 @@
+table dim_funnel_stage
+	lineageTag: 750e4cf4-09aa-40d4-a413-c8bbfc3f18bd
+
+	/// The five stages of the shopping funnel, in order, for the funnel visual's
+	/// Category. Disconnected on purpose, like dim_pnl_bridge: Funnel Value reads the
+	/// selected stage and returns the matching measure.
+	column stage_name
+		dataType: string
+		lineageTag: 93bb69f8-b2e0-4a80-baaa-48c66e362133
+		summarizeBy: none
+		sourceColumn: stage_name
+		sortByColumn: stage_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column stage_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3c5c201f-a65a-4787-937d-94929a30cd52
+		summarizeBy: none
+		sourceColumn: stage_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_funnel_stage = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [stage_name = text, stage_order = Int64.Type],
+				        {
+				    {"Sessions", 1},
+				    {"Viewed a product", 2},
+				    {"Added to basket", 3},
+				    {"Reached checkout", 4},
+				    {"Ordered", 5}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

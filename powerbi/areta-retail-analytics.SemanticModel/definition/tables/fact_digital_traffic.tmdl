@@ -157,6 +157,231 @@ table fact_digital_traffic
 		displayFolder: Time Intelligence
 		lineageTag: 2c7868f5-6bea-4745-ab55-eb702fe1938c
 
+	/// The funnel stages. Each is a count of sessions that got at least that far, so they
+	/// only narrow: sessions >= product views >= baskets >= checkouts >= orders (VAL-24 checks
+	/// every row). Same market TREATAS as Total Sessions.
+	measure 'Product View Sessions' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[product_view_sessions] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 9e15a6b1-f880-404e-afae-0a145a439729
+
+	measure 'Basket Sessions' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[basket_sessions] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 8fc1ec23-961e-4d35-b03e-e4a8a26c84d5
+
+	measure 'Checkout Sessions' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[checkout_sessions] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 8c837d69-d25d-45d4-8e88-3771ee526cd1
+
+	/// Sessions that ordered. Adds up to Digital Orders (REC-07), but lives on the traffic
+	/// table, so unlike Digital Orders it slices by device and browser.
+	measure 'Order Sessions' =
+			CALCULATE (
+			    SUM ( fact_digital_traffic[order_sessions] ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( dim_market[market_code] ), fact_digital_traffic[market_code] ) )
+			)
+		formatString: #,0
+		displayFolder: Digital
+		lineageTag: 6adaa3f9-5147-4972-8876-5b08e13636eb
+
+	measure 'Product View Rate %' = DIVIDE ( [Product View Sessions], [Total Sessions] )
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: 33962f56-b810-4a9f-8367-4604b2a505b4
+
+	/// Share of sessions that put something in the basket.
+	measure 'Add to Basket Rate %' = DIVIDE ( [Basket Sessions], [Total Sessions] )
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: d84c5e57-cd3c-488e-9bfd-6855f472a6e2
+
+	/// Share of baskets that never became an order. Lower is better, so its trend colour
+	/// is the other way round from most KPIs.
+	measure 'Basket Abandonment %' =
+			VAR Baskets = [Basket Sessions]
+			RETURN
+			    IF ( Baskets > 0, 1 - DIVIDE ( [Order Sessions], Baskets ) )
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: 6c3d45c1-dd21-496d-bd71-662130e8c865
+
+	/// Share of checkouts that didn't complete. This is where the April 2025 one-page
+	/// checkout shows up. Lower is better.
+	measure 'Checkout Abandonment %' =
+			VAR Checkouts = [Checkout Sessions]
+			RETURN
+			    IF ( Checkouts > 0, 1 - DIVIDE ( [Order Sessions], Checkouts ) )
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: 66c2b607-c133-4bb3-b072-4edaedd3f17a
+
+	/// Order sessions over sessions. In total it matches Digital Conversion Rate %, but it
+	/// comes entirely from the traffic table, so it works by device and browser, which
+	/// Digital Conversion Rate % can't (orders and sessions used to sit on different
+	/// tables with no shared device).
+	measure 'Funnel Conversion Rate %' = DIVIDE ( [Order Sessions], [Total Sessions] )
+		formatString: 0.0%
+		displayFolder: Digital
+		lineageTag: 48803bdd-4d48-4687-890b-11f70fb5937e
+
+	measure 'Add to Basket Rate LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
+			RETURN
+			    CALCULATE (
+			        [Add to Basket Rate %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
+			    )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 0c5f62a5-dcba-4404-9932-992398f6a447
+
+	measure 'Add to Basket Rate YoY (pp)' = [Add to Basket Rate %] - [Add to Basket Rate LY]
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 25c37524-a8bb-4dc2-a577-4b9ca7312a00
+
+	measure 'Add to Basket Rate Trend Arrow' = IF ( [Add to Basket Rate YoY (pp)] > 0, "▲", IF ( [Add to Basket Rate YoY (pp)] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: ce0f3082-ff9d-4c8a-acc3-2abb72c708da
+
+	measure 'Add to Basket Rate Trend Colour' = IF ( [Add to Basket Rate YoY (pp)] > 0, "#2E7D32", IF ( [Add to Basket Rate YoY (pp)] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 4520bf0d-080b-4a75-a684-7856e0711153
+
+	measure 'Add to Basket Rate YoY Combo' = [Add to Basket Rate Trend Arrow] & " " & FORMAT ( [Add to Basket Rate YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
+		displayFolder: Time Intelligence
+		lineageTag: 8792b9fa-9031-4f17-9f18-0fdac40553ae
+
+	measure 'Basket Abandonment LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
+			RETURN
+			    CALCULATE (
+			        [Basket Abandonment %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
+			    )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: a707aff8-9014-4d6c-83e8-36d0c72cd7f9
+
+	measure 'Basket Abandonment YoY (pp)' = [Basket Abandonment %] - [Basket Abandonment LY]
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: d6c6c291-98bf-486c-99b2-ad581ecc52cd
+
+	measure 'Basket Abandonment Trend Arrow' = IF ( [Basket Abandonment YoY (pp)] > 0, "▲", IF ( [Basket Abandonment YoY (pp)] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 8e3c326a-14ed-463b-b704-f6eb5e984f0e
+
+	/// Reversed: abandonment going down is good news, so down is green and up is red.
+	/// The arrow still points the way the number moved.
+	measure 'Basket Abandonment Trend Colour' = IF ( [Basket Abandonment YoY (pp)] < 0, "#2E7D32", IF ( [Basket Abandonment YoY (pp)] > 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: eeed78e9-0e86-4102-9b33-d27833ad386a
+
+	measure 'Basket Abandonment YoY Combo' = [Basket Abandonment Trend Arrow] & " " & FORMAT ( [Basket Abandonment YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
+		displayFolder: Time Intelligence
+		lineageTag: 1bc10cb3-2ee2-486d-a807-27b8724355e4
+
+	measure 'Checkout Abandonment LY' =
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			VAR RelevantWeekNumbers = VALUES ( dim_date[business_week_number] )
+			VAR RelevantWeekdays = VALUES ( dim_date[day_of_week_num] )
+			RETURN
+			    CALCULATE (
+			        [Checkout Abandonment %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] ),
+			        TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
+			        TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
+			    )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 96307050-79af-4ef0-9477-e41fd3bc141e
+
+	measure 'Checkout Abandonment YoY (pp)' = [Checkout Abandonment %] - [Checkout Abandonment LY]
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 1145d052-5af6-447c-b42a-e3f76527e63d
+
+	measure 'Checkout Abandonment Trend Arrow' = IF ( [Checkout Abandonment YoY (pp)] > 0, "▲", IF ( [Checkout Abandonment YoY (pp)] < 0, "▼", "▬" ) )
+		displayFolder: Time Intelligence
+		lineageTag: 436217c5-3d1a-4905-9c57-c37cbe40f33f
+
+	/// Reversed: abandonment going down is good news, so down is green and up is red.
+	/// The arrow still points the way the number moved.
+	measure 'Checkout Abandonment Trend Colour' = IF ( [Checkout Abandonment YoY (pp)] < 0, "#2E7D32", IF ( [Checkout Abandonment YoY (pp)] > 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: Time Intelligence
+		lineageTag: c77c4cd5-4ddc-4983-8ef1-ec5ecf0d6422
+
+	measure 'Checkout Abandonment YoY Combo' = [Checkout Abandonment Trend Arrow] & " " & FORMAT ( [Checkout Abandonment YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
+		displayFolder: Time Intelligence
+		lineageTag: 73f01a74-1ebb-4b41-ad37-3939f24e6804
+
+	/// Feeds the native funnel visual: stage_name from dim_funnel_stage on Category, this on
+	/// Values. Same idea as the P&L bridge. A disconnected table of stages gives proper
+	/// names and a fixed order, which putting five measures straight into the visual doesn't.
+	measure 'Funnel Value' =
+			SWITCH (
+			    SELECTEDVALUE ( dim_funnel_stage[stage_name] ),
+			    "Sessions", [Total Sessions],
+			    "Viewed a product", [Product View Sessions],
+			    "Added to basket", [Basket Sessions],
+			    "Reached checkout", [Checkout Sessions],
+			    "Ordered", [Order Sessions]
+			)
+		formatString: #,0
+		displayFolder: Funnel
+		lineageTag: 44dd9a9a-abaf-41a8-9c9d-24c7075ee3b5
+
+	/// How many of the stage before got this far. For the funnel's tooltip.
+	measure 'Funnel % of Previous Stage' =
+			VAR Stage = SELECTEDVALUE ( dim_funnel_stage[stage_order] )
+			VAR ThisStage = [Funnel Value]
+			VAR PreviousStage =
+			    CALCULATE ( [Funnel Value], REMOVEFILTERS ( dim_funnel_stage ), dim_funnel_stage[stage_order] = Stage - 1 )
+			RETURN
+			    IF ( Stage > 1, DIVIDE ( ThisStage, PreviousStage ) )
+		formatString: 0.0%
+		displayFolder: Funnel
+		lineageTag: 26679fc0-d66c-4836-a9a0-7dbbd2f6a5f3
+
+	/// Each stage as a share of all sessions. The funnel visual shows this as its
+	/// "% of first" on its own, but having it as a measure means tooltips and tables get it too.
+	measure 'Funnel % of Sessions' = DIVIDE ( [Funnel Value], [Total Sessions] )
+		formatString: 0.0%
+		displayFolder: Funnel
+		lineageTag: f2d0928f-dab0-4cad-a9b7-0f360e63675f
+
 	column date
 		dataType: dateTime
 		isHidden
@@ -206,6 +431,34 @@ table fact_digital_traffic
 		summarizeBy: none
 		sourceColumn: page_views
 
+	column product_view_sessions
+		dataType: int64
+		formatString: #,0
+		lineageTag: bf7dc18c-f2e0-4a40-bc52-45dee8bb151b
+		summarizeBy: none
+		sourceColumn: product_view_sessions
+
+	column basket_sessions
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1de6ffa2-721d-457e-a4ab-d9d384741b48
+		summarizeBy: none
+		sourceColumn: basket_sessions
+
+	column checkout_sessions
+		dataType: int64
+		formatString: #,0
+		lineageTag: f3bd69ae-8964-4943-ab91-bd0e8a046a08
+		summarizeBy: none
+		sourceColumn: checkout_sessions
+
+	column order_sessions
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0b50dc3d-9eec-4340-8c88-cd815d180e8a
+		summarizeBy: none
+		sourceColumn: order_sessions
+
 	partition fact_digital_traffic = m
 		mode: import
 		source =
@@ -215,4 +468,6 @@ table fact_digital_traffic
 				    Source
 
 	annotation PBI_ResultType = Table
+
+
 

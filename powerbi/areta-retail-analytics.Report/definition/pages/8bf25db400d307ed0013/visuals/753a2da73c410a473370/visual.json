@@ -32,6 +32,38 @@
             }
           ]
         },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Gross Margin %"
+                }
+              },
+              "queryRef": "fact_sales.Gross Margin %",
+              "nativeQueryRef": "Gross Margin %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_store_finance"
+                    }
+                  },
+                  "Property": "Net Contribution %"
+                }
+              },
+              "queryRef": "fact_store_finance.Net Contribution %",
+              "nativeQueryRef": "Net Contribution %"
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {

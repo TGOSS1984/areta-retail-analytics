@@ -59,7 +59,8 @@ table 'VAT View'
 				        [Average Order Value LY],
 				        [Average Order Value YoY (GBP)],
 				        [Top Style Net Sales (GBP)],
-				        [Top Style-Colour Net Sales (GBP)]
+				        [Top Style-Colour Net Sales (GBP)],
+				        [Top Product Group Net Sales (GBP)]
 				    ),
 				    SELECTEDMEASURE ( )
 				        * DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),

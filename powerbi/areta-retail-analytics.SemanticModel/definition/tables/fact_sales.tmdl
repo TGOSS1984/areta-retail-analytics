@@ -970,6 +970,19 @@ table fact_sales
 		displayFolder: Pareto Analysis
 		lineageTag: 62548630-67e6-48c8-bee3-b82a04ce9541
 
+	/// The top product group's own Net Sales, for the card's reference label. It finds
+	/// the winner itself, like Top Product Group, so the card needs no visual filter
+	/// (a filter would also shrink Top Product Group Share % to the filtered slice).
+	/// £-formatted for the currency group and on the VAT View whitelist.
+	measure 'Top Product Group Net Sales (GBP)' =
+			VAR GroupSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[product_group] ), "@Sales", [Net Sales (GBP)] )
+			RETURN
+			    MAXX ( GroupSales, [@Sales] )
+		formatString: "£"#,0.00
+		displayFolder: Pareto Analysis
+		lineageTag: bdb0f4fa-9bd6-4ada-83a7-32a4c80083f4
+
 	/// Same idea as Top Product Group, one level down. It ranks on style_code, not
 	/// style_name, because 907 styles share 498 names across the brands; ranking by
 	/// name would add unrelated styles together. It then shows the winning style's

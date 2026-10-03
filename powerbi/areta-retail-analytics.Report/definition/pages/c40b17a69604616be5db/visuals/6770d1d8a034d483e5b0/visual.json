@@ -336,6 +336,20 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "431fbcf3f815e3198cdf",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Top Product Group"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

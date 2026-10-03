@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "88c8a55a7eb2e2289c2a",
+  "name": "cfc5aa3a400293cc3571",
   "position": {
     "x": 1770.7206068268015,
     "y": 155.34766118836916,
-    "z": 37000,
+    "z": 33013,
     "height": 110.4424778761062,
     "width": 129.86093552465235,
-    "tabOrder": 37000
+    "tabOrder": 33013
   },
   "visual": {
     "visualType": "lineChart",
@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_stock_snapshot"
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Stock Value (Retail, GBP)"
+                  "Property": "Online Share %"
                 }
               },
-              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
-              "nativeQueryRef": "Stock Value (Retail, GBP)"
+              "queryRef": "fact_sales.Online Share %",
+              "nativeQueryRef": "Online Share %"
             }
           ]
         }
@@ -58,10 +58,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_stock_snapshot"
+                    "Entity": "fact_sales"
                   }
                 },
-                "Property": "Stock Value (Retail, GBP)"
+                "Property": "Online Share %"
               }
             },
             "direction": "Descending"
@@ -230,7 +230,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "244dd85094e3e3804e07",
+        "name": "04870551a4640ba5d064",
         "field": {
           "Column": {
             "Expression": {
@@ -244,15 +244,15 @@
         "type": "Advanced"
       },
       {
-        "name": "a1d802d8bc0a08eb411a",
+        "name": "fe9a44c5341858d47ccb",
         "field": {
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "fact_stock_snapshot"
+                "Entity": "fact_sales"
               }
             },
-            "Property": "Stock Value (Retail, GBP)"
+            "Property": "Online Share %"
           }
         },
         "type": "Advanced"

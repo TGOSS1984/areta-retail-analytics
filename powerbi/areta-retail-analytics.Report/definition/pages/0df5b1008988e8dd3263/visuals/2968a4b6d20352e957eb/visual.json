@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "83d5403ebdbd5098c5b7",
+  "name": "2968a4b6d20352e957eb",
   "position": {
-    "x": 903.23586744639385,
+    "x": 1241.3255360623782,
     "y": 93.5672514619883,
-    "z": 35000,
+    "z": 33004,
     "height": 162.04255319148936,
     "width": 324.08510638297872,
-    "tabOrder": 35000
+    "tabOrder": 33004
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,11 +23,11 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Styles for 80% of Sales %"
+                  "Property": "Average Order Value (GBP)"
                 }
               },
-              "queryRef": "fact_sales.Styles for 80% of Sales %",
-              "nativeQueryRef": "Styles for 80% of Sales %"
+              "queryRef": "fact_sales.Average Order Value (GBP)",
+              "nativeQueryRef": "Average Order Value (GBP)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "fact_sales"
                   }
                 },
-                "Property": "Styles for 80% of Sales %"
+                "Property": "Average Order Value (GBP)"
               }
             },
             "direction": "Descending"
@@ -183,21 +183,6 @@
       ],
       "referenceLabel": [
         {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-ebe0ceb1-b598-a9b7-5299-173ea777b11b",
-            "order": 0
-          }
-        },
-        {
           "properties": {
             "value": {
               "expr": {
@@ -207,7 +192,7 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Styles in Range"
+                  "Property": "Average Order Value YoY Combo"
                 }
               }
             }
@@ -220,38 +205,47 @@
                 }
               }
             ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-d7073ade-4898-2e1e-c97f-65b95695c7b9",
+            "metadata": "fact_sales.Average Order Value (GBP)",
+            "id": "field-0094c605-2d82-0fe1-5ff5-ae9098d571af",
             "order": 0
           }
-        },
+        }
+      ],
+      "referenceLabelTitle": [
         {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
                 }
               }
-            ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-df7071a2-3d7c-b4ad-42a1-18d957ca6027",
-            "order": 1
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Average Order Value (GBP)",
+            "id": "field-0094c605-2d82-0fe1-5ff5-ae9098d571af"
           }
         }
       ],
       "referenceLabelValue": [
         {
           "properties": {
-            "valueBold": {
+            "valueItalic": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
             },
-            "valueItalic": {
+            "valueBold": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -260,7 +254,8 @@
             }
           },
           "selector": {
-            "metadata": "fact_sales.Styles for 80% of Sales %"
+            "metadata": "fact_sales.Average Order Value (GBP)",
+            "id": "field-0094c605-2d82-0fe1-5ff5-ae9098d571af"
           }
         }
       ]
@@ -304,7 +299,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "1126ef2e142bb9100021",
+        "name": "0701a837168539eda236",
         "field": {
           "Measure": {
             "Expression": {
@@ -312,7 +307,7 @@
                 "Entity": "fact_sales"
               }
             },
-            "Property": "Styles for 80% of Sales %"
+            "Property": "Average Order Value (GBP)"
           }
         },
         "type": "Advanced"

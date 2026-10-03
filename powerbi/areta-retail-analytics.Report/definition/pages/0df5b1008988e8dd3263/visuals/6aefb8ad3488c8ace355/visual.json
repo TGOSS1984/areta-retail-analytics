@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "88c8a55a7eb2e2289c2a",
+  "name": "6aefb8ad3488c8ace355",
   "position": {
-    "x": 1770.7206068268015,
-    "y": 155.34766118836916,
-    "z": 37000,
-    "height": 110.4424778761062,
-    "width": 129.86093552465235,
-    "tabOrder": 37000
+    "x": 1437.1929824561405,
+    "y": 155.94541910331384,
+    "z": 33010,
+    "height": 109.78557504873295,
+    "width": 129.74658869395714,
+    "tabOrder": 33010
   },
   "visual": {
     "visualType": "lineChart",
@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_stock_snapshot"
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Stock Value (Retail, GBP)"
+                  "Property": "Average Order Value (GBP)"
                 }
               },
-              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
-              "nativeQueryRef": "Stock Value (Retail, GBP)"
+              "queryRef": "fact_sales.Average Order Value (GBP)",
+              "nativeQueryRef": "Average Order Value (GBP)"
             }
           ]
         }
@@ -58,10 +58,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_stock_snapshot"
+                    "Entity": "fact_sales"
                   }
                 },
-                "Property": "Stock Value (Retail, GBP)"
+                "Property": "Average Order Value (GBP)"
               }
             },
             "direction": "Descending"
@@ -230,7 +230,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "244dd85094e3e3804e07",
+        "name": "b267bca14812440338a2",
         "field": {
           "Column": {
             "Expression": {
@@ -244,15 +244,15 @@
         "type": "Advanced"
       },
       {
-        "name": "a1d802d8bc0a08eb411a",
+        "name": "6f5518f760c9417708ed",
         "field": {
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "fact_stock_snapshot"
+                "Entity": "fact_sales"
               }
             },
-            "Property": "Stock Value (Retail, GBP)"
+            "Property": "Average Order Value (GBP)"
           }
         },
         "type": "Advanced"

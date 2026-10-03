@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "88c8a55a7eb2e2289c2a",
+  "name": "0e7dccd6c18044e30a52",
   "position": {
-    "x": 1770.7206068268015,
-    "y": 155.34766118836916,
-    "z": 37000,
-    "height": 110.4424778761062,
-    "width": 129.86093552465235,
-    "tabOrder": 37000
+    "x": 767.25146198830419,
+    "y": 157.19298245614036,
+    "z": 33006,
+    "height": 109.78557504873295,
+    "width": 128.49902534113062,
+    "tabOrder": 33006
   },
   "visual": {
     "visualType": "lineChart",
@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_stock_snapshot"
+                      "Entity": "fact_targets"
                     }
                   },
-                  "Property": "Stock Value (Retail, GBP)"
+                  "Property": "Net Sales Target Achievement %"
                 }
               },
-              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
-              "nativeQueryRef": "Stock Value (Retail, GBP)"
+              "queryRef": "fact_targets.Net Sales Target Achievement %",
+              "nativeQueryRef": "Net Sales Target Achievement %"
             }
           ]
         }
@@ -58,10 +58,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_stock_snapshot"
+                    "Entity": "fact_targets"
                   }
                 },
-                "Property": "Stock Value (Retail, GBP)"
+                "Property": "Net Sales Target Achievement %"
               }
             },
             "direction": "Descending"
@@ -230,7 +230,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "244dd85094e3e3804e07",
+        "name": "b6eca9a48ab45500d289",
         "field": {
           "Column": {
             "Expression": {
@@ -244,15 +244,15 @@
         "type": "Advanced"
       },
       {
-        "name": "a1d802d8bc0a08eb411a",
+        "name": "c64d22bdbe03e70363de",
         "field": {
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "fact_stock_snapshot"
+                "Entity": "fact_targets"
               }
             },
-            "Property": "Stock Value (Retail, GBP)"
+            "Property": "Net Sales Target Achievement %"
           }
         },
         "type": "Advanced"

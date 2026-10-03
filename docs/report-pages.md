@@ -300,6 +300,8 @@ Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everyth
 
 - Stock is a weekly closing balance. The measures already take the last snapshot in the filter context, so a period axis shows closing stock, not the sum of every week.
 - Non-GBP stock values convert at the average rate for now. The closing-rate convention is still on the roadmap.
+- Weeks of Cover is closing stock ÷ the average weekly rate over the selected window, so its meaning changes with the grain: a week is volatile, a period is the everyday view, and a year blends peak and quiet weeks (BY25 reads 13.0 weeks). `Weeks of Cover (Last 4 Weeks)` uses the rate in the four weeks up to the closing date instead, which is how a merchandiser would quote it (15.3 weeks for BY25, because February sells slowly). Add it to the table in visual 4 next to Weeks of Cover, or use it on the card with a "last 4 weeks" label.
+- If Weeks of Cover for the current year looks far too high, check `Avg Weekly Sales (Units)` counts traded weeks, not every week in `dim_date`. The first version didn't, and 2026 YTD read 21.8 weeks instead of 13.0.
 
 ---
 

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "83d5403ebdbd5098c5b7",
+  "name": "0b456dbaa66a81220723",
   "position": {
-    "x": 903.23586744639385,
-    "y": 93.5672514619883,
-    "z": 35000,
-    "height": 162.04255319148936,
-    "width": 324.08510638297872,
-    "tabOrder": 35000
+    "x": 570.13645224171546,
+    "y": 94.814814814814824,
+    "z": 33002,
+    "height": 160.26711185308849,
+    "width": 323.73956594323874,
+    "tabOrder": 33002
   },
   "visual": {
     "visualType": "cardVisual",
@@ -20,14 +20,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_sales"
+                      "Entity": "fact_targets"
                     }
                   },
-                  "Property": "Styles for 80% of Sales %"
+                  "Property": "Net Sales Target Achievement %"
                 }
               },
-              "queryRef": "fact_sales.Styles for 80% of Sales %",
-              "nativeQueryRef": "Styles for 80% of Sales %"
+              "queryRef": "fact_targets.Net Sales Target Achievement %",
+              "nativeQueryRef": "Net Sales Target Achievement %"
             }
           ]
         }
@@ -39,10 +39,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_sales"
+                    "Entity": "fact_targets"
                   }
                 },
-                "Property": "Styles for 80% of Sales %"
+                "Property": "Net Sales Target Achievement %"
               }
             },
             "direction": "Descending"
@@ -183,31 +183,16 @@
       ],
       "referenceLabel": [
         {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
-                }
-              }
-            ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-ebe0ceb1-b598-a9b7-5299-173ea777b11b",
-            "order": 0
-          }
-        },
-        {
           "properties": {
             "value": {
               "expr": {
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_sales"
+                      "Entity": "fact_targets"
                     }
                   },
-                  "Property": "Styles in Range"
+                  "Property": "Net Sales Target Combo"
                 }
               }
             }
@@ -220,38 +205,47 @@
                 }
               }
             ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-d7073ade-4898-2e1e-c97f-65b95695c7b9",
+            "metadata": "fact_targets.Net Sales Target Achievement %",
+            "id": "field-d21f608d-2f03-24ba-919a-e7db84fa9595",
             "order": 0
           }
-        },
+        }
+      ],
+      "referenceLabelTitle": [
         {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 0
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
                 }
               }
-            ],
-            "metadata": "fact_sales.Styles for 80% of Sales %",
-            "id": "field-df7071a2-3d7c-b4ad-42a1-18d957ca6027",
-            "order": 1
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs target'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_targets.Net Sales Target Achievement %",
+            "id": "field-d21f608d-2f03-24ba-919a-e7db84fa9595"
           }
         }
       ],
       "referenceLabelValue": [
         {
           "properties": {
-            "valueBold": {
+            "valueItalic": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
             },
-            "valueItalic": {
+            "valueBold": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -260,7 +254,8 @@
             }
           },
           "selector": {
-            "metadata": "fact_sales.Styles for 80% of Sales %"
+            "metadata": "fact_targets.Net Sales Target Achievement %",
+            "id": "field-d21f608d-2f03-24ba-919a-e7db84fa9595"
           }
         }
       ]
@@ -304,15 +299,15 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "1126ef2e142bb9100021",
+        "name": "1abda4f6504a0963a722",
         "field": {
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "fact_sales"
+                "Entity": "fact_targets"
               }
             },
-            "Property": "Styles for 80% of Sales %"
+            "Property": "Net Sales Target Achievement %"
           }
         },
         "type": "Advanced"

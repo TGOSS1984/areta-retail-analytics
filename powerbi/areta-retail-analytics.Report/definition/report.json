@@ -253,6 +253,11 @@
           "type": "Image"
         },
         {
+          "name": "receipt7495349141888022.png",
+          "path": "receipt7495349141888022.png",
+          "type": "Image"
+        },
+        {
           "name": "ridge-shadow08597975900248489.png",
           "path": "ridge-shadow08597975900248489.png",
           "type": "Image"
@@ -313,6 +318,11 @@
           "type": "Image"
         },
         {
+          "name": "target-arrow4949032166657926.png",
+          "path": "target-arrow4949032166657926.png",
+          "type": "Image"
+        },
+        {
           "name": "trophy9509742336426757.png",
           "path": "trophy9509742336426757.png",
           "type": "Image"
@@ -328,8 +338,18 @@
           "type": "Image"
         },
         {
+          "name": "wallet029087973825840385.png",
+          "path": "wallet029087973825840385.png",
+          "type": "Image"
+        },
+        {
           "name": "wide-hero-image-light8626649385260462.png",
           "path": "wide-hero-image-light8626649385260462.png",
+          "type": "Image"
+        },
+        {
+          "name": "world7128027714174032.png",
+          "path": "world7128027714174032.png",
           "type": "Image"
         }
       ]

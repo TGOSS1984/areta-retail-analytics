@@ -40,7 +40,18 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
 
-	measure 'Avg Weekly Sales (Units)' = DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
+	/// Gross units per week actually traded. It used to divide by DISTINCTCOUNT of
+	/// business_week_number, which broke twice: dim_date runs to the end of the
+	/// current business year, so a part-year counted future weeks (2026 YTD divided by
+	/// 52 instead of 31, and cover read 21.8 weeks instead of 13.0); and week numbers
+	/// repeat every year, so two years selected counted 52 weeks, not 104. Counting
+	/// year-and-week pairs that have sales fixes both. A part-traded current week
+	/// still counts as a whole week, which understates the rate slightly until it closes.
+	measure 'Avg Weekly Sales (Units)' =
+			VAR WeeksTraded =
+			    COUNTROWS ( SUMMARIZE ( fact_sales, dim_date[business_year], dim_date[business_week_number] ) )
+			RETURN
+			    DIVIDE ( [Gross Units Sold], WeeksTraded )
 		formatString: #,0.00
 		displayFolder: Stock
 		lineageTag: 549e2729-ead2-44c3-b426-2da47fcccdfa
@@ -49,6 +60,35 @@ table fact_stock_snapshot
 		formatString: #,0.00
 		displayFolder: Stock
 		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
+
+	/// Weekly rate of sale over the four weeks up to the closing stock date, ignoring
+	/// whatever window the date filter selects. Product, store and market filters still
+	/// apply.
+	measure 'Avg Weekly Sales (Last 4 Weeks)' =
+			VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
+			RETURN
+			    DIVIDE (
+			        CALCULATE (
+			            [Gross Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[full_date] > LastSnapshot - 28,
+			            dim_date[full_date] <= LastSnapshot
+			        ),
+			        4
+			    )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 1b1f233e-1ebf-4fab-ab35-5c848b47e301
+
+	/// Closing stock against the last four weeks' rate of sale, which is how a
+	/// merchandiser quotes cover. Weeks of Cover divides by the average over the whole
+	/// selected window instead, so at year level it blends peak and quiet weeks
+	/// together. For BY25 the two give 13.0 weeks (whole-year rate) and 15.3 weeks
+	/// (February's slower rate against the same closing stock).
+	measure 'Weeks of Cover (Last 4 Weeks)' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Last 4 Weeks)] )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 65d14e3c-4f85-4e5f-8897-b13a4ba4737f
 
 	measure 'Stock Units LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
@@ -279,8 +319,15 @@ table fact_stock_snapshot
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The product columns below are hidden on purpose. They only exist so the stock
+	/// measures can TREATAS dim_product's style and colour onto this table. Nothing
+	/// in fact_sales follows them, so a visual with product_group from THIS table
+	/// divided company-wide sales into each group's stock, and Weeks of Cover came
+	/// out at 0-1 weeks per group (the bars summed to the 13-week total). Product
+	/// fields on stock visuals come from dim_product.
 	column style_code
 		dataType: string
+		isHidden
 		lineageTag: 3ef9785b-187a-4cf6-b08e-9c91301e8dfb
 		summarizeBy: none
 		sourceColumn: style_code
@@ -289,6 +336,7 @@ table fact_stock_snapshot
 
 	column colour
 		dataType: string
+		isHidden
 		lineageTag: 9b7acdc2-3520-4bdf-a8e6-a60c4c451f23
 		summarizeBy: none
 		sourceColumn: colour
@@ -297,6 +345,7 @@ table fact_stock_snapshot
 
 	column brand_code
 		dataType: string
+		isHidden
 		lineageTag: 8da69d75-40bd-4fc5-8c65-1a0be7d2a409
 		summarizeBy: none
 		sourceColumn: brand_code
@@ -305,6 +354,7 @@ table fact_stock_snapshot
 
 	column division
 		dataType: string
+		isHidden
 		lineageTag: 93270cf5-deba-4579-9397-685af11beb07
 		summarizeBy: none
 		sourceColumn: division
@@ -313,6 +363,7 @@ table fact_stock_snapshot
 
 	column major_product_group
 		dataType: string
+		isHidden
 		lineageTag: c1e95015-f675-4169-997c-d57de5e42f00
 		summarizeBy: none
 		sourceColumn: major_product_group
@@ -321,6 +372,7 @@ table fact_stock_snapshot
 
 	column product_group
 		dataType: string
+		isHidden
 		lineageTag: 2f1499ad-a9f1-4d53-9702-1254731076fc
 		summarizeBy: none
 		sourceColumn: product_group

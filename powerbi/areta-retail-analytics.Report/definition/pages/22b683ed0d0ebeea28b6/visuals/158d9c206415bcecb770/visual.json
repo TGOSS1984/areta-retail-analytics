@@ -115,5 +115,65 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f45e370c865086c307f7",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "channel"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "195801c2c7285f2d325e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "market_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "eb112bfe52100223ff6c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a5bb054e3d6d3d9f6f0c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales LY"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

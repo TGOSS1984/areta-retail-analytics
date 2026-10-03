@@ -219,5 +219,132 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "bfd3c2aa96a5b532cdd0",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_date"
+                  }
+                },
+                "Hierarchy": "Business Calendar"
+              }
+            },
+            "Level": "Business Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d424f72d556eadfba207",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_date"
+                  }
+                },
+                "Hierarchy": "Business Calendar"
+              }
+            },
+            "Level": "business_quarter"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fe96d76db37872f2c448",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_date"
+                  }
+                },
+                "Hierarchy": "Business Calendar"
+              }
+            },
+            "Level": "Business Period"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7c61821ea02616f370a3",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_date"
+                  }
+                },
+                "Hierarchy": "Business Calendar"
+              }
+            },
+            "Level": "Business Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "da1c93236d5e12fc5d9b",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_date"
+                  }
+                },
+                "Hierarchy": "Business Calendar"
+              }
+            },
+            "Level": "day_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "ad29617298e3ebb88bcf",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a6dbe08ac0959609ead7",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Margin %"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

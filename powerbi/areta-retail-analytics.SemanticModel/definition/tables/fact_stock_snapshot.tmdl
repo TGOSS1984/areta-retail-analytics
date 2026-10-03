@@ -61,35 +61,6 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
 
-	/// Weekly rate of sale over the four weeks up to the closing stock date, ignoring
-	/// whatever window the date filter selects. Product, store and market filters still
-	/// apply.
-	measure 'Avg Weekly Sales (Last 4 Weeks)' =
-			VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
-			RETURN
-			    DIVIDE (
-			        CALCULATE (
-			            [Gross Units Sold],
-			            REMOVEFILTERS ( dim_date ),
-			            dim_date[full_date] > LastSnapshot - 28,
-			            dim_date[full_date] <= LastSnapshot
-			        ),
-			        4
-			    )
-		formatString: #,0.00
-		displayFolder: Stock
-		lineageTag: 1b1f233e-1ebf-4fab-ab35-5c848b47e301
-
-	/// Closing stock against the last four weeks' rate of sale, which is how a
-	/// merchandiser quotes cover. Weeks of Cover divides by the average over the whole
-	/// selected window instead, so at year level it blends peak and quiet weeks
-	/// together. For BY25 the two give 13.0 weeks (whole-year rate) and 15.3 weeks
-	/// (February's slower rate against the same closing stock).
-	measure 'Weeks of Cover (Last 4 Weeks)' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Last 4 Weeks)] )
-		formatString: #,0.00
-		displayFolder: Stock
-		lineageTag: 65d14e3c-4f85-4e5f-8897-b13a4ba4737f
-
 	measure 'Stock Units LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
@@ -297,6 +268,35 @@ table fact_stock_snapshot
 	measure 'Weeks of Cover YoY Combo' = [Weeks of Cover Trend Arrow] & " " & FORMAT ( ABS ( [Weeks of Cover YoY (Weeks)] ), "#,0.00" ) & " (" & FORMAT ( [Weeks of Cover YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Stock
 		lineageTag: 3d30deba-a777-43aa-ae48-a0e33e64e59c
+
+	/// Weekly rate of sale over the four weeks up to the closing stock date, ignoring
+	/// whatever window the date filter selects. Product, store and market filters still
+	/// apply.
+	measure 'Avg Weekly Sales (Last 4 Weeks)' =
+			VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
+			RETURN
+			    DIVIDE (
+			        CALCULATE (
+			            [Gross Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[full_date] > LastSnapshot - 28,
+			            dim_date[full_date] <= LastSnapshot
+			        ),
+			        4
+			    )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 1b1f233e-1ebf-4fab-ab35-5c848b47e301
+
+	/// Closing stock against the last four weeks' rate of sale, which is how a
+	/// merchandiser quotes cover. Weeks of Cover divides by the average over the whole
+	/// selected window instead, so at year level it blends peak and quiet weeks
+	/// together. For BY25 the two give 13.0 weeks (whole-year rate) and 15.3 weeks
+	/// (February's slower rate against the same closing stock).
+	measure 'Weeks of Cover (Last 4 Weeks)' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Last 4 Weeks)] )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 65d14e3c-4f85-4e5f-8897-b13a4ba4737f
 
 	column week_ending_date
 		dataType: dateTime

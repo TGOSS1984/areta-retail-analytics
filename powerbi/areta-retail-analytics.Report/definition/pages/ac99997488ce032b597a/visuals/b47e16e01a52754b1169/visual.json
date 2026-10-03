@@ -224,6 +224,34 @@
             "id": "field-50885494-abb3-0543-3892-2608d76b5ef5",
             "order": 1
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Top Style Share %"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Top Style",
+            "id": "field-35e935b9-a103-4e26-38e5-b743b588d22a",
+            "order": 1
+          }
         }
       ]
     },
@@ -381,6 +409,20 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "39a644300f2a59f40c5b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Top Style"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

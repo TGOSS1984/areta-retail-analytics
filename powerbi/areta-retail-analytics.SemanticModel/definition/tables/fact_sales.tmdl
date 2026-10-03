@@ -567,6 +567,150 @@ table fact_sales
 		displayFolder: KPI Trend Indicators
 		lineageTag: a588022c-54a1-4c68-b373-a7a77522c983
 
+	/// Net Sales per net unit, so it's the price actually realised per unit kept,
+	/// after discounts and returns. It falls when promotions deepen or the mix
+	/// shifts to cheaper lines. On the VAT View whitelist and £-formatted, so it
+	/// follows both the VAT toggle and the currency group.
+	measure 'Average Selling Price (GBP)' = DIVIDE ( [Net Sales (GBP)], [Net Units Sold] )
+		formatString: "£"#,0.00
+		displayFolder: Sales & Margin
+		lineageTag: a45cc817-db7f-4ca1-971f-7e1c6eb68343
+
+	/// Built from Net Sales LY and Net Units Sold LY rather than its own TREATAS
+	/// block, so it inherits their weekday-aligned LY logic.
+	measure 'Average Selling Price LY' = DIVIDE ( [Net Sales LY], [Net Units Sold LY] )
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: eb856408-3dec-4a1e-9679-330291e32598
+
+	measure 'Average Selling Price YoY (GBP)' = [Average Selling Price (GBP)] - [Average Selling Price LY]
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 6b7ca204-f142-4711-a373-c64838ae2be1
+
+	measure 'Average Selling Price YoY %' = DIVIDE ( [Average Selling Price (GBP)] - [Average Selling Price LY], [Average Selling Price LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 12731c86-1a21-42ba-a8e8-dafb5a8bbd04
+
+	measure 'Average Selling Price Trend Arrow' = IF ( [Average Selling Price YoY %] > 0, "▲", IF ( [Average Selling Price YoY %] < 0, "▼", "▬" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: 195b4610-5859-4993-b3e0-a8933d570597
+
+	measure 'Average Selling Price Trend Colour' = IF ( [Average Selling Price YoY %] > 0, "#2E7D32", IF ( [Average Selling Price YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: f427bbdd-032b-4575-958d-76ca31f1ab35
+
+	/// Pence, not whole pounds like the other money combos: a price around £30
+	/// moving by 40p would otherwise read as "£0".
+	measure 'Average Selling Price YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Average Selling Price Trend Arrow] & " £" & FORMAT ( ABS ( [Average Selling Price YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Average Selling Price YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: KPI Trend Indicators
+		lineageTag: a80dc7aa-30a7-4158-8c36-ff2a3b673bd6
+
+	/// Net Sales per transaction across every channel. Average Transaction Value
+	/// (fact_footfall) divides by store transactions only, so it's right on the Retail
+	/// page (filtered to stores) but overstated anywhere Online is included: about £98
+	/// against a true £81 for BY25. This one divides by Distinct Invoices from
+	/// fact_sales, which counts online orders too. On the VAT View whitelist.
+	measure 'Average Order Value (GBP)' = DIVIDE ( [Net Sales (GBP)], [Distinct Invoices (from Sales)] )
+		formatString: "£"#,0.00
+		displayFolder: Sales & Margin
+		lineageTag: 4e495623-6dfa-46f0-9c4d-f58f87b7463c
+
+	/// Built from Net Sales LY and Distinct Invoices LY, so it inherits their
+	/// weekday-aligned LY logic.
+	measure 'Average Order Value LY' = DIVIDE ( [Net Sales LY], [Distinct Invoices LY] )
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: e7fc4c0d-60a4-41a4-a221-5773bef6589a
+
+	measure 'Average Order Value YoY (GBP)' = [Average Order Value (GBP)] - [Average Order Value LY]
+		formatString: "£"#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 218f982b-924f-4d6c-b0ab-3bfc2fb652ac
+
+	measure 'Average Order Value YoY %' = DIVIDE ( [Average Order Value (GBP)] - [Average Order Value LY], [Average Order Value LY] )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 71de2d15-284d-4ea4-ba66-662901139106
+
+	measure 'Average Order Value Trend Arrow' = IF ( [Average Order Value YoY %] > 0, "▲", IF ( [Average Order Value YoY %] < 0, "▼", "▬" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: a096474e-06e7-4019-a2ec-6a8388cc689a
+
+	measure 'Average Order Value Trend Colour' = IF ( [Average Order Value YoY %] > 0, "#2E7D32", IF ( [Average Order Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: b9d2ab65-55cb-4abe-9f66-fe72ef1f6dc9
+
+	/// Pence, like Average Selling Price, since an £81 order moving by 60p would
+	/// otherwise read as "£1".
+	measure 'Average Order Value YoY Combo' =
+			VAR VatFactor =
+				IF (
+				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+				    1
+				)
+			VAR CcyFactor = [FX Rate (Selected)]
+			VAR Factor = VatFactor * CcyFactor
+			RETURN
+			    [Average Order Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Order Value YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Average Order Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
+		displayFolder: KPI Trend Indicators
+		lineageTag: 121b3421-bf5d-4e1e-a962-1cd2263fe9eb
+
+	/// Online's share of Net Sales. The numerator always means Online and the
+	/// denominator always means every channel, whatever the channel slicer says, so
+	/// the card keeps its meaning on a page with a channel slicer. Market, date and
+	/// product filters still apply, so it works as "online share of Footwear in
+	/// Germany". Ex-VAT by design, like the other mix measures.
+	measure 'Online Share %' =
+			DIVIDE (
+			    CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Online" ),
+			    CALCULATE ( [Net Sales (GBP)], REMOVEFILTERS ( dim_store[channel] ) )
+			)
+		formatString: 0.0%
+		displayFolder: Sales & Margin
+		lineageTag: cd9ae4ad-4a77-49d4-9b1d-26acfab91c08
+
+	measure 'Online Share LY' =
+			DIVIDE (
+			    CALCULATE ( [Net Sales LY], dim_store[channel] = "Online" ),
+			    CALCULATE ( [Net Sales LY], REMOVEFILTERS ( dim_store[channel] ) )
+			)
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 2e7619a0-e0f5-4499-ac1b-c1d40615ec24
+
+	measure 'Online Share YoY (pp)' = [Online Share %] - [Online Share LY]
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: bb0eae67-44eb-4b70-acc7-6e514672510a
+
+	measure 'Online Share Trend Arrow' = IF ( [Online Share YoY (pp)] > 0, "▲", IF ( [Online Share YoY (pp)] < 0, "▼", "▬" ) )
+		displayFolder: KPI Trend Indicators
+		lineageTag: 1295114f-8bbc-4f5e-bd39-a7e81afc5999
+
+	/// Neutral grey whichever way it moves. A rising online share isn't good or bad
+	/// in itself (it can mean stores are struggling as easily as online is thriving),
+	/// so I didn't want the card to cheer for it.
+	measure 'Online Share Trend Colour' = "#8D9AA1"
+		displayFolder: KPI Trend Indicators
+		lineageTag: cb41b4ab-11f1-49a9-af4f-3b1e212d417d
+
+	measure 'Online Share YoY Combo' = [Online Share Trend Arrow] & " " & FORMAT ( [Online Share YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
+		displayFolder: KPI Trend Indicators
+		lineageTag: 09d8f29f-b335-4164-8023-fa80662f20b1
+
 	measure 'Multi-buy Sales LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
@@ -853,6 +997,59 @@ table fact_sales
 		displayFolder: Pareto Analysis
 		lineageTag: fe97a040-fa71-4ec7-96ee-a37fe7c3bee8
 
+	/// The top style's own Net Sales, for a card's reference label. Like Top Style it
+	/// finds the winner itself, so the card needs no visual filter. Filtering the card
+	/// to the top style makes Net Sales and Top Style Share % describe only that
+	/// filtered slice. The £ format means the currency group converts it, and it's on
+	/// the VAT View whitelist.
+	measure 'Top Style Net Sales (GBP)' =
+			VAR StyleSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_code] ), "@Sales", [Net Sales (GBP)] )
+			RETURN
+			    MAXX ( StyleSales, [@Sales] )
+		formatString: "£"#,0.00
+		displayFolder: Pareto Analysis
+		lineageTag: db766ce9-6653-4b84-9f17-ad32afd68e1f
+
+	/// Top Style one level down: ranks on style_colour_code, then shows name and
+	/// colour, which is what reads on a card. The code is left off for room. If two
+	/// brands ever shared a name and colour the card would read the same for both,
+	/// but the ranking itself can't merge them, because it runs on the code.
+	measure 'Top Style-Colour' =
+			VAR StyleColourSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
+			VAR TopCode =
+			    MAXX ( TOPN ( 1, StyleColourSales, [@Sales], DESC ), dim_product[style_colour_code] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( [Net Sales (GBP)] ),
+			        LOOKUPVALUE ( dim_product[style_name], dim_product[style_colour_code], TopCode )
+			            & " · "
+			            & LOOKUPVALUE ( dim_product[colour], dim_product[style_colour_code], TopCode )
+			    )
+		displayFolder: Pareto Analysis
+		lineageTag: 13e667ba-18c3-4385-ab6d-f01873a7c161
+
+	/// The top style-colour's share of Net Sales in the same context, for the reference label.
+	measure 'Top Style-Colour Share %' =
+			VAR StyleColourSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
+			RETURN
+			    DIVIDE ( MAXX ( StyleColourSales, [@Sales] ), [Net Sales (GBP)] )
+		formatString: 0.0%
+		displayFolder: Pareto Analysis
+		lineageTag: 9c0d3601-cd45-4cd5-8308-1f68e85b6163
+
+	/// Same as Top Style Net Sales, for the style-colour card.
+	measure 'Top Style-Colour Net Sales (GBP)' =
+			VAR StyleColourSales =
+			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
+			RETURN
+			    MAXX ( StyleColourSales, [@Sales] )
+		formatString: "£"#,0.00
+		displayFolder: Pareto Analysis
+		lineageTag: d1fbeb23-344f-4ad2-8c48-32c2c5936f5c
+
 	/// Styles with at least one sale line in the current context. Returns are left out, so
 	/// a style that only had a refund in the period doesn't count as selling. The fact table
 	/// is only filtered one way to dim_product, so a plain DISTINCTCOUNT on the dimension
@@ -1004,7 +1201,7 @@ table fact_sales
 	/// styles and a long tail (cut the tail), a high figure means sales are spread thinly
 	/// across everything (the group itself is weak). It works on whatever styles are in
 	/// the current row, so on a product group row it's that group's styles only.
-	/// 
+	///
 	/// Styles only count if their Net Sales is above zero; a style that's net negative
 	/// from returns can't contribute to 80% of anything. Cumulative sales use the same
 	/// "every style selling at least as much as this one" trick as Style Pareto
@@ -1031,179 +1228,6 @@ table fact_sales
 		formatString: 0.0%
 		displayFolder: Range Analysis
 		lineageTag: 611447f2-8057-4197-ab8a-b7a7cf04adde
-
-	/// Net Sales per net unit, so it's the price actually realised per unit kept,
-	/// after discounts and returns. It falls when promotions deepen or the mix
-	/// shifts to cheaper lines. On the VAT View whitelist and £-formatted, so it
-	/// follows both the VAT toggle and the currency group.
-	measure 'Average Selling Price (GBP)' = DIVIDE ( [Net Sales (GBP)], [Net Units Sold] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: a45cc817-db7f-4ca1-971f-7e1c6eb68343
-
-	/// Built from Net Sales LY and Net Units Sold LY rather than its own TREATAS
-	/// block, so it inherits their weekday-aligned LY logic.
-	measure 'Average Selling Price LY' = DIVIDE ( [Net Sales LY], [Net Units Sold LY] )
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: eb856408-3dec-4a1e-9679-330291e32598
-
-	measure 'Average Selling Price YoY (GBP)' = [Average Selling Price (GBP)] - [Average Selling Price LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 6b7ca204-f142-4711-a373-c64838ae2be1
-
-	measure 'Average Selling Price YoY %' = DIVIDE ( [Average Selling Price (GBP)] - [Average Selling Price LY], [Average Selling Price LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 12731c86-1a21-42ba-a8e8-dafb5a8bbd04
-
-	measure 'Average Selling Price Trend Arrow' = IF ( [Average Selling Price YoY %] > 0, "▲", IF ( [Average Selling Price YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 195b4610-5859-4993-b3e0-a8933d570597
-
-	measure 'Average Selling Price Trend Colour' = IF ( [Average Selling Price YoY %] > 0, "#2E7D32", IF ( [Average Selling Price YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: f427bbdd-032b-4575-958d-76ca31f1ab35
-
-	/// Pence, not whole pounds like the other money combos: a price around £30
-	/// moving by 40p would otherwise read as "£0".
-	measure 'Average Selling Price YoY Combo' =
-			VAR VatFactor =
-				IF (
-				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
-				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
-				    1
-				)
-			VAR CcyFactor = [FX Rate (Selected)]
-			VAR Factor = VatFactor * CcyFactor
-			RETURN
-			    [Average Selling Price Trend Arrow] & " £" & FORMAT ( ABS ( [Average Selling Price YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Average Selling Price YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: a80dc7aa-30a7-4158-8c36-ff2a3b673bd6
-
-	/// Top Style one level down: ranks on style_colour_code, then shows name and
-	/// colour, which is what reads on a card. The code is left off for room. If two
-	/// brands ever shared a name and colour the card would read the same for both,
-	/// but the ranking itself can't merge them, because it runs on the code.
-	measure 'Top Style-Colour' =
-			VAR StyleColourSales =
-			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
-			VAR TopCode =
-			    MAXX ( TOPN ( 1, StyleColourSales, [@Sales], DESC ), dim_product[style_colour_code] )
-			RETURN
-			    IF (
-			        NOT ISBLANK ( [Net Sales (GBP)] ),
-			        LOOKUPVALUE ( dim_product[style_name], dim_product[style_colour_code], TopCode )
-			            & " · "
-			            & LOOKUPVALUE ( dim_product[colour], dim_product[style_colour_code], TopCode )
-			    )
-		displayFolder: Pareto Analysis
-		lineageTag: 13e667ba-18c3-4385-ab6d-f01873a7c161
-
-	/// The top style-colour's share of Net Sales in the same context, for the reference label.
-	measure 'Top Style-Colour Share %' =
-			VAR StyleColourSales =
-			    ADDCOLUMNS ( VALUES ( dim_product[style_colour_code] ), "@Sales", [Net Sales (GBP)] )
-			RETURN
-			    DIVIDE ( MAXX ( StyleColourSales, [@Sales] ), [Net Sales (GBP)] )
-		formatString: 0.0%
-		displayFolder: Pareto Analysis
-		lineageTag: 9c0d3601-cd45-4cd5-8308-1f68e85b6163
-
-	/// Net Sales per transaction across every channel. Average Transaction Value
-	/// (fact_footfall) divides by store transactions only, so it's right on the Retail
-	/// page (filtered to stores) but overstated anywhere Online is included: about £98
-	/// against a true £81 for BY25. This one divides by Distinct Invoices from
-	/// fact_sales, which counts online orders too. On the VAT View whitelist.
-	measure 'Average Order Value (GBP)' = DIVIDE ( [Net Sales (GBP)], [Distinct Invoices (from Sales)] )
-		formatString: "£"#,0.00
-		displayFolder: Sales & Margin
-		lineageTag: 4e495623-6dfa-46f0-9c4d-f58f87b7463c
-
-	/// Built from Net Sales LY and Distinct Invoices LY, so it inherits their
-	/// weekday-aligned LY logic.
-	measure 'Average Order Value LY' = DIVIDE ( [Net Sales LY], [Distinct Invoices LY] )
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: e7fc4c0d-60a4-41a4-a221-5773bef6589a
-
-	measure 'Average Order Value YoY (GBP)' = [Average Order Value (GBP)] - [Average Order Value LY]
-		formatString: "£"#,0.00
-		displayFolder: Time Intelligence
-		lineageTag: 218f982b-924f-4d6c-b0ab-3bfc2fb652ac
-
-	measure 'Average Order Value YoY %' = DIVIDE ( [Average Order Value (GBP)] - [Average Order Value LY], [Average Order Value LY] )
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 71de2d15-284d-4ea4-ba66-662901139106
-
-	measure 'Average Order Value Trend Arrow' = IF ( [Average Order Value YoY %] > 0, "▲", IF ( [Average Order Value YoY %] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: a096474e-06e7-4019-a2ec-6a8388cc689a
-
-	measure 'Average Order Value Trend Colour' = IF ( [Average Order Value YoY %] > 0, "#2E7D32", IF ( [Average Order Value YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: b9d2ab65-55cb-4abe-9f66-fe72ef1f6dc9
-
-	/// Pence, like Average Selling Price, since an £81 order moving by 60p would
-	/// otherwise read as "£1".
-	measure 'Average Order Value YoY Combo' =
-			VAR VatFactor =
-				IF (
-				    SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
-				    DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
-				    1
-				)
-			VAR CcyFactor = [FX Rate (Selected)]
-			VAR Factor = VatFactor * CcyFactor
-			RETURN
-			    [Average Order Value Trend Arrow] & " £" & FORMAT ( ABS ( [Average Order Value YoY (GBP)] * Factor ), "#,0.00" ) & " (" & FORMAT ( [Average Order Value YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
-		displayFolder: KPI Trend Indicators
-		lineageTag: 121b3421-bf5d-4e1e-a962-1cd2263fe9eb
-
-	/// Online's share of Net Sales. The numerator always means Online and the
-	/// denominator always means every channel, whatever the channel slicer says, so
-	/// the card keeps its meaning on a page with a channel slicer. Market, date and
-	/// product filters still apply, so it works as "online share of Footwear in
-	/// Germany". Ex-VAT by design, like the other mix measures.
-	measure 'Online Share %' =
-			DIVIDE (
-			    CALCULATE ( [Net Sales (GBP)], dim_store[channel] = "Online" ),
-			    CALCULATE ( [Net Sales (GBP)], REMOVEFILTERS ( dim_store[channel] ) )
-			)
-		formatString: 0.0%
-		displayFolder: Sales & Margin
-		lineageTag: cd9ae4ad-4a77-49d4-9b1d-26acfab91c08
-
-	measure 'Online Share LY' =
-			DIVIDE (
-			    CALCULATE ( [Net Sales LY], dim_store[channel] = "Online" ),
-			    CALCULATE ( [Net Sales LY], REMOVEFILTERS ( dim_store[channel] ) )
-			)
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: 2e7619a0-e0f5-4499-ac1b-c1d40615ec24
-
-	measure 'Online Share YoY (pp)' = [Online Share %] - [Online Share LY]
-		formatString: 0.0%
-		displayFolder: Time Intelligence
-		lineageTag: bb0eae67-44eb-4b70-acc7-6e514672510a
-
-	measure 'Online Share Trend Arrow' = IF ( [Online Share YoY (pp)] > 0, "▲", IF ( [Online Share YoY (pp)] < 0, "▼", "▬" ) )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 1295114f-8bbc-4f5e-bd39-a7e81afc5999
-
-	/// Neutral grey whichever way it moves. A rising online share isn't good or bad
-	/// in itself (it can mean stores are struggling as easily as online is thriving),
-	/// so I didn't want the card to cheer for it.
-	measure 'Online Share Trend Colour' = "#8D9AA1"
-		displayFolder: KPI Trend Indicators
-		lineageTag: cb41b4ab-11f1-49a9-af4f-3b1e212d417d
-
-	measure 'Online Share YoY Combo' = [Online Share Trend Arrow] & " " & FORMAT ( [Online Share YoY (pp)] * 100, "+0.0pp;-0.0pp;0.0pp" )
-		displayFolder: KPI Trend Indicators
-		lineageTag: 09d8f29f-b335-4164-8023-fa80662f20b1
 
 	column date
 		dataType: dateTime

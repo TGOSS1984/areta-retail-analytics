@@ -11,6 +11,46 @@
   },
   "visual": {
     "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Return Rate %"
+                }
+              },
+              "queryRef": "fact_sales.Return Rate %",
+              "nativeQueryRef": "Return Rate %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "Return Rate %"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
     "objects": {
       "layout": [
         {
@@ -140,6 +180,84 @@
             "id": "default"
           }
         }
+      ],
+      "referenceLabel": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Return Rate YoY Combo"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Return Rate %",
+            "id": "field-cacdb963-701a-a967-2459-77f5ea981ba7",
+            "order": 0
+          }
+        }
+      ],
+      "referenceLabelTitle": [
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Return Rate %",
+            "id": "field-cacdb963-701a-a967-2459-77f5ea981ba7"
+          }
+        }
+      ],
+      "referenceLabelValue": [
+        {
+          "properties": {
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Return Rate %",
+            "id": "field-cacdb963-701a-a967-2459-77f5ea981ba7"
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -177,5 +295,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f283134bec0be070d06b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Return Rate %"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

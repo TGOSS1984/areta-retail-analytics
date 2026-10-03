@@ -39,14 +39,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "fact_stock_snapshot"
+                      "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Stock Value (Retail, GBP)"
+                  "Property": "Style-Colours Sold"
                 }
               },
-              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
-              "nativeQueryRef": "Stock Value (Retail, GBP)"
+              "queryRef": "fact_sales.Style-Colours Sold",
+              "nativeQueryRef": "Style-Colours Sold"
             }
           ]
         }
@@ -58,10 +58,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "fact_stock_snapshot"
+                    "Entity": "fact_sales"
                   }
                 },
-                "Property": "Stock Value (Retail, GBP)"
+                "Property": "Style-Colours Sold"
               }
             },
             "direction": "Descending"
@@ -226,5 +226,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "484ea303f8731a2500e7",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_week_number"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "4bc5d72256bc04a8f0b1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Style-Colours Sold"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

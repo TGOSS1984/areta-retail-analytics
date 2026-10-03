@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'building-warehouse.png'"
+                      "Value": "'hanger.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "building-warehouse5475276214362552.png"
+                      "ItemName": "hanger25827095117696575.png"
                     }
                   }
                 },

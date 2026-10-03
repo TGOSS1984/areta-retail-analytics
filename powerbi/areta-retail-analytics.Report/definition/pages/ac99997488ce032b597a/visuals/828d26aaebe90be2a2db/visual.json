@@ -20,7 +20,7 @@
                 "name": {
                   "expr": {
                     "Literal": {
-                      "Value": "'moneybag.png'"
+                      "Value": "'rotate.png'"
                     }
                   }
                 },
@@ -29,7 +29,7 @@
                     "ResourcePackageItem": {
                       "PackageName": "RegisteredResources",
                       "PackageType": 1,
-                      "ItemName": "moneybag4101909272022156.png"
+                      "ItemName": "rotate027271488100323427.png"
                     }
                   }
                 },

@@ -23,11 +23,11 @@
                       "Entity": "fact_stock_snapshot"
                     }
                   },
-                  "Property": "Weeks of Cover"
+                  "Property": "Weeks of Cover (Last 4 Weeks)"
                 }
               },
-              "queryRef": "fact_stock_snapshot.Weeks of Cover",
-              "nativeQueryRef": "Weeks of Cover"
+              "queryRef": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+              "nativeQueryRef": "Weeks of Cover (Last 4 Weeks)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "fact_stock_snapshot"
                   }
                 },
-                "Property": "Weeks of Cover"
+                "Property": "Weeks of Cover (Last 4 Weeks)"
               }
             },
             "direction": "Descending"
@@ -192,7 +192,7 @@
                       "Entity": "fact_stock_snapshot"
                     }
                   },
-                  "Property": "Weeks of Cover YoY Combo"
+                  "Property": "Weeks of Cover"
                 }
               }
             }
@@ -205,9 +205,37 @@
                 }
               }
             ],
-            "metadata": "fact_stock_snapshot.Weeks of Cover",
-            "id": "field-a19ad8dd-a493-1fbf-93d2-e490784913e2",
+            "metadata": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+            "id": "field-4602c135-abc5-28f5-6d01-ec1c6494461a",
             "order": 0
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Weeks of Cover LY"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+            "id": "field-764aa673-58d9-1116-3531-f5aa5f4b56aa",
+            "order": 1
           }
         }
       ],
@@ -224,18 +252,40 @@
             "titleText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Vs PY'"
+                  "Value": "'Wks Cover (Spot)'"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "fact_stock_snapshot.Weeks of Cover",
-            "id": "field-a19ad8dd-a493-1fbf-93d2-e490784913e2"
+            "metadata": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+            "id": "field-4602c135-abc5-28f5-6d01-ec1c6494461a"
           }
         }
       ],
       "referenceLabelValue": [
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+            "id": "field-4602c135-abc5-28f5-6d01-ec1c6494461a"
+          }
+        },
         {
           "properties": {
             "valueBold": {
@@ -244,18 +294,11 @@
                   "Value": "true"
                 }
               }
-            },
-            "valueItalic": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
             }
           },
           "selector": {
-            "metadata": "fact_stock_snapshot.Weeks of Cover",
-            "id": "field-a19ad8dd-a493-1fbf-93d2-e490784913e2"
+            "metadata": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+            "id": "field-764aa673-58d9-1116-3531-f5aa5f4b56aa"
           }
         }
       ]
@@ -295,5 +338,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "bd02415974764fd87663",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Weeks of Cover (Last 4 Weeks)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

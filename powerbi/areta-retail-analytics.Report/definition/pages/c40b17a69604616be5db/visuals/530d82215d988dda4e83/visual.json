@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "530d82215d988dda4e83",
   "position": {
-    "x": 1140.26825633383,
-    "y": 547.95827123695972,
+    "x": 1177.8429680759275,
+    "y": 548.334771354616,
     "z": 31000,
     "height": 503.60655737704917,
-    "width": 761.13263785394929,
+    "width": 723.93442622950818,
     "tabOrder": 31000
   },
   "visual": {
@@ -133,8 +133,81 @@
             }
           }
         }
+      ],
+      "seriesLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "6eb6d2ea77e502b87b5e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "6bee5ee2e4b18a39bbc3",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Product Group Pareto Cumulative %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a9f3dec23ca832d4848e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Product Group Pareto Rank"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8ad75f57200f5ab97b3b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

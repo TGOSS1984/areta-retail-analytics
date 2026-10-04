@@ -1,0 +1,139 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "2638b40d883838c6b15e",
+  "position": {
+    "x": 1183.2558139534883,
+    "y": 689.61240310077517,
+    "z": 44001,
+    "height": 382.015503875969,
+    "width": 714.41860465116281,
+    "tabOrder": 44001
+  },
+  "visual": {
+    "visualType": "lineClusteredColumnComboChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "major_product_group"
+                }
+              },
+              "queryRef": "dim_product.major_product_group",
+              "nativeQueryRef": "major_product_group",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock Value (Retail, GBP)"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock Value (Retail, GBP)",
+              "nativeQueryRef": "Stock Value (Retail, GBP)"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Weeks of Cover (Last 4 Weeks)"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Weeks of Cover (Last 4 Weeks)",
+              "nativeQueryRef": "Weeks of Cover (Last 4 Weeks)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_stock_snapshot"
+                  }
+                },
+                "Property": "Stock Value (Retail, GBP)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e051140b144d94bb8ff2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Stock Value (Retail, GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e10654433313daefeb5e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "major_product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "64609848ab99ff907ed0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Weeks of Cover (Last 4 Weeks)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

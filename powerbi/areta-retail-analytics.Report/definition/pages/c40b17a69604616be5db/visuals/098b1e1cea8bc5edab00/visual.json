@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "098b1e1cea8bc5edab00",
   "position": {
-    "x": 231.56695156695156,
-    "y": 264.38746438746438,
+    "x": 231.92407247627264,
+    "y": 265.0560828300259,
     "z": 32000,
-    "height": 302.67806267806264,
-    "width": 548.83190883190878,
+    "height": 301.50129421915443,
+    "width": 549.99137187230372,
     "tabOrder": 32000
   },
   "visual": {
@@ -382,5 +382,105 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2bfcecf64acaa23cb091",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "major_product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "2dcfab2905495a35e974",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d93db3c0a3a6e0f1f852",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ed7c339cadf062b56c3e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales YoY Combo"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "60ff888947d0dd1e4c58",
+        "field": {
+          "Arithmetic": {
+            "Left": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_sales"
+                  }
+                },
+                "Property": "Net Sales (GBP)"
+              }
+            },
+            "Right": {
+              "ScopedEval": {
+                "Expression": {
+                  "Measure": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "fact_sales"
+                      }
+                    },
+                    "Property": "Net Sales (GBP)"
+                  }
+                },
+                "Scope": [
+                  {
+                    "RoleRef": {
+                      "Role": "Columns"
+                    }
+                  }
+                ]
+              }
+            },
+            "Operator": 3
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

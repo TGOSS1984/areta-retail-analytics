@@ -56,6 +56,42 @@
               },
               "queryRef": "fact_sales.Net Sales YoY Combo",
               "nativeQueryRef": "Net Sales YoY Combo"
+            },
+            {
+              "field": {
+                "SparklineData": {
+                  "Measure": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_sales"
+                        }
+                      },
+                      "Property": "Net Sales (GBP)"
+                    }
+                  },
+                  "Groupings": [
+                    {
+                      "HierarchyLevel": {
+                        "Expression": {
+                          "Hierarchy": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Entity": "dim_date"
+                              }
+                            },
+                            "Hierarchy": "Business Calendar"
+                          }
+                        },
+                        "Level": "Business Week"
+                      }
+                    }
+                  ],
+                  "ApplyCalculationGroupTo": "Point"
+                }
+              },
+              "queryRef": "SparklineData(fact_sales.Net Sales (GBP)_[dim_date.Business Calendar.Business Week])",
+              "nativeQueryRef": "Net Sales (GBP) by Business Calendar Business Week"
             }
           ]
         }
@@ -190,6 +226,20 @@
           "selector": {
             "metadata": "fact_sales.Net Sales YoY Combo"
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "135.21692746739194D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "SparklineData(fact_sales.Net Sales (GBP)_[dim_date.Business Calendar.Business Week])"
+          }
         }
       ],
       "columnHeaders": [
@@ -214,5 +264,51 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "bc7d35bbad68238ecf46",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "product_group"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "a50f36ce0c20159aeba3",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2f9e5ed3d71076573702",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales YoY Combo"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

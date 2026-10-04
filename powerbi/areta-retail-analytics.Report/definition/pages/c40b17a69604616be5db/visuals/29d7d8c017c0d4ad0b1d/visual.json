@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "29d7d8c017c0d4ad0b1d",
   "position": {
-    "x": 797,
-    "y": 585,
+    "x": 796.82484900776535,
+    "y": 266.71268334771355,
     "z": 47000,
-    "height": 465,
-    "width": 326,
+    "height": 299.84469370146678,
+    "width": 366.10871440897324,
     "tabOrder": 47000
   },
   "visual": {
-    "visualType": "clusteredBarChart",
+    "visualType": "pieChart",
     "query": {
       "queryState": {
         "Category": {
@@ -86,5 +86,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f95737fcd76f647dc62b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "brand_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "0695bb50b8df9c50354b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

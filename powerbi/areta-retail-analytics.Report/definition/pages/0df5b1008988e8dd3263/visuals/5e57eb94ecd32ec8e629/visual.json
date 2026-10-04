@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "5e57eb94ecd32ec8e629",
   "position": {
-    "x": 1030.3236797274276,
-    "y": 263.30494037478707,
+    "x": 1029.6840307429547,
+    "y": 263.97950469684031,
     "z": 28000,
-    "height": 484.08858603066437,
-    "width": 871.68654173764912,
+    "height": 418.10418445772848,
+    "width": 872.28010247651582,
     "tabOrder": 28000
   },
   "visual": {
@@ -109,5 +109,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "69de4d68176543e710d8",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "market_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "e5985543321401b8f94f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_targets"
+              }
+            },
+            "Property": "Net Sales Target Variance (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

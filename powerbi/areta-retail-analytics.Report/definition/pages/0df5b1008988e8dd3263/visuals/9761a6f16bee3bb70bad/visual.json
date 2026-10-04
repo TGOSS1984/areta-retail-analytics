@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "9761a6f16bee3bb70bad",
   "position": {
-    "x": 1030.8982035928145,
-    "y": 756.88622754491018,
+    "x": 969.01793339026483,
+    "y": 695.200683176772,
     "z": 33001,
-    "height": 304.67065868263472,
-    "width": 390.89820359281441,
+    "height": 368.91545687446626,
+    "width": 390.23057216054656,
     "tabOrder": 33001
   },
   "visual": {
@@ -145,5 +145,51 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "c893355bd6776459e903",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "channel"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "1327559017e66cea0b43",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "market_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "de571c0101cbcfeff6a2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales YoY %"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

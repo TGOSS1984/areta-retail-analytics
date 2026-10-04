@@ -237,7 +237,7 @@
             ],
             "metadata": "fact_sales.Top Style",
             "id": "field-35e935b9-a103-4e26-38e5-b743b588d22a",
-            "order": 0
+            "order": 1
           }
         },
         {
@@ -265,7 +265,7 @@
             ],
             "metadata": "fact_sales.Top Style",
             "id": "field-3bea0080-1210-8d49-a0de-a9ff14e56b9f",
-            "order": 1
+            "order": 0
           }
         }
       ],

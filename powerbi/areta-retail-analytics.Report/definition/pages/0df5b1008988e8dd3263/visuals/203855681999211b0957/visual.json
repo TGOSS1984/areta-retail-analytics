@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "203855681999211b0957",
   "position": {
-    "x": 227.48137108792847,
-    "y": 660.983606557377,
+    "x": 227.90777113578139,
+    "y": 695.200683176772,
     "z": 30000,
-    "height": 402.3168654173765,
-    "width": 785.00851788756393,
+    "height": 368.91545687446626,
+    "width": 732.91204099060633,
     "tabOrder": 30000
   },
   "visual": {
@@ -256,14 +256,14 @@
             "viewportHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "370D"
+                  "Value": "337D"
                 }
               }
             },
             "viewportWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "751D"
+                  "Value": "699D"
                 }
               }
             }
@@ -285,5 +285,149 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "c454914e942ba07bbc38",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "full_date"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "75edab39c6bc07631d3f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "day_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "19ab354180f391ecd50b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "day_of_week_num"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f6d829527241418f3b06",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2b46ed91911cf54cb2c5",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_week_number"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "02cd8d3d023ed1f8e8db",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "business_period_label"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7fb1e53041e967283662",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "is_black_friday"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "88c0246918b8c731fdaa",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "is_christmas_day"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "bcfc67b2a9732143db30",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_date"
+              }
+            },
+            "Property": "is_boxing_day"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "f2c75fcc4a9421242bbc",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

@@ -168,6 +168,21 @@
       ],
       "referenceLabel": [
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-65ce6bbd-984f-3331-2273-0a44a8bae0a5",
+            "order": 0
+          }
+        },
+        {
           "properties": {
             "value": {
               "expr": {
@@ -177,7 +192,7 @@
                       "Entity": "fact_sales"
                     }
                   },
-                  "Property": "Net Sales (GBP)"
+                  "Property": "Top Product Group Net Sales (GBP)"
                 }
               }
             }
@@ -191,8 +206,121 @@
               }
             ],
             "metadata": "fact_sales.Top Product Group",
-            "id": "field-65ce6bbd-984f-3331-2273-0a44a8bae0a5",
+            "id": "field-36b09c5b-0c1f-2356-1b9a-c51abeaad1d5",
             "order": 0
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Top Product Group Share %"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-25f76d22-bdfe-61d7-7cef-1d7a98ec09b1",
+            "order": 1
+          }
+        }
+      ],
+      "referenceLabelTitle": [
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Net Sales (GBP)'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-36b09c5b-0c1f-2356-1b9a-c51abeaad1d5"
+          }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share %'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-25f76d22-bdfe-61d7-7cef-1d7a98ec09b1"
+          }
+        }
+      ],
+      "referenceLabelValue": [
+        {
+          "properties": {
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-36b09c5b-0c1f-2356-1b9a-c51abeaad1d5"
+          }
+        },
+        {
+          "properties": {
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_sales.Top Product Group",
+            "id": "field-25f76d22-bdfe-61d7-7cef-1d7a98ec09b1"
           }
         }
       ]
@@ -248,93 +376,6 @@
           }
         },
         "type": "TopN",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "subquery",
-              "Expression": {
-                "Subquery": {
-                  "Query": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "d",
-                        "Entity": "dim_product",
-                        "Type": 0
-                      },
-                      {
-                        "Name": "f",
-                        "Entity": "fact_sales",
-                        "Type": 0
-                      }
-                    ],
-                    "Select": [
-                      {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "d"
-                            }
-                          },
-                          "Property": "product_group"
-                        },
-                        "Name": "field"
-                      }
-                    ],
-                    "OrderBy": [
-                      {
-                        "Direction": 2,
-                        "Expression": {
-                          "Measure": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "f"
-                              }
-                            },
-                            "Property": "Net Sales (GBP)"
-                          }
-                        }
-                      }
-                    ],
-                    "Top": 1
-                  }
-                }
-              },
-              "Type": 2
-            },
-            {
-              "Name": "d",
-              "Entity": "dim_product",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "d"
-                          }
-                        },
-                        "Property": "product_group"
-                      }
-                    }
-                  ],
-                  "Table": {
-                    "SourceRef": {
-                      "Source": "subquery"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
         "howCreated": "User"
       },
       {

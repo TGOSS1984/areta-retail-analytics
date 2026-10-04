@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "743ee85adc39aca828ed",
   "position": {
-    "x": 796.80911680911674,
-    "y": 264.38746438746438,
+    "x": 796.82484900776535,
+    "y": 586.43658326143225,
     "z": 34000,
-    "height": 302.67806267806264,
-    "width": 326.38176638176634,
+    "height": 465.504745470233,
+    "width": 366.10871440897324,
     "tabOrder": 34000
   },
   "visual": {
-    "visualType": "pieChart",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -32,6 +32,38 @@
             }
           ]
         },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Gross Margin %"
+                }
+              },
+              "queryRef": "fact_sales.Gross Margin %",
+              "nativeQueryRef": "Gross Margin %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Gross Margin % LY"
+                }
+              },
+              "queryRef": "fact_sales.Gross Margin % LY",
+              "nativeQueryRef": "Gross Margin % LY"
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {
@@ -47,6 +79,20 @@
               },
               "queryRef": "fact_sales.Net Sales (GBP)",
               "nativeQueryRef": "Net Sales (GBP)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales LY"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales LY",
+              "nativeQueryRef": "Net Sales LY"
             }
           ]
         }
@@ -70,6 +116,102 @@
         "isDefaultSort": true
       }
     },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "dff65ea8c8710746e639",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_product"
+              }
+            },
+            "Property": "gender"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "83668c35fecd647ddd38",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bae0bcda4fa7bfe962cd",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales LY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "abd8b9f2d79dae6f2b49",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Margin %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "62f29f842b3f77d7ca2d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Margin % LY"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

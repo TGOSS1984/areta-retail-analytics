@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "dc7789989688c8b0ee72",
   "position": {
-    "x": 1442.8742514970061,
-    "y": 756.88622754491018,
+    "x": 1377.2843723313408,
+    "y": 695.200683176772,
     "z": 29000,
-    "height": 306.58682634730542,
-    "width": 459.88023952095813,
+    "height": 368.91545687446626,
+    "width": 524.67976088812986,
     "tabOrder": 29000
   },
   "visual": {
@@ -139,5 +139,79 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "b0073f28f6953763359c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_store"
+              }
+            },
+            "Property": "channel"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "9b28925026ba7afdce93",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales LY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "6a7d355a33b847af1242",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Profit (GBP)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "de79a6470fd0d6a0d792",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Gross Profit LY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "40b98fdff78aaa97fd2a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

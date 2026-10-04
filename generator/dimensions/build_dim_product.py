@@ -2,7 +2,7 @@
 dim_product builder.
 
 Expands config/brands.yml (brand -> division -> major product group ->
-product group) into actual style/colour/size rows — that's the grain
+product group) into actual style/colour/size rows. That's the grain
 fact_sales and fact_stock will report against, same as a real product
 hierarchy.
 
@@ -10,11 +10,11 @@ A "style" here is one distinct design within a product group (a specific
 jacket, say), which fans out into a few colourways, which each fan out into
 a size range appropriate to the category. Style names lean on real
 mountain/place names (Glencoe, Snowdon, Chamonix...) rather than a random
-word generator — reads a lot more like an actual outdoor brand's range, and
+word generator: reads a lot more like an actual outdoor brand's range, and
 place names aren't anyone's IP to worry about.
 
 One deliberate override: Camping & Equipment doesn't fan out by gender even
-for brands that sell Mens/Womens/Kids apparel — a rucksack or a tent being
+for brands that sell Mens/Womens/Kids apparel: a rucksack or a tent being
 split into "Mens" and "Womens" versions isn't how that category actually
 works in the real hierarchy this was modelled on, so it's forced to Unisex
 regardless of what the brand's gender list says.
@@ -24,7 +24,7 @@ BI can't check whether a URL exists (a calculated column can't make an HTTP
 request), so this script decides at build time by looking at what's actually
 in web/public/images/. See resolve_image() for the fallback order.
 
-Straight to data/warehouse, same as dim_store — no raw/staging pass needed
+Straight to data/warehouse, same as dim_store: no raw/staging pass needed
 for a generated hierarchy like this.
 
 Usage:
@@ -63,12 +63,12 @@ LEGACY_CATEGORY_ICONS = {
 
 RANDOM_SEED = 7
 
-# These two are the main levers on total row count — check the printed
+# These two are the main levers on total row count: check the printed
 # summary after running and dial them down if it comes out bigger than
 # feels right for the project.
 STYLES_PER_COMBO = (1, 3)   # distinct styles per brand/division/gender/product group
 COLOURS_PER_STYLE = (2, 3)
-COST_RATIO_RANGE = (0.28, 0.38)  # cost as a share of base price — i.e. ~62-72% gross margin, set per style not per colour/size
+COST_RATIO_RANGE = (0.28, 0.38)  # cost as a share of base price, i.e. ~62-72% gross margin, set per style not per colour/size
 
 PLACE_NAMES = [
     "Glencoe", "Snowdon", "Ben Nevis", "Skiddaw", "Helvellyn", "Cairngorm",
@@ -83,7 +83,7 @@ COLOURS = [
     "Ink Navy", "Mustard Gold", "Deep Teal", "Ash Grey", "Rust",
 ]
 
-# Explicit codes rather than colour[:3] — "Storm Blue" and "Stone" both
+# Explicit codes rather than colour[:3]: "Storm Blue" and "Stone" both
 # truncate to "STO", which was silently producing duplicate SKUs until I
 # actually ran this and checked. Every code below needs to stay unique if
 # more colours get added later.
@@ -104,7 +104,7 @@ ONE_SIZE = ["One Size"]
 GLOVES_SOCKS_SIZES = ["S/M", "M/L", "L/XL"]
 
 # size_code stays compact (what's already used in the SKU); size_description
-# is the human-readable version — separated out since they were one field
+# is the human-readable version: separated out since they were one field
 # before. Shoe sizes are numeric strings and get "UK {n}" generated rather
 # than listed here.
 SIZE_DESCRIPTIONS = {
@@ -120,10 +120,10 @@ SIZE_DESCRIPTIONS = {
 def size_description_for(size_code: str) -> str:
     if size_code in SIZE_DESCRIPTIONS:
         return SIZE_DESCRIPTIONS[size_code]
-    return f"UK {size_code}"  # shoe sizes — numeric strings, not worth a full lookup table
+    return f"UK {size_code}"  # shoe sizes: numeric strings, not worth a full lookup table
 
 
-# sub-brand — a range label within a division, distinct from the brand
+# sub-brand: a range label within a division, distinct from the brand
 # itself (brand.yml's "brand" entries are the actual commercial brands;
 # this is closer to a collection name). Apparel gets real variety since
 # that's where the real hierarchy this was modelled on showed the most
@@ -135,12 +135,12 @@ SUB_BRANDS_BY_DIVISION = {
     "Camping & Equipment": (["Core Equipment"], [1.0]),
 }
 
-# season_label a style belongs to — matches dim_date's SS/AW-year format
+# season_label a style belongs to: matches dim_date's SS/AW-year format
 # exactly, so the two can be joined/compared directly. Weighted toward
 # more recent seasons: a live assortment skews toward what's currently
 # ranged, not evenly across four years of history. This tags WHICH season
 # a style belongs to; it doesn't make demand for older-season styles
-# decay over time in fact_sales — that'd be a real product-lifecycle
+# decay over time in fact_sales: that'd be a real product-lifecycle
 # simulation, a bigger change than adding the attribute itself.
 SEASON_LABELS = ["SS23", "AW23", "SS24", "AW24", "SS25", "AW25", "SS26", "AW26"]
 SEASON_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8]  # relative, normalised at sample time
@@ -212,7 +212,7 @@ def build() -> pd.DataFrame:
     for brand in brands:
         for division in brand["divisions"]:
             # camping gear doesn't fan out by gender in the real hierarchy
-            # this was modelled on — force Unisex regardless of the brand's
+            # this was modelled on: force Unisex regardless of the brand's
             # broader gender list
             genders = ["Unisex"] if division == "Camping & Equipment" else brand["genders"]
 
@@ -372,7 +372,7 @@ def main() -> None:
     df = build()
     dupes = df["sku"].duplicated().sum()
     if dupes:
-        raise ValueError(f"{dupes} duplicate SKUs — check COLOUR_CODES for a clash before writing output")
+        raise ValueError(f"{dupes} duplicate SKUs: check COLOUR_CODES for a clash before writing output")
 
     df = add_image_columns(df)
     warn_if_not_on_github()

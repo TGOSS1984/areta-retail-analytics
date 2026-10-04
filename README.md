@@ -596,9 +596,6 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 
 **Tidying**
 - [x] Bring `docs/project-plan.md`, `docs/dax-measures.md` and the decision records up to date
-- [ ] Add the source and licence of the product photos to ADR 0001 and the credits
-
-<!-- TODO: decide where the product photos come from and how they're credited, then update ADR 0001 and the credits at the bottom. -->
 
 ## Docs and decisions
 
@@ -629,4 +626,4 @@ MIT, see [`LICENSE`](LICENSE).
 
 Built on the shoulders of some very good free tools: [DuckDB](https://duckdb.org) and [DuckDB-wasm](https://github.com/duckdb/duckdb-wasm), [Deneb](https://deneb-viz.github.io/), [Next.js](https://nextjs.org), [Apache ECharts](https://echarts.apache.org), [Tailwind CSS](https://tailwindcss.com), [Tabler Icons](https://tabler.io/icons) (MIT) and the Montserrat typeface (SIL Open Font Licence). The store network, products and every number are invented, and any resemblance to a real retailer is a coincidence.
 
-<!-- TODO: add credit for the product photography once its source is sorted. -->
+The product photos were generated with ChatGPT from my own prompts. They show invented Areta products, not real ones.

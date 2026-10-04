@@ -1,12 +1,12 @@
 """
 build_fact_footfall.py
 
-Daily footfall / transactions / conversion at (date, store) grain — dense,
+Daily footfall / transactions / conversion at (date, store) grain: dense,
 not sparse like fact_sales, since a door counter runs every day whether
 anyone buys anything or not.
 
 Rebuilt now that fact_sales has a real invoice_id: transactions is now
-COUNT(DISTINCT invoice_id) per store-day — an actual count, not the
+COUNT(DISTINCT invoice_id) per store-day: an actual count, not the
 basket-size estimate the first version had to use before invoices existed.
 Footfall is still independently simulated (there's no real door-counter
 dataset to draw from), calibrated so footfall = transactions / a
@@ -21,7 +21,7 @@ end of specialty retail, reflecting that most of that footfall is there
 for the host store (garden centre, department store), not specifically
 for Areta.
 
-Depends on fact_sales already existing in data/warehouse — run this after
+Depends on fact_sales already existing in data/warehouse: run this after
 clean/clean_fact_sales.py, not before.
 
 Usage:
@@ -44,7 +44,7 @@ OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_footfall.parquet"
 
 RANDOM_SEED = 55
 
-# same cutoff concept as build_fact_sales.py — footfall is an actual,
+# same cutoff concept as build_fact_sales.py: footfall is an actual,
 # observed metric same as sales, so it can't exist for a date that
 # hasn't happened yet either. Kept independent rather than imported so
 # this script has no dependency on fact_sales.py as a module, only on
@@ -56,23 +56,23 @@ def present_date() -> dt.date:
     return PRESENT_DATE_OVERRIDE or dt.date.today()
 
 # in-store apparel conversion runs ~15-25% typical, specialty retail
-# ~10-20% — see module docstring for sources
+# ~10-20%: see module docstring for sources
 CONVERSION_BASELINE = {"Retail": 0.22, "Concession": 0.13}
 CONVERSION_DAILY_NOISE = 0.04
 
 
 def build() -> pd.DataFrame:
     dim_store = pd.read_parquet(DIM_STORE_PATH)
-    # Footfall is a physical-door-counter concept — doesn't exist for
+    # Footfall is a physical-door-counter concept: doesn't exist for
     # Online. Excluded here rather than given a fabricated conversion
     # baseline (an "online conversion rate" is a real, different metric
-    # — sessions-to-purchase — not modelled in this project yet).
+    # (sessions-to-purchase) not modelled in this project yet).
     dim_store = dim_store[dim_store["channel"] != "Online"]
     dim_date = pd.read_parquet(DIM_DATE_PATH)[["full_date", "is_christmas_day"]].rename(columns={"full_date": "date"})
     dim_date = dim_date[dim_date["date"] <= present_date()]
     sales = pd.read_parquet(FACT_SALES_PATH)
 
-    # real invoice count per store per day — a return gets its own
+    # real invoice count per store per day: a return gets its own
     # invoice_id (see build_fact_sales.py) but isn't a new purchase visit,
     # so it's excluded from the conversion numerator
     daily_transactions = (
@@ -90,7 +90,7 @@ def build() -> pd.DataFrame:
         .reset_index()
     )
 
-    # dense (store, date) grid — every store, every day
+    # dense (store, date) grid: every store, every day
     grid = dim_store[["store_id", "channel"]].merge(dim_date, how="cross")
     grid = grid.merge(daily_transactions, on=["store_id", "date"], how="left")
     grid = grid.merge(daily_units, on=["store_id", "date"], how="left")

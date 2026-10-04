@@ -2,19 +2,19 @@
 dim_currency builder.
 
 Two small outputs from one script, since they're tightly coupled:
-  - dim_currency.parquet    — currency reference metadata
-  - fx_rate_monthly.parquet — GBP -> local currency rate, one row per
+  - dim_currency.parquet:    currency reference metadata
+  - fx_rate_monthly.parquet: GBP -> local currency rate, one row per
                                currency per calendar month, so fact_sales
                                can convert local sales back to GBP and the
                                report can show constant-currency vs actual
                                (useful given how many markets aren't GBP).
 
-Currency list is read straight from markets.yml rather than hardcoded here
-— one source of truth for "which currencies exist," same as dim_store
+Currency list is read straight from markets.yml rather than hardcoded here:
+one source of truth for "which currencies exist," same as dim_store
 reading market weights from the same file.
 
 Rates are a random walk around a realistic-looking anchor per currency,
-clipped to a plausible band. Not real historical FX data — just enough
+clipped to a plausible band. Not real historical FX data, just enough
 month-to-month movement that a currency-impact view has something to show.
 
 Usage:

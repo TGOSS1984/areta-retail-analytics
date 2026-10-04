@@ -1,7 +1,7 @@
 """
 dim_promo builder.
 
-Generates the promotional calendar — one row per promo instance per year
+Generates the promotional calendar: one row per promo instance per year
 (2023-2026), plus a single "Full Price" row that fact_sales lines use when
 a sale wasn't discounted. Depths deliberately land on 30/40/50/60/70% since
 that's the breakdown the margin-by-discount-depth question in
@@ -28,7 +28,7 @@ OUTPUT_PATH = Path(__file__).resolve().parents[2] / "data" / "warehouse" / "dim_
 YEARS = range(2023, 2027)
 
 # (name, promo_type, month, day, duration_days, discount_pct)
-# day=None means "compute it" — only Black Friday needs that right now.
+# day=None means "compute it". Only Black Friday needs that right now.
 PROMO_TEMPLATES = [
     ("January Sale", "Seasonal Sale", 1, 2, 12, 30),
     ("January Mid-Sale", "Seasonal Sale", 1, 14, 10, 50),
@@ -60,14 +60,14 @@ def build() -> pd.DataFrame:
             "end_date": None,
             "discount_pct": 0,
         },
-        # Multi-buy schemes — no fixed date range or discount_pct here on
+        # Multi-buy schemes: no fixed date range or discount_pct here on
         # purpose: unlike the %-off promos above, eligibility runs on a
         # recurring month-window basis (see MULTIBUY_SCHEMES in
         # facts/build_fact_sales.py, the actual source of truth for when
         # these are active) and the effective discount varies basket to
         # basket rather than being a fixed rate. These rows exist so
-        # fact_sales' promo_id always resolves to a real dimension row —
-        # they don't drive the promotional logic themselves.
+        # fact_sales' promo_id always resolves to a real dimension row.
+        # They don't drive the promotional logic themselves.
         {
             "promo_id": "MULTIBUY-MB001",
             "promo_name": "Fleece & T-Shirts 2 for GBP30",

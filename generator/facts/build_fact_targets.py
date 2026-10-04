@@ -2,7 +2,7 @@
 build_fact_targets.py
 
 Targets at (store, business_year, business_period) grain, now covering
-5 metrics, not just net sales — matches how targets actually get set in
+5 metrics, not just net sales: matches how targets actually get set in
 retail: relative to the same period last year, not built up from
 scratch, and not at daily or SKU grain.
 
@@ -10,36 +10,36 @@ Target for period P in year Y = actual for period P in year Y-1,
 uplifted by a per-store growth assumption. For the first business year
 in the dataset there's no prior year to base anything on, so that
 year's targets are set directly off that same year's actual, with a bit
-of noise — a reasonable stand-in for "target-setting before there was
+of noise: a reasonable stand-in for "target-setting before there was
 any history." Same pattern this file has always used for net sales,
 now generalised into one helper (`_target_for_metric`) and applied to
 4 more metrics chosen because they're genuinely what retailers set
-targets for in practice — not an exhaustive list of every measure in
+targets for in practice, not an exhaustive list of every measure in
 this project. Deliberately NOT targeted here: promotional mix, digital,
-and stock metrics — those are typically monitored, not targeted, in a
+and stock metrics. Those are typically monitored, not targeted, in a
 standard retail planning cycle, and adding them would be scope creep
 beyond what was asked.
 
 The 5 metrics, and why each one:
-  - Net Sales (GBP)     — the original, unchanged in method
-  - Net Units Sold       — volume target, standard alongside sales
-  - Total Footfall       — the single most common physical-retail KPI
+  - Net Sales (GBP):     the original, unchanged in method
+  - Net Units Sold:       volume target, standard alongside sales
+  - Total Footfall:       the single most common physical-retail KPI
                             to target; EXCLUDES Online (no physical
                             door), same exclusion fact_footfall itself
                             already applies
-  - Gross Margin %       — ADDITIVE growth (percentage-point
-                            improvement), not multiplicative — a
+  - Gross Margin %:       ADDITIVE growth (percentage-point
+                            improvement), not multiplicative: a
                             margin target is normally stated as
                             "+0.5pp" not "+5% of the margin number
                             itself", which would compound oddly on a
                             ratio
-  - Net Contribution     — the profitability target; EXCLUDES Online,
+  - Net Contribution:     the profitability target; EXCLUDES Online,
     (GBP)                  same reason and same exclusion as
                             fact_store_finance itself (no physical
                             rent/staff cost model for online)
 
 Plus one DERIVED column, not a sixth independent target:
-  - Gross Profit (GBP)   — target net sales x target gross margin %, row
+  - Gross Profit (GBP):   target net sales x target gross margin %, row
                             by row. Deliberately derived rather than given
                             its own growth assumption, so the margin VALUE
                             and the margin RATE targets can never disagree
@@ -51,13 +51,13 @@ Plus one DERIVED column, not a sixth independent target:
                             is what the Power BI measure now does.
 
 Each metric gets its own independent per-store growth assumption
-(different random seed offset) — not tied to that store's actual
+(different random seed offset), not tied to that store's actual
 future performance, which is the whole point: it's what lets some
 stores beat target on units while missing it on margin, rather than
 every metric suspiciously moving in lockstep.
 
 Depends on fact_sales, fact_footfall, and fact_store_finance already
-existing in data/warehouse — run AFTER all three, not alongside them.
+existing in data/warehouse: run AFTER all three, not alongside them.
 
 Usage:
     python build_fact_targets.py
@@ -79,9 +79,9 @@ FACT_STORE_FINANCE_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_store_fina
 OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_targets.parquet"
 
 RANDOM_SEED = 71
-GROWTH_MEAN = 0.05  # +5% target growth on average, store to store — net sales, units, footfall, contribution
+GROWTH_MEAN = 0.05  # +5% target growth on average, store to store: net sales, units, footfall, contribution
 GROWTH_STD = 0.03
-MARGIN_GROWTH_MEAN_PP = 0.005  # +0.5 percentage points on average — margin, additive not multiplicative
+MARGIN_GROWTH_MEAN_PP = 0.005  # +0.5 percentage points on average: margin, additive not multiplicative
 MARGIN_GROWTH_STD_PP = 0.003
 FIRST_YEAR_NOISE_STD = 0.06
 
@@ -98,7 +98,7 @@ def _target_for_metric(
     """Same "prior year x per-store growth" pattern this file has always
     used for net sales, generalised to any metric. additive=True switches
     to percentage-POINT growth (for margin %) instead of multiplicative
-    growth (everything else) — see the module docstring for why."""
+    growth (everything else): see the module docstring for why."""
     grid = full_grid.merge(actual, on=["store_id", "business_year", "business_period_number"], how="left")
 
     prior = actual.rename(columns={metric_col: f"prior_{metric_col}"})
@@ -131,7 +131,7 @@ def _target_for_metric(
         )
 
     # Margin is a ratio (can be negative in theory, e.g. a heavy
-    # clearance period) — only floor at zero for the additive £/unit
+    # clearance period), only floor at zero for the additive £/unit
     # metrics, not margin, where a hard floor at 0 would be wrong.
     return pd.Series(target if additive else np.maximum(target, 0), index=grid.index).round(4 if additive else 2)
 
@@ -162,7 +162,7 @@ def build() -> pd.DataFrame:
         footfall.groupby(["store_id", "business_year", "business_period_number"])["footfall"].sum().reset_index()
     )
 
-    # fact_store_finance is ALREADY at exactly this grain — no
+    # fact_store_finance is ALREADY at exactly this grain: no
     # re-aggregation needed, just select the columns.
     finance_actual = finance[["store_id", "business_year", "business_period_number", "net_contribution_gbp"]]
 
@@ -198,7 +198,7 @@ def build() -> pd.DataFrame:
     result = result.merge(
         physical_targets, on=["store_id", "business_year", "business_period_number"], how="left"
     )
-    # Online rows correctly get NaN for footfall/contribution targets —
+    # Online rows correctly get NaN for footfall/contribution targets:
     # no physical door, no physical cost model, same documented gap as
     # the source facts themselves. Not filled with 0, which would look
     # like a real (met/missed) target rather than "not applicable".
@@ -212,7 +212,7 @@ def build() -> pd.DataFrame:
     ).round(2)
 
     # keep actual net sales alongside for the sanity-check print below,
-    # same as before — dropped from the final parquet output
+    # same as before: dropped from the final parquet output
     result = result.merge(
         sales_actual[["store_id", "business_year", "business_period_number", "net_sales_gbp"]].rename(
             columns={"net_sales_gbp": "actual_net_sales_gbp"}
@@ -244,7 +244,7 @@ def main() -> None:
         f"sanity check: {hit_rate:.1%} of store-periods WITH actuals hit or beat net sales target "
         f"(expect well short of 100%, well above 0%)"
     )
-    print(f"{n_future:,} store-periods have a target but no actual yet — the future ones, as intended")
+    print(f"{n_future:,} store-periods have a target but no actual yet: the future ones, as intended")
 
     implied = df["target_gross_profit_gbp"].sum() / df["target_net_sales_gbp"].sum()
     print(
@@ -254,7 +254,7 @@ def main() -> None:
 
     n_no_footfall_target = df["target_footfall"].isna().sum()
     print(
-        f"{n_no_footfall_target:,} rows have no footfall/contribution target — "
+        f"{n_no_footfall_target:,} rows have no footfall/contribution target: "
         f"Online store-periods (no physical footfall/finance model) plus future periods"
     )
 

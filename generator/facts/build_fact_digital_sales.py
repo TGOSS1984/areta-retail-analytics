@@ -1,14 +1,14 @@
 """
 build_fact_digital_sales.py
 
-Daily digital sales at (date, market_code, device_type) grain — orders,
+Daily digital sales at (date, market_code, device_type) grain: orders,
 units, net_sales_gbp, and the AOV/basket-size that fall out of those.
 
 Deliberately NOT an independent demand simulation. The Online channel
 already exists in fact_sales (one "Areta Online" entity per market,
 added when the Online channel was built) with real, already-validated
 sales/order/unit figures. Simulating digital sales separately here
-would risk the two numbers silently drifting apart over time — "Online
+would risk the two numbers silently drifting apart over time: "Online
 sales" on the KPI card and "digital sales" on a device-split chart
 would each need their own story for why they don't match, which is
 worse than just not having the device breakdown at all.
@@ -19,7 +19,7 @@ INDEPENDENT weighted shares (order-share and value-share) that each sum
 to exactly 1.0 per (date, market) before being applied. Two independent
 shares, not one, is what lets device-level AOV differ realistically
 (desktop should have a meaningfully higher AOV than mobile) while still
-reconciling exactly — if the same share drove both orders and value,
+reconciling exactly, if the same share drove both orders and value,
 every device would work out to identical AOV by construction, which
 isn't realistic and isn't what real e-commerce data looks like.
 
@@ -30,7 +30,7 @@ traffic/order share (~60-70% in Western markets) while desktop
 consistently leads conversion rate (roughly 1.5-2x mobile) and AOV
 (roughly 1.3-1.6x mobile). Tablet is a small (~5-7%) but higher-AOV
 slice, behaving more like desktop than mobile. The order_share vs
-value_share split below is tuned to land in that band — see main()'s
+value_share split below is tuned to land in that band: see main()'s
 printed implied-AOV-by-device check.
 
 Depends on fact_sales and dim_store already existing.
@@ -58,7 +58,7 @@ DEVICES = ["Desktop", "Mobile", "Tablet"]
 # Baseline shares of ORDERS (~= traffic share, since conversion rate
 # differences between devices are modest relative to traffic volume
 # differences) vs baseline shares of VALUE (skewed toward Desktop/Tablet
-# because of their higher real-world AOV). Each list sums to 1.0 — the
+# because of their higher real-world AOV). Each list sums to 1.0: the
 # daily draw below perturbs these with noise and re-normalises, so the
 # exact daily split moves around but the LY average sits near baseline.
 ORDER_SHARE_BASELINE = {"Mobile": 0.60, "Desktop": 0.33, "Tablet": 0.07}
@@ -82,7 +82,7 @@ def build() -> pd.DataFrame:
     online_sales = sales.merge(online_stores, on="store_id", how="inner")
     online_sales = online_sales[~online_sales["is_return"]]  # returns don't represent a NEW digital order
 
-    # Real, already-validated totals per (date, market) — the thing this
+    # Real, already-validated totals per (date, market): the thing this
     # whole table has to reconcile back to.
     daily = (
         online_sales.groupby(["date", "market_code"])
@@ -104,7 +104,7 @@ def build() -> pd.DataFrame:
         device_rows = daily[["date", "market_code"]].copy()
         device_rows["device_type"] = device
         # Orders/units driven by the SAME share (they're both "how many
-        # transactions", naturally correlated) — value driven by its own
+        # transactions", naturally correlated): value driven by its own
         # independent share, which is what creates the realistic AOV gap.
         device_rows["orders"] = np.round(daily["orders"].to_numpy() * order_shares[:, i]).astype(int)
         device_rows["units"] = np.round(daily["units"].to_numpy() * order_shares[:, i]).astype(int)
@@ -114,7 +114,7 @@ def build() -> pd.DataFrame:
     result = pd.concat(rows, ignore_index=True)
 
     # Rounding orders/units to whole numbers per device means the three
-    # devices' sum can drift by 1-2 from the true daily total — reconcile
+    # devices' sum can drift by 1-2 from the true daily total: reconcile
     # exactly by dumping any residual onto whichever device has the
     # largest share that day, same "residual goes to the biggest bucket"
     # approach as elsewhere in this generator for exactly this class of

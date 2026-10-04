@@ -1,27 +1,27 @@
 """
 dim_store builder.
 
-Reads config/markets.yml and generates the store network — one row per
+Reads config/markets.yml and generates the store network: one row per
 store, weighted across markets by store_weight, split into owned retail vs
 concession using each market's channel_mix. Also assigns store_type
 (High Street/Retail Park/Shopping Centre/Outlet for retail; the host
-format itself — Garden Centre, Department Store etc — for concessions,
+format itself (Garden Centre, Department Store etc) for concessions,
 since that IS the concession's format), a coarse region within each
 market, and a jittered latitude/longitude around that city's centre.
 
-Also adds one "Online" row per market — not a physical store, the
+Also adds one "Online" row per market. It isn't a physical store: it's the
 market's whole online/fulfilment operation as a single entity, additive
 on top of TOTAL_STORES rather than part of the retail/concession split.
 Downstream effects of this channel live in build_fact_sales.py (demand
 volume), build_fact_stock.py (assortment size), and build_fact_footfall.py
-(explicitly excluded — footfall is a physical-store concept). Deliberately
+(explicitly excluded: footfall is a physical-store concept). Deliberately
 NOT modelled: online-specific costs in build_fact_store_finance.py (that
 table's rent/staff/utilities ratios are a physical-retail-estate concept;
 rather than invent an unfounded online cost structure, Online rows are
-excluded from that table for now — a real gap, documented, not silently
+excluded from that table for now: a real gap, documented, not silently
 papered over).
 
-Coordinates live here (store grain), not in a separate region table —
+Coordinates live here (store grain), not in a separate region table:
 a region-level view (for the web app's map, eventually) is a derived
 average of its stores' coordinates, computed at query time, not a second
 independently-maintained set of positions that could drift out of sync
@@ -29,7 +29,7 @@ with this one.
 
 This one's a clean build straight to data/warehouse, no raw/staging pass.
 There's nothing meaningfully "messy" about a store list the way there is
-about a season of daily sales rows — the cleaning pipeline is really there
+about a season of daily sales rows: the cleaning pipeline is really there
 for the fact tables, not the dimensions.
 
 Usage:
@@ -51,7 +51,7 @@ TOTAL_STORES = 350
 RANDOM_SEED = 42  # fixed so re-running this doesn't reshuffle the whole store list
 
 # A handful of real cities per market. Real city names are just geography,
-# not anyone's proprietary data — it's only the store/brand names attached
+# not anyone's proprietary data. It's only the store/brand names attached
 # to them below that are invented.
 CITIES = {
     "UK": [
@@ -74,7 +74,7 @@ CITIES = {
     "LT": ["Vilnius", "Kaunas", "Klaipeda"],
 }
 
-# Region within each market — used to tag store_type/region attributes
+# Region within each market: used to tag store_type/region attributes
 # below. Coarse groupings, not administrative boundaries.
 CITY_TO_REGION = {
     # UK
@@ -126,8 +126,8 @@ RETAIL_STORE_TYPE_WEIGHTS = [0.40, 0.30, 0.20, 0.10]
 # Deliberate design point: size is drawn from the FORMAT band only, with no
 # link at all to how well that particular store actually trades (trading
 # performance is drawn separately, in build_fact_sales.py's store_perf_factor,
-# from a completely different random seed). That mismatch — a store sized
-# for its format rather than its footfall — is exactly what real retailers
+# from a completely different random seed). That mismatch (a store sized
+# for its format rather than its footfall) is exactly what real retailers
 # get wrong sometimes, and it's what makes fact_store_finance's contribution
 # figures show genuine, not cosmetic, variation: some stores end up with
 # more space than their trading justifies, and it shows in the numbers.
@@ -142,14 +142,14 @@ RETAIL_SQFT_RANGES = {
 # A concession is a shop-within-a-shop, a fraction of its host format's
 # footprint, not a full unit of it.
 CONCESSION_SIZE_FACTOR_RANGE = (0.20, 0.40)
-# A small share of stores are an oversized "flagship" for their format —
-# the Kensington-megastore end of the range — regardless of whether the
+# A small share of stores are an oversized "flagship" for their format
+# (the Kensington-megastore end of the range), regardless of whether the
 # local market can actually fill that much space.
 FLAGSHIP_SHARE = 0.05
 FLAGSHIP_MULTIPLIER_RANGE = (3.0, 5.0)
 FLAGSHIP_SQFT_CAP = 22_000
 
-# City-centre coordinates (decimal degrees) — approximate, a real store's
+# City-centre coordinates (decimal degrees), approximate, a real store's
 # actual address would sit a few streets off these, which is exactly what
 # the per-store jitter below is for. Enough precision for what this is
 # actually used for: a store-level bubble map in Power BI, and (via an
@@ -208,11 +208,11 @@ CITY_COORDINATES = {
 
 # Degrees of random jitter applied per store so multiple stores in the
 # same city don't render as one overlapping dot on a map. ~0.03deg is
-# roughly 2-3km at these latitudes — enough visual separation, small
+# roughly 2-3km at these latitudes: enough visual separation, small
 # enough that every store still clearly reads as "that city".
 COORD_JITTER_DEGREES = 0.03
 
-# Fictional concession partners — generic retail-park / garden-centre /
+# Fictional concession partners: generic retail-park / garden-centre /
 # department-store types, standing in for the kind of host retailer a
 # concession store would actually sit inside.
 CONCESSION_PARTNERS = [
@@ -223,7 +223,7 @@ CONCESSION_PARTNERS = [
 ]
 
 # store_type for a concession is really the HOST's format, not a separate
-# random draw — a concession inside a garden centre IS a "Garden Centre"
+# random draw: a concession inside a garden centre IS a "Garden Centre"
 # store, that's the whole point of the channel
 CONCESSION_PARTNER_TYPE = {
     "Fernbank Garden Centre": "Garden Centre",
@@ -255,7 +255,7 @@ def draw_square_footage(channel: str, store_type: str, rng: random.Random) -> in
 def jittered_coords(city: str, market_name: str, rng: random.Random) -> tuple[float, float]:
     lat, lon = CITY_COORDINATES.get(city, (None, None))
     if lat is None:
-        raise KeyError(f"no coordinates for '{city}' ({market_name}) — add it to CITY_COORDINATES")
+        raise KeyError(f"no coordinates for '{city}' ({market_name}): add it to CITY_COORDINATES")
     return (
         round(lat + rng.uniform(-COORD_JITTER_DEGREES, COORD_JITTER_DEGREES), 5),
         round(lon + rng.uniform(-COORD_JITTER_DEGREES, COORD_JITTER_DEGREES), 5),
@@ -329,26 +329,26 @@ def build() -> pd.DataFrame:
             )
             store_id += 1
 
-        # One "Online" entity per market, not a physical store — the
+        # One "Online" entity per market, not a physical store: the
         # fulfilment operation serving that whole market rather than one
         # of several retail/concession locations within it. No jitter:
         # jitter exists to stop multiple real store addresses in the
         # same city overlapping on a map, and there's exactly one of
-        # these per market, at the market's lead city (cities[0] — the
+        # these per market, at the market's lead city (cities[0], since the
         # CITIES dict is ordered largest/capital first), representing
         # roughly where a national distribution centre would sit rather
         # than a real shopfront address.
         online_city = cities[0]
         lat, lon = CITY_COORDINATES.get(online_city, (None, None))
         if lat is None:
-            raise KeyError(f"no coordinates for '{online_city}' ({market['name']}) — add it to CITY_COORDINATES")
+            raise KeyError(f"no coordinates for '{online_city}' ({market['name']}): add it to CITY_COORDINATES")
         rows.append(
             {
                 "store_id": f"ST{store_id:04d}",
                 "store_name": f"Areta Online \u2014 {market['name']}",
                 "channel": "Online",
                 "store_type": "Online",
-                "square_footage": 0,  # not a physical footprint — see fact_store_finance's own Online exclusion
+                "square_footage": 0,  # not a physical footprint: see fact_store_finance's own Online exclusion
                 "market_code": code,
                 "market_name": market["name"],
                 "city": online_city,
@@ -363,7 +363,7 @@ def build() -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
 
-    # small city lists mean a couple of names will legitimately collide —
+    # small city lists mean a couple of names will legitimately collide:
     # de-dupe by suffixing a number rather than silently dropping rows
     df["dupe_rank"] = df.groupby(["market_code", "store_name"]).cumcount()
     df["store_name"] = df.apply(

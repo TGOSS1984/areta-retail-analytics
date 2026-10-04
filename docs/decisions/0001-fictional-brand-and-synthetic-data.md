@@ -11,9 +11,7 @@ Everything in this repo (the brand, stores, products and sales) is invented. Are
 
 Real-world structure informed the *shape* of the data: a multi-brand product hierarchy, a dominant home market with several smaller European ones, a mix of owned stores and concessions. None of the actual content came from anywhere real.
 
-The product photos in `web/public/images/products/` show invented Areta products, not real branded goods. Styles without a photo fall back to a placeholder for their product group.
-
-<!-- TODO: add where the product photos came from and the licence they're used under. -->
+The product photos in `web/public/images/products/` were generated with ChatGPT from my own prompts, so they show invented Areta products rather than real branded goods. Styles without a photo fall back to a placeholder for their product group.
 
 ## Consequences
 - No trademark, copyright or confidentiality risk from anything in the repo.

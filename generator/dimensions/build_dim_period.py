@@ -3,11 +3,11 @@ build_dim_period.py
 
 Small bridge dimension: one row per (business_year, business_period),
 with period_key as a genuine unique key. Exists specifically so
-fact_targets and fact_store_finance — both at period grain, not daily —
+fact_targets and fact_store_finance (both at period grain, not daily)
 can relate to something with a standard one-to-many relationship.
 
 Without this, the only option is relating those two fact tables directly
-to dim_date on period_key — but period_key isn't unique in dim_date (it
+to dim_date on period_key, but period_key isn't unique in dim_date (it
 repeats once per day within a period) and isn't unique in the fact
 tables either (once per store within a period), so that'd be a many-to-
 many relationship on both sides. Power BI supports that, but it's a real
@@ -16,12 +16,12 @@ anyone who didn't specifically choose it. A bridge table is the standard
 fix for a period-grain fact needing to relate to a daily-grain date
 dimension.
 
-dim_date also relates to this (many-to-one, on period_key) — not just
-the two period-grain facts — so filtering by a period in a report cascades
+dim_date also relates to this (many-to-one, on period_key), not just
+the two period-grain facts, so filtering by a period in a report cascades
 correctly down to the daily-grain facts (fact_sales, fact_footfall,
 fact_stock_snapshot) via dim_date, not just the period-grain ones.
 
-Derived entirely from dim_date — not an independent source of truth,
+Derived entirely from dim_date, not an independent source of truth,
 just a distinct grain of the same calendar.
 
 Usage:

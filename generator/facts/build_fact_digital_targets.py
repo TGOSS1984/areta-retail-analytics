@@ -2,13 +2,13 @@
 build_fact_digital_targets.py
 
 Digital sales targets at (market_code, business_year, business_period)
-grain — same "prior year x per-market growth" pattern build_fact_targets
+grain, same "prior year x per-market growth" pattern build_fact_targets
 .py uses for store-grain targets, adapted for market grain since digital
 has no physical store to key off (same reason fact_digital_sales/
 traffic are market-grain, not store-grain).
 
 Deliberately a SEPARATE file and table (fact_digital_targets), not
-folded into fact_targets — that table's whole schema and its
+folded into fact_targets. That table's whole schema and its
 _target_for_metric() helper are built around store_id specifically;
 bolting a different grain on would mean either duplicating store_id
 with NULLs for digital rows (messy, same anti-pattern already avoided
@@ -109,7 +109,7 @@ def main() -> None:
         f"sanity check: {hit_rate:.1%} of market-periods WITH actuals hit or beat target "
         f"(expect well short of 100%, well above 0%)"
     )
-    print(f"{n_future:,} market-periods have a target but no actual yet — future periods, as intended")
+    print(f"{n_future:,} market-periods have a target but no actual yet: future periods, as intended")
 
 
 if __name__ == "__main__":

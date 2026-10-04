@@ -10,7 +10,7 @@ REDESIGNED (see the project README's "things that went wrong" list): the
 first version calibrated rent/staff/utilities against each store's OWN
 long-run average sales, which meant every store's fixed-cost base fit that
 store almost perfectly, and the resulting contribution spread was far too
-narrow — no store ever went below about 13%, and none went negative, which
+narrow: no store ever went below about 13%, and none went negative, which
 isn't how a real multi-hundred-store retail estate looks.
 
 The fix ties Retail-channel rent and utilities to the store's SQUARE
@@ -18,12 +18,12 @@ FOOTAGE (dim_store[square_footage]) instead, at a £-per-sq-ft rate that is
 drawn independently of that store's own trading performance. Footprint
 and footfall come from two unrelated random draws (see dim_store's own
 docstring), so some stores end up with more space than their trading
-actually supports — a large-format store in a middling market, say — and
+actually supports (a large-format store in a middling market, say) and
 that mismatch is what now produces a genuine tail of weak and loss-making
 stores, the same way it does in real retail.
 
 Concession stores keep the OLD ratio-on-sales mechanism for rent and
-utilities, not the new sqft-based one — a concession's cost is normally
+utilities, not the new sqft-based one: a concession's cost is normally
 a revenue-share deal with its host (a % of the concession's own sales),
 not a fixed sqft lease, so that's a different and still-realistic
 mechanism, not an inconsistency.
@@ -31,7 +31,7 @@ mechanism, not an inconsistency.
 One honest limitation: the £-per-sq-ft rates below are calibrated to
 THIS dataset's own (fairly modest) sales-per-sq-ft scale, not to real UK
 retail rent benchmarks, which run far higher. Matching real absolute
-rents against these stores' sales would sink nearly the whole estate —
+rents against these stores' sales would sink nearly the whole estate:
 the STRUCTURE (a format/demand mismatch driving genuine variation) is
 the realistic part; the absolute £/sq ft is scaled down to fit.
 
@@ -71,7 +71,7 @@ RANDOM_SEED = 123
 # to dim_store[square_footage] and divided across the 12 business periods.
 # Varies by store_type/host-format, same spirit as real UK retail lettings
 # (a retail-park unit costs less per sq ft than a high-street one) but at
-# a rate scaled to this dataset — see the docstring above.
+# a rate scaled to this dataset: see the docstring above.
 RENT_RATE_PSF_YEAR = {
     "High Street": (5.0, 15.0),
     "Retail Park": (2.5, 7.0),
@@ -83,7 +83,7 @@ RENT_RATE_PSF_YEAR = {
 UTIL_RATE_PSF_YEAR_RANGE = (1.2, 3.0)
 PERIODS_PER_YEAR = 12
 
-# Concession channel: unchanged mechanism — a ratio on the concession's OWN
+# Concession channel: unchanged mechanism: a ratio on the concession's OWN
 # period sales, standing in for a revenue-share deal with the host.
 CONCESSION_RENT_RATIO_RANGE = (0.10, 0.22)
 CONCESSION_UTIL_RATIO_RANGE = (0.015, 0.035)
@@ -113,20 +113,20 @@ def period_actuals() -> pd.DataFrame:
 
 def build() -> pd.DataFrame:
     dim_store = pd.read_parquet(DIM_STORE_PATH)
-    # rent/staff/utilities here are a physical-retail-estate cost model —
+    # rent/staff/utilities here are a physical-retail-estate cost model:
     # doesn't transfer to Online (no shop floor to rent). A real online
     # P&L (fulfilment, delivery, warehousing) is a genuinely different
     # cost structure this project hasn't modelled, so Online is excluded
     # here rather than given a fabricated "online rent" figure. Same
     # judgment call as fact_footfall's Online exclusion, documented the
-    # same way — a real, known gap, not silently papered over.
+    # same way: a real, known gap, not silently papered over.
     dim_store = dim_store[dim_store["channel"] != "Online"][
         ["store_id", "channel", "store_type", "square_footage"]
     ]
     actuals = period_actuals()
     actuals = actuals[actuals["store_id"].isin(dim_store["store_id"])]
 
-    # each store's own long-run average period sales — used only to
+    # each store's own long-run average period sales: used only to
     # calibrate the FIXED staff cost, not as the denominator for any
     # single period's actual contribution %
     avg_period_sales = actuals.groupby("store_id")["net_sales_gbp"].mean().rename("avg_period_sales")
@@ -159,10 +159,10 @@ def build() -> pd.DataFrame:
     is_retail_row = df["channel"] == "Retail"
 
     # Retail: rent and utilities driven by footprint, independent of that
-    # store's own sales — the mismatch that creates real variety.
+    # store's own sales: the mismatch that creates real variety.
     retail_rent = df["square_footage"] * df["rent_rate_psf_year"] / PERIODS_PER_YEAR
     retail_util = df["square_footage"] * df["util_rate_psf_year"] / PERIODS_PER_YEAR
-    # Concession: unchanged — a ratio on the concession's own period sales.
+    # Concession: unchanged: a ratio on the concession's own period sales.
     concession_rent = df["net_sales_gbp"] * df["concession_rent_ratio"]
     concession_util = df["net_sales_gbp"] * df["concession_util_ratio"]
 

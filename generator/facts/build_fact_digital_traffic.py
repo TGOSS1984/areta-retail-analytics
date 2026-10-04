@@ -10,7 +10,7 @@ exactly where the conversion rate does.
 
 Unlike fact_digital_sales, there's no existing figure this has to
 reconcile against (nothing in this project tracks "sessions" anywhere
-else), so this IS an independent simulation — but calibrated so the
+else), so this IS an independent simulation, but calibrated so the
 implied conversion rate (orders from fact_digital_sales / sessions
 here) lands in a realistic band per device, the same "derive sessions
 from a conversion-rate draw" approach build_fact_footfall.py uses for

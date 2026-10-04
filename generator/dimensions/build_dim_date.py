@@ -6,7 +6,7 @@ didn't: business year runs March-February here (not January-December),
 season is a 2-value SS/AW model aligned to that business year (not four
 meteorological seasons), and weeks run Sunday-Saturday (not Monday-Sunday).
 All three were explicit in the original notes and I'd defaulted to
-something else without checking back against them — see
+something else without checking back against them: see
 docs/project-plan.md for the full audit.
 
 Column naming: "retail_year"/"retail_week_number"/etc from the first
@@ -15,7 +15,7 @@ the terminology actually used in the brief. Downstream tables that
 referenced the old names need updating to match:
   - fact_footfall: no change needed, it only ever used full_date
   - fact_stock_snapshot: mechanical rename, done in the same commit as this
-  - fact_targets: needs an actual restructure, not just a rename — handled
+  - fact_targets: needs an actual restructure, not just a rename: handled
     as its own step, broken until then
 
 Both calendar week (standard ISO week-of-year) and business week (the
@@ -35,13 +35,13 @@ import pandas as pd
 
 # --- config -----------------------------------------------------------
 # First Sunday on/after 1 March 2023 (business year start, week start),
-# through four full 52-week business years — BY2023..BY2026, where
+# through four full 52-week business years: BY2023..BY2026, where
 # BY2026 = Mar 2026-Feb 2027. Comfortably spans "to date" for a
 # September 2026 present-date cutoff with room left in BY2026.
 _FIRST_OF_MARCH_2023 = dt.date(2023, 3, 1)
 START_DATE = _FIRST_OF_MARCH_2023 + dt.timedelta(
     days=(6 - _FIRST_OF_MARCH_2023.weekday()) % 7
-)  # first Sunday on/after 1 March 2023 — date.weekday() is Mon=0..Sun=6
+)  # first Sunday on/after 1 March 2023: date.weekday() is Mon=0..Sun=6
 
 WEEKS_PER_BUSINESS_YEAR = 52
 N_BUSINESS_YEARS = 4
@@ -97,18 +97,18 @@ def build() -> pd.DataFrame:
         business_week_number = min(business_week_number, WEEKS_PER_BUSINESS_YEAR)
         business_period_number, business_quarter = period_lookup[business_week_number]
 
-        # sequential label, not business_year_start.year — same leap-year
+        # sequential label, not business_year_start.year, same leap-year
         # collision risk as the very first dim_date version if derived
         # from the date directly instead
         business_year = START_DATE.year + business_year_index
 
         season = _season(d.month)
-        # labelled by business year, not calendar year — Jan 2024 is
+        # labelled by business year, not calendar year: Jan 2024 is
         # still "AW23", the second half of business year 2023, not the
         # start of a new season label
         season_label = f"{season}{business_year % 100:02d}"
 
-        # Sunday=1 .. Saturday=7 — Python's own weekday()/isoweekday()
+        # Sunday=1 .. Saturday=7: Python's own weekday()/isoweekday()
         # don't match what a Sunday-start retail week needs directly
         day_of_week_num = (d.weekday() + 1) % 7 + 1
 

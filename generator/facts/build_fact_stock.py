@@ -1,10 +1,10 @@
 """
 build_fact_stock.py
 
-Weekly stock snapshot — one row per (week ending, store, style, colour),
+Weekly stock snapshot: one row per (week ending, store, style, colour),
 not full SKU. Dropped size from this grain on purpose: at ~11,500 SKUs x
 351 stores x 208 weeks, a size-level weekly stock table is genuinely too
-big for what it'd be used for — this gets analysed one level up anyway,
+big for what it'd be used for. This gets analysed one level up anyway,
 overstocked/understocked by store and product group, not by individual
 size run. style_code + colour is carried directly on this fact table
 rather than through a separate dimension, a small denormalisation but a
@@ -12,18 +12,18 @@ standard one for exactly this situation.
 
 First version of this script OOM'd. Reconstructing the full SKU-level
 assortment per store and rolling it up to style+colour produced ~83,600
-pairs — a random 350-SKU sample spreads across most of the catalog's ~2,165
+pairs: a random 350-SKU sample spreads across most of the catalog's ~2,165
 distinct style/colour combinations rather than clustering in a few, which
 I hadn't accounted for. Cross-joined against 208 weeks with string columns
-repeated in full at every row, that's what actually killed the process —
+repeated in full at every row, that's what actually killed the process,
 not the row count on its own so much as building it as 208 separate
 pandas DataFrames with object-dtype strings duplicated in each one.
 
 Two changes to fix it:
   - each store's style/colour set (still drawn from what its SKU
-    assortment could have sold — keeps stock consistent with fact_sales)
+    assortment could have sold: keeps stock consistent with fact_sales)
     gets capped and sub-sampled down to a couple hundred at most, which is
-    also just more realistic — no store stocks 500+ distinct style/colour
+    also just more realistic: no store stocks 500+ distinct style/colour
     lines at once
   - the week-by-week simulation runs on plain numpy arrays throughout, and
     the repeated text columns (store_id, style_code, etc.) get built as
@@ -34,7 +34,7 @@ Simple (s, S) inventory policy per (store, style, colour): sell down each
 week against actual units sold that week (from fact_sales, rolled up from
 SKU to style+colour), and when stock falls below a reorder point (35% of
 a target stock level), replenish straight back up to target. No delivery
-lead time modelled — replenishment is instant when triggered.
+lead time modelled: replenishment is instant when triggered.
 
 Depends on fact_sales existing in data/warehouse.
 
@@ -58,9 +58,9 @@ DIM_DATE_PATH = PROJECT_ROOT / "data" / "warehouse" / "dim_date.parquet"
 FACT_SALES_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_sales.parquet"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "warehouse" / "fact_stock_snapshot.parquet"
 
-RANDOM_SEED = 99  # matches build_fact_sales.py's RANDOM_SEED — has to, to reconstruct the same SKU assortment
+RANDOM_SEED = 99  # matches build_fact_sales.py's RANDOM_SEED: has to, to reconstruct the same SKU assortment
 
-# same cutoff concept as build_fact_sales.py — a stock snapshot can't
+# same cutoff concept as build_fact_sales.py: a stock snapshot can't
 # exist for a week that hasn't happened yet
 PRESENT_DATE_OVERRIDE: dt.date | None = None
 
@@ -70,7 +70,7 @@ def present_date() -> dt.date:
 ASSORTMENT_SIZE = {"Retail": 350, "Concession": 120, "Online": 1000}  # same as build_fact_sales.py
 
 # separate, smaller cap on distinct style/colour lines actually held in
-# stock — see module docstring for why this is needed. Online's cap is
+# stock: see module docstring for why this is needed. Online's cap is
 # bigger in absolute terms (a fulfilment centre holds far more distinct
 # lines than a shop floor ever would) but still well under its full
 # ASSORTMENT_SIZE, same proportional logic as Retail/Concession.
@@ -78,7 +78,7 @@ STOCK_ASSORTMENT_CAP = {"Retail": 130, "Concession": 45, "Online": 350}
 
 TARGET_WEEKS_COVER_RANGE = (6, 18)
 REORDER_FRACTION = 0.35
-MIN_STOCK_FLOOR = 10  # minimum display/pack quantity — real stores hold at least this many of a line for shelf presentation regardless of how slowly it actually sells
+MIN_STOCK_FLOOR = 10  # minimum display/pack quantity: real stores hold at least this many of a line for shelf presentation regardless of how slowly it actually sells
 
 
 def _store_seed(store_id: str) -> int:
@@ -151,7 +151,7 @@ def build() -> pd.DataFrame:
     weekly = weekly_sales(dim_product, dim_date)
 
     # weeks computed from the FULL calendar first, THEN cut off by
-    # week_ending_date — not by filtering dim_date's rows before
+    # week_ending_date, not by filtering dim_date's rows before
     # grouping, which would give an in-progress week a fake early
     # "ending" date instead of correctly excluding it until it's
     # actually finished
@@ -169,7 +169,7 @@ def build() -> pd.DataFrame:
     weekly_indexed = weekly.merge(pair_lookup, on=["store_id", "style_code", "colour"], how="inner")
     weekly_indexed = weekly_indexed.merge(weeks[["week_key", "week_idx"]], on="week_key", how="inner")
 
-    # sold_matrix built directly via numpy fancy-indexed assignment — no
+    # sold_matrix built directly via numpy fancy-indexed assignment: no
     # dense cross-join dataframe ever gets materialised
     sold_matrix = np.zeros((n_weeks, n_pairs))
     sold_matrix[weekly_indexed["week_idx"].to_numpy(), weekly_indexed["pair_idx"].to_numpy()] = (

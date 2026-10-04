@@ -2,25 +2,25 @@
 weekly_refresh.py
 
 Single entry point that runs the whole generator pipeline in the order it
-actually needs to run in — this is what the GitHub Action calls on a
+actually needs to run in. This is what the GitHub Action calls on a
 schedule, and what "just rebuild everything" means locally too.
 
 Order matters here, not arbitrary:
-  1. dimensions (date, store, product, currency, promo) — nothing else can
+  1. dimensions (date, store, product, currency, promo). Nothing else can
      run without these
-  2. fact_sales raw pass, then its clean step — fact_footfall,
+  2. fact_sales raw pass, then its clean step: fact_footfall,
      fact_stock_snapshot, fact_store_finance, fact_targets, and
      fact_digital_sales all read the CLEANED fact_sales, not the raw one
-  3. fact_footfall, fact_stock_snapshot, fact_store_finance — order
+  3. fact_footfall, fact_stock_snapshot, fact_store_finance: order
      between these three doesn't matter, they're independent of each
      other, just downstream of fact_sales
-  4. fact_targets — now has to run AFTER fact_footfall and
+  4. fact_targets: now has to run AFTER fact_footfall and
      fact_store_finance specifically, not just after fact_sales: it
      targets footfall and net contribution too, not just net sales, so
      it reads both of those facts' actuals directly rather than
      re-deriving them
   5. fact_digital_sales, then fact_digital_targets, then
-     fact_digital_traffic — digital_sales derives its device-level
+     fact_digital_traffic: digital_sales derives its device-level
      split from the real Online-channel totals in fact_sales (so
      digital sales figures reconcile exactly, see that script's own
      docstring); digital_targets just needs digital_sales' actuals to
@@ -37,13 +37,13 @@ Order matters here, not arbitrary:
 
 What "refresh" actually does now: fact_sales, fact_footfall, and
 fact_stock_snapshot all stop generating actuals at date.today() (see
-PRESENT_DATE_OVERRIDE in each of those scripts) — so running this again
+PRESENT_DATE_OVERRIDE in each of those scripts), so running this again
 next week genuinely extends the actuals frontier by however many days
 have passed, rather than just reproducing the same fixed dataset. Targets
 still span the full business year regardless, via fact_targets.
 
 Each step runs as its own subprocess rather than an import, mainly so this
-behaves the same locally as it will from CI — one failing step stops the
+behaves the same locally as it will from CI: one failing step stops the
 whole run rather than silently leaving downstream tables stale.
 
 Usage:
@@ -98,7 +98,7 @@ def run_step(script_rel_path: str, label: str) -> None:
 
     if result.returncode != 0:
         print(result.stderr.strip(), file=sys.stderr)
-        print(f"\n[weekly_refresh] FAILED at '{label}' after {elapsed:.1f}s — stopping, nothing after this ran.")
+        print(f"\n[weekly_refresh] FAILED at '{label}' after {elapsed:.1f}s: stopping, nothing after this ran.")
         sys.exit(1)
 
     print(f"[weekly_refresh] {label} done in {elapsed:.1f}s")

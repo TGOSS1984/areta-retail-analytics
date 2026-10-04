@@ -1,7 +1,7 @@
 """
 clean_fact_sales.py
 
-Second half of the fact_sales pipeline — takes the deliberately messy
+Second half of the fact_sales pipeline: takes the deliberately messy
 output of generator/facts/build_fact_sales.py and turns it into the
 deduplicated, typed table that actually lands in data/staging and
 data/warehouse. This is the one script in the whole generator that's
@@ -16,10 +16,10 @@ What it fixes, and why each one's actually in the raw file:
 Also runs a foreign-key check against the dimension tables before writing
 anything out. Mainly there to catch the class of bug where dim_product got
 regenerated (reshuffling the SKU sample) after fact_sales was already
-built against an older version — same underlying issue as the missing-file
+built against an older version, same underlying issue as the missing-file
 error from running these out of order, just a quieter version of it.
 
-Writes the same cleaned table to both data/staging (the audit trail —
+Writes the same cleaned table to both data/staging (the audit trail:
 "here's what cleaning actually did") and data/warehouse (what Power BI
 imports from).
 
@@ -74,7 +74,7 @@ def validate_foreign_keys(df: pd.DataFrame) -> None:
         raise ValueError(
             f"foreign key check failed: {orphan_stores} rows with an unknown store_id, "
             f"{orphan_skus} with an unknown sku, {orphan_promos} with an unknown promo_id. "
-            "Likely cause: a dimension was regenerated after fact_sales was built — "
+            "Likely cause: a dimension was regenerated after fact_sales was built: "
             "rerun the dimension builders, then facts/build_fact_sales.py, then this script."
         )
     print("foreign key check passed: every store_id, sku, and promo_id resolves to a dimension row")

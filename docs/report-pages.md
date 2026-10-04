@@ -1,107 +1,68 @@
 # Report pages
 
-This is my build sheet for the ten report pages. Every field and measure named here exists in the model as of the 395-measure build, and I checked the relationship paths behind each visual so nothing here quietly returns the wrong number.
+This is what each of the ten report pages shows, as built, and the numbers I'd expect to see on them. It started life as my build sheet and I've rewritten it against the exported report (`docs/screenshots/areta-retail-analytics.pdf`), so where the build drifted from the original plan, this follows the build.
 
-## Page anatomy
+All the numbers below are business year 2025 (the 2025 button), from the PDF. If you regenerate the data on a later day, BY25 shouldn't change, but BY26 will.
 
-Every page is 1920 x 1080 and starts from the same shell: the 211px left rail (logo, page navigator, slicer stack), the 84px header banner with the page title, the `Report Last Refreshed` card and the `business_year` slicer.
+## How the pages are put together
 
-I lay the content out on one grid so the pages line up when you flick between them. The content area runs from x = 227 to 1901 and y = 94 to 1070.
+Every page is 1920 x 1080 and shares one shell: the left rail (logo, page navigator, five slicers and the tagline), the header banner with `Report Last Refreshed` and the year buttons, then a row of five KPI cards across the top and two rows of visuals below.
 
-| Slot | y | h | Notes |
-|---|---|---|---|
-| KPI row | 94 | 162 | Five cards, 324 wide, at x = 227, 570, 903, 1241, 1577. Same card + icon + sparkline template as Overview. |
-| Row A | 268 | 400 | Main visuals |
-| Row B | 680 | 390 | Supporting visuals |
+Each KPI card is the same template: the value, an icon, one or two reference lines underneath, and a sparkline on `business_week_number`. The reference lines are the YoY or target combos, coloured with the matching Trend Colour measure (Reference label, then Font colour, then Field value). An icon means one metric everywhere, so Net Sales always has the same icon and conversion is the funnel icon for both stores and the website.
 
-| Width pattern | Widths (x positions) |
-|---|---|
-| Thirds | 550 each (227, 789, 1351) |
-| Two-thirds + third | 1107 (227) + 555 (1346) |
-| Halves | 831 each (227, 1070) |
-| 40 / 60 | 666 (227) + 996 (905) |
-| Full | 1674 (227) |
-
-All gaps are 12px.
-
-### KPI cards
-
-Each card shows the headline measure with its YoY or Target Combo as the reference label. The sparkline sits on `business_week_number`, same as Overview. The Trend Colour conditional formatting is still manual per card: Reference label, then Font colour, then Field value, then the matching Trend Colour measure.
-
-### Slicers
-
-The rail slicers aren't the same on every page. A slicer only filters what it has a relationship path to, and several facts don't reach `dim_product` or `dim_store`.
-
-| Page | Keep | Remove / replace |
-|---|---|---|
-| Sales, Products, Categories, Retail, Promo | week, month, product_group, major_product_group, channel | none |
-| Stock | product_group, major_product_group, channel | week and month (stock is a weekly closing balance, a month slicer mid-period reads oddly) |
-| Digital | week, month | product and channel slicers do nothing to digital facts. Replace with `dim_market[market_name]`. |
-| Finance | none of the date ones | Finance and targets are period grain. Replace with `dim_store[store_type]` and `dim_store[market_name]`. |
-| Data Quality | nothing | The DQ tables have no relationships, so no slicer does anything. See that page. |
-
-### KPI icons
-
-The icons are the Tabler set in `branding/icons/`, in the same colour variant the Overview cards use. One metric always gets one icon across the whole report: Net Sales is `coin` everywhere, conversion is `chart-funnel` for both stores and web, and anything profit-shaped is `moneybag`. That way the icon carries meaning, not just decoration. Every icon named in this doc is already in the set, so nothing needs generating.
-
-### VAT and currency
-
-Add two small tile slicers to the rail on every page except Data Quality: `'VAT View'[VAT View]` and `'Currency Conversion'[Currency Conversion]`. Use View, then Sync slicers, so a choice follows you around the report.
-
-Any old slicer on `dim_vat_view` does nothing now, so replace it with the new one wherever it appears. Use the plain base measures everywhere (`Net Sales (GBP)`, `Average Transaction Value (GBP)`, and so on). The `(Selected VAT View)` family are only pass-throughs now.
-
-### Visual mix
-
-I try to give every page one of each: a trend over time, a composition or share, a ranking or comparison, a relationship (scatter), and one detail table. Where a page already has the obvious chart on Overview, I've gone for a different angle rather than repeating it.
-
-The report has three heatmaps. There's one headline calendar heatmap in Deneb on Sales, and two native matrix heatmaps, on Retail and Data Quality. There's an optional fourth on Categories.
+The rail slicers are the same five on every page: Week, Period, Category, Mjr Prod and Channel. They don't all reach every page. The product and channel slicers do nothing to the digital facts or the finance P&L, and nothing in the rail touches the Data Quality tables. I've parked a cleaner set (period, week and a market slicer that reaches every page through one extra relationship) to come back to.
 
 ---
 
 ## 1. Overview
 
-Already built, no changes needed. Its KPI row sets the icon for each core metric, and every other page reuses the same icon for the same metric:
+*How is the business doing, and what drove it?*
 
-| KPI card | Value | Icon |
+| Card | Value | Reference lines |
 |---|---|---|
-| Net Sales | `Net Sales (GBP)` | `coin` |
-| Units | `Net Units Sold` | `package` |
-| Gross Margin | `Gross Margin %` | `percentage` |
-| Gross Profit | `Gross Profit (GBP)` | `moneybag` |
-| Stock Value | `Stock Value (Retail, GBP)` | `building-warehouse` |
+| Net Sales | £39.00M | vs target −£87K (−0.2%), vs PY +£1.69M (+4.5%) |
+| Net Units Sold | 1.12M | vs target −1.0%, vs PY +4.0% |
+| Gross Margin % | 68.9% | vs target −0.2pp, vs PY +0.3pp |
+| Gross Profit | £26.85M | vs PY +£1.28M (+5.0%) |
+| Stock Value (Retail) | £15.27M | vs PY −1.8%, weeks of cover (last 4 weeks) 15.4 |
 
-The rest of the page is the sales and margin combo, the channel and market bar with LY, the best sellers table with images, the store map, the major product group donut, and the product group YoY table.
+Top row, left to right:
 
-The only job left on this page is the VAT slicer swap.
+- **Net Sales and Gross Margin % by business period.** Columns and a line. Margin dips in P05 and P11, the two clearance periods.
+- **Net Sales vs LY by channel.** Retail £27M (up from £26M), Online £7M, Concession £5M.
+- **What drove growth vs last year.** A waterfall of `Net Sales YoY (GBP)` by major product group, drilling to product group. Outerwear (+£600K) and Footwear (+£522K) lead. Camping (−£4K) and Accessories (−£40K) are the two red bars, and the total matches the +£1.69M on the Net Sales card.
+
+Bottom row:
+
+- **Store map** of Net Sales by latitude and longitude.
+- **Net Sales by major product group**, a donut. Outerwear is a third of the business.
+- **Product group table** with Net Sales and the YoY combo. Shoes is the fastest grower at +11.5%.
+
+The waterfall replaced a best-sellers table, which was a straight copy of the one on Products. The page now says why the number moved, not just what sold.
 
 ---
 
-## 2. Sales Performance
+## 2. Sales
 
-*How are we trading against last year and target, and on which days?*
+*How are we trading against last year and target, and where is the growth?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
-| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` | `target-arrow` |
-| Transactions | `Distinct Invoices (from Sales)` | `Distinct Invoices YoY Combo` | `receipt` |
-| Average Order Value | `Average Order Value (GBP)` | `Average Order Value YoY Combo` | `wallet` |
-| Online Share | `Online Share %` | `Online Share YoY Combo` | `world` |
+| Card | Value | Reference line |
+|---|---|---|
+| Net Sales | £39.00M | vs target −0.2%, vs PY +4.5% |
+| Net Sales Target Achievement % | 99.8% | vs target −£87K |
+| Distinct Invoices (from Sales) | 481K | vs PY +16,350 (+3.5%) |
+| Average Order Value | £81.01 | vs PY +£0.80 (+1.0%) |
+| Online Share % | 18.3% | vs PY +0.7pp |
 
-| # | Visual | Type | Position (x, y, w, h) | Fields |
-|---|---|---|---|---|
-| 1 | Actual vs LY vs Target | Line | 227, 268, 1107, 400 | X `business_week_number`. Y `Net Sales (GBP)`, `Net Sales LY`, `Target Net Sales (GBP), Any Grain`. Make LY grey and target dashed. |
-| 2 | Target variance by market | Bar (horizontal) | 1346, 268, 555, 400 | Y `dim_store[market_name]`. X `Net Sales Target Variance %`. Bar colour: Rules, below 0 red, 0 and above green. Sort by value. |
-| 3 | Trading calendar | Deneb heatmap | 227, 680, 1674, 390 | See [the heatmap section](#the-calendar-heatmap) |
+The cards split the headline instead of repeating Overview: Net Sales is transactions times average order value, and Online Share shows the channel shift.
 
-**Notes**
+- **Net Sales vs target vs LY by business week.** The target uses `Target Net Sales (GBP), Any Grain`, which spreads each period's target over its weeks. The plain target measure draws a staircase.
+- **Target variance by market.** Poland (+£90K) and Italy (+£70K) beat target; Germany is furthest behind (−£180K).
+- **Trading calendar.** The Deneb heatmap of every day in the year. See [the calendar heatmap](#the-calendar-heatmap).
+- **Where the growth came from.** A matrix of `Net Sales YoY %` with markets down the side and channels across, coloured red to green. Online grows in every market (+8.7% overall, +15.5% in Poland). France Retail (−3.1%) and Netherlands Concession (−2.2%) go backwards inside markets that grew overall. It sits next to the target chart on purpose: Germany is the most behind target, and here you can see its stores are flat while only Online grows.
+- **Net Sales, LY, Gross Profit and LY by channel.**
 
-- The cards split the headline rather than repeat Overview: Net Sales = Transactions × Average Order Value, and Online Share shows the channel shift (about 17.6% in BY24, 18.3% in BY25). Gross Profit and Gross Margin were here in the first draft, but they're on Overview already.
-- Use `Average Order Value (GBP)` here, never `Average Transaction Value (GBP)`. ATV divides by store transactions from `fact_footfall`, so with Online in the filter it counts online sales but not online orders: about £98 for BY25 instead of the true £81. ATV and Items per Transaction belong on the Retail page, which is filtered to stores.
-- Online Share's trend colour is always grey. A rising online share can mean online is thriving or stores are struggling, so the card doesn't treat either direction as good news.
-- Visual 1 needs the Any Grain target. The plain target measure returns the whole period's target on every week and draws a staircase.
-- I dropped the "sales & margin by month" chart from the first draft because it duplicated the Overview combo.
-- I also dropped the channel donut and the market map, since Overview covers both.
+Never use `Average Transaction Value (GBP)` on this page. It divides by store transactions from `fact_footfall`, so with Online in the filter it counts online sales but not online orders, and reads about £98 instead of £81. `Average Order Value (GBP)` divides by every channel's invoices. Online Share's trend colour is always grey, because a rising online share can mean stores are struggling as easily as online is thriving.
 
 ---
 
@@ -109,28 +70,21 @@ The only job left on this page is the VAT slicer swap.
 
 *Which lines carry the business, and which ones come back?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Top Style | `Top Style` | `Top Style Share %` (label it "of sales") | `award` |
-| Average Selling Price | `Average Selling Price (GBP)` | `Average Selling Price YoY Combo` | `currency-pound` |
-| Range concentration | `Styles for 80% of Sales %` | none | `chart-pie` |
-| Return Rate | `Return Rate %` | `Return Rate YoY Combo` | `rotate` |
-| Style-colours | `Style-Colours Sold` | `Colours per Style` (label it "colours per style") | `hanger` |
+| Card | Value | Reference lines |
+|---|---|---|
+| Top Style | Denali Boots | £690K, 1.8% of sales |
+| Average Selling Price | £34.85 | vs PY £34.67 |
+| Styles for 80% of Sales % | 25.9% | of 907 styles in the range |
+| Return Rate % | 2.8% | vs PY 0.0pp |
+| Style-Colours Sold | 2,244 | 2.5 colours per style |
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Style Pareto | Line and clustered column | 227, 268, 1107, 400 | X `style_label` (never `style_name`, which is shared by up to 8 styles; the Pareto measures go blank on it by design). Columns `Net Sales (GBP)`. Line (secondary axis) `Style Pareto Cumulative %`, with the secondary axis fixed 0 to 100% and a constant line at 80%. Sort by Net Sales descending. |
-| 2 | Best sellers | Table | 1346, 268, 555, 400 | `image_url` (Image URL category), `style_name`, `colour`, `Net Sales (GBP)`, `Net Sales YoY Combo`. Top N 15 by Net Sales. |
-| 3 | Margin vs volume | Scatter | 227, 680, 831, 390 | Values `product_group`. X `Net Sales (GBP)`. Y `Gross Margin %`. Size `Net Units Sold`. Legend `major_product_group`. Add average lines on both axes to create quadrants. |
-| 4 | Return rate by group | Deneb gradient bars | 1070, 680, 831, 390 | `deneb-gradient-bars.json`. Category `product_group`, value `Return Rate %` (switch the label format to `.1%`). |
+Every card is product-specific. Top Style finds the winner itself through `Top Style Net Sales (GBP)` and `Top Style Share %`, so the card has no visual filter. Two brands have a style called Denali Boots, and a filter on the name would have described both.
 
-**Notes**
-
-- The cards are all product-specific rather than repeating Overview's Net Sales, Units, Margin and Profit. Top Style and Styles for 80% sum up the Pareto in two numbers, and Style-Colours Sold ties to the range-analysis table.
-- Expect a proper Pareto bow. After the generator's popularity changes, the top 20% of styles do about 73% of sales and about 26% of styles reach 80%. Before style popularity existed it took 502 of 907, which is why the first version of this chart looked flat.
-- The first draft had a Style-Colour Pareto. There's no Style-Colour Pareto measure in the model, and three Paretos on one page was repetitive anyway, so I cut it.
-- The Product Group Pareto lives on Categories.
-- I used 33 product groups for the scatter rather than brands. There are only four brands, which isn't enough dots to show a relationship.
+- **Best sellers** with product photos: style, colour, Net Sales, margin, average selling price, units, stock and weeks of cover. The Helvellyn 3 in 1 in Stone leads at £452K.
+- **Style Pareto** on `style_label` (never `style_name`, which repeats across brands). About a quarter of styles make 80% of sales, and the best style sells about 49 times the median.
+- **Margin vs volume** by product group: Net Sales across, Gross Margin % up, bubble size units, coloured by major group. Footwear sits low (about 66%) and Camping lowest.
+- **Net Sales by season.** BY25 sells across several seasons' ranges at once, newest at the top.
+- **Range analysis table** by product group: Net Sales, Gross Profit Share %, Style Productivity Index (GP) and Styles for 80% of Sales %. Softshell (index 0.69) carries more styles than it earns. 3 in 1 needs only 18% of its styles to reach 80% of its sales.
 
 ---
 
@@ -138,112 +92,93 @@ The only job left on this page is the VAT slicer swap.
 
 *How does the range mix perform, and where?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Top category | `Top Product Group` | `Top Product Group Share %` (label it "of sales") | `trophy` |
-| Net Sales | `Net Sales (GBP)` | `Net Sales YoY Combo` | `coin` |
-| YoY | `Net Sales YoY %` | `Net Sales YoY Combo` | `trending-up` |
-| Gross Margin | `Gross Margin %` | `Gross Margin YoY Combo` | `percentage` |
-| vs Target | `Net Sales Target Achievement %` | `Net Sales Target Combo` | `target-arrow` |
+| Card | Value | Reference lines |
+|---|---|---|
+| Top Product Group | Waterproof Shell | £3.47M, 8.9% of sales |
+| Net Sales | £39.00M | vs PY +4.5% |
+| Gross Margin % | 68.9% | vs target −0.2pp, vs PY +0.3pp |
+| Gross Profit | £26.85M | vs PY +5.0% |
+| Stock Value (Retail) | £15.27M | vs PY −1.8% |
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Range treemap | Treemap | 227, 268, 666, 400 | Category `major_product_group`, Details `product_group`, Values `Net Sales (GBP)` |
-| 2 | Product Group Pareto | Line and clustered column | 905, 268, 996, 400 | X `product_group`. Columns `Net Sales (GBP)`. Line `Product Group Pareto Cumulative %` (secondary axis 0 to 100%, constant line at 80%). |
-| 3 | Category x Market YoY | Matrix heatmap (optional) | 227, 680, 1107, 390 | Rows `major_product_group` (drill to `product_group`). Columns `dim_store[market_name]`. Values `Net Sales YoY %`. |
-| 4 | Margin vs LY | Clustered bar | 1346, 680, 555, 390 | Y `major_product_group`. X `Gross Margin %`, `Gross Margin % LY` |
+- **Major product group table**, drilling to product group: Net Sales, the YoY combo and share of total. Accessories (−2.9%) and Camping (−2.7%) are the only groups down.
+- **Net Sales by brand.** Areta 34.7%, Kestrel Ridge 23.1%, Basecamp 21.7%, Areta Pro 20.6%.
+- **Category x market heatmap** of `Net Sales YoY %`. Footwear grows in every market, double digits in Latvia, Poland and Slovakia. Accessories falls in most of western Europe (−8.2% in Germany).
+- **Range treemap**, major group then product group.
+- **Net Sales and margin vs LY by gender.** Mens £12.3M, Womens £11.7M, Unisex £9.5M, Kids £5.4M.
+- **Product Group Pareto.** Thirty-odd product groups, so the curve is gentler than the style one.
 
-**Notes**
-
-- For visual 3, use a diverging gradient centred on 0 (see [native heatmaps](#native-matrix-heatmaps)).
-- Swap the columns to `brand_name` if you'd rather see range by brand. That was the original Category x Brand matrix.
-- If three heatmaps feels like enough, make visual 3 a plain matrix with data bars instead.
-- Use `dim_store[market_name]`, not `dim_market[market_name]`. `fact_sales` only reaches markets through `dim_store`.
+Use `dim_store[market_name]` for the heatmap columns, not `dim_market`. `fact_sales` only reaches markets through `dim_store`.
 
 ---
 
-## 5. Retail Performance
+## 5. Retail
 
 *How are the stores trading, converting and earning their space?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Footfall | `Total Footfall` | `Total Footfall Target Combo (Any Grain)` | `walk` |
-| Conversion | `Conversion Rate %` | `Conversion Rate YoY Combo` | `chart-funnel` |
-| ATV | `Average Transaction Value (GBP)` | `Average Transaction Value YoY Combo` | `receipt-2` |
-| IPT | `Items per Transaction` | `Items per Transaction YoY Combo` | `shopping-bag` |
-| Sales per Sq Ft | `Sales per Sq Ft (Annualised)` | `Sales per Sq Ft YoY Combo` | `ruler` |
+The page is filtered to Retail and Concession, since Online has no footfall.
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Footfall vs conversion | Scatter | 227, 268, 666, 400 | Values `store_name`. X `Total Footfall`. Y `Conversion Rate %`. Size `Retail Sales (GBP)`. Legend `store_type`. Average lines on both axes. |
-| 2 | Store league table | Table | 905, 268, 996, 400 | `store_name`, `region`, `store_type`, `Net Sales (GBP)`, `Net Sales YoY Combo`, `Conversion Rate %`, `Sales per Sq Ft (Annualised)`, `Net Contribution %`. Data bars on Net Sales. Background rules on Net Contribution %: below 0 red, 0 to 10% amber. |
-| 3 | Trading rhythm | Matrix heatmap | 227, 680, 1107, 390 | Rows `day_name`. Columns `business_period_label`. Values `Total Footfall`. |
-| 4 | Footfall vs target | Line | 1346, 680, 555, 390 | X `business_week_number`. Y `Total Footfall`, `Target Total Footfall, Any Grain` (dashed) |
+| Card | Value | Reference line |
+|---|---|---|
+| Total Footfall | 2.3M | vs target −59,882 (−2.6%) |
+| Conversion Rate % | 17.4% | vs PY +0.1pp |
+| Average Transaction Value | £80.25 | vs PY £79.50 |
+| Items per Transaction | 2.35 | vs PY +0.3% |
+| Sales per Sq Ft | £33.81 | vs PY +£1.19 (+3.6%) |
 
-**Notes**
+- **ATV and items per transaction by market.** Italy and the Netherlands have the biggest baskets; Slovakia and Czechia the smallest.
+- **Net Sales vs target vs LY by store type.** High Street and Retail Park carry the estate.
+- **Day of week by month** matrix of Net Sales. Saturday is the biggest day almost every month.
+- **Store league table:** store, region and type, a weekly sales sparkline, Net Sales, the target combo and the YoY combo. Stores in total are up on last year (+3.6%) but 1.0% behind target.
+- **Footfall YoY vs Net Sales YoY by store**, coloured by store type, with average lines making quadrants. The two move together, and the bottom-left quadrant is the list of stores losing both.
 
-- The rhythm heatmap in visual 3 shows the weekend peak and the seasonal build in one visual. Conversion Rate % works in the same slot. Its spread is narrow (about 16 to 18.5%), but the gradient scales to min and max, so the pattern still reads.
-- Add a channel page filter of Retail + Concession so Online doesn't sit in the scatter with zero footfall.
-- The league table is also my Desktop test for the store contribution redesign. There should be real spread now, with some stores negative, and `Sales per Sq Ft` should be blank for Online.
-- I left the region map off. Overview already has one. If you want it here instead of visual 4, use `dim_store[latitude]` and `[longitude]` with `Retail Sales (GBP)` as size.
+ATV and Items per Transaction divide by store transactions, which is right here because the page excludes Online.
 
 ---
 
-## 6. Promotional Performance
+## 6. Promo
 
 *What does discounting buy us, and what does it cost in margin?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Full Price Sales | `Full Price Sales (GBP)` | `Full Price Sales YoY Combo` | `tag` |
-| Multi-buy Sales | `Multi-buy Sales (GBP)` | `Multi-buy Sales YoY Combo` | `basket` |
-| Full Price Mix | `Full Price Mix %` | `Full Price Mix YoY Combo` | `chart-pie` |
-| Multi-buy Mix | `Multi-buy Mix %` | `Multi-buy Mix YoY Combo` | `chart-donut` |
-| Return Rate | `Return Rate %` | `Return Rate YoY Combo` | `rotate` |
+| Card | Value | Reference line |
+|---|---|---|
+| Full Price Sales | £32.34M | vs PY +4.5% |
+| Multi-buy Sales | £1.30M | vs PY +2.8% |
+| Full Price Mix % | 82.9% | vs PY 0.0pp |
+| Multi-buy Mix % | 3.3% | vs PY −0.1pp |
+| Return Rate % | 2.8% | vs PY 0.0pp |
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Full price vs multi-buy | Stacked area | 227, 268, 1107, 400 | X `business_week_number`. Y `Full Price Sales (GBP)`, `Multi-buy Sales (GBP)` |
-| 2 | The cost of discounting | Line and clustered column | 1346, 268, 555, 400 | X `fact_sales[Discount Band]`. Columns `Net Sales (GBP)`. Line `Gross Margin %` |
-| 3 | Return rate trend | Line | 227, 680, 666, 390 | X `business_period_label`. Y `Return Rate %`, `Return Rate LY` |
-| 4 | Promotion table | Table | 905, 680, 996, 390 | `promo_name`, `promo_type`, `start_date`, `end_date`, `discount_pct`, `Net Sales (GBP)`, `Net Units Sold`, `Gross Margin %`, `Distinct Invoices (from Sales)` |
+- **Net Sales by promotion type.** Full price 82.9%, seasonal sales 8.5%, multi-buy 3.3%, clearance 3.0%, flash events 2.3%.
+- **The cost of discounting:** Net Sales and Gross Margin % by discount band. Margin falls from 70.6% at full price to 53.6% at 51–70% off. Multi-buys (60.6%) cost less margin than a 31–50% markdown.
+- **Return rate vs LY by quarter.**
+- **Full price and multi-buy sales by business period.**
+- **Promotion table:** every promotion with its type, discount, dates, Net Sales, share, units, margin and invoices. Summer Sale 2025 was the biggest at £989K, and socks 3 for 2 sold the most units of any multi-buy.
 
-**Notes**
-
-- Visual 2 is the insight on this page. It shows how much the margin line falls as the discount band deepens. It replaces the separate discount-band bar and the invoice-count distribution from the first draft.
-- `Discount Band` has no sort column, so alphabetical order puts "31-50% off" first. For now, sort the visual by `Gross Margin %` descending, which lands close to band order. The proper fix is a `Discount Band Order` column next to it in `fact_sales.tmdl`.
+Returns are all coded `PROMO0000`, whatever the original sale was on, so Full Price carries every refund in the business (about £1.27M in BY25). The real full price mix is slightly higher than the card says.
 
 ---
 
-## 7. Digital Performance
+## 7. Digital
 
-*How is the website trading and converting, by device, browser and market, and where do shoppers drop out?*
+*How is the website trading and converting, and where do shoppers drop out?*
 
-Rail slicers on this page: week, month and `dim_market[market_name]`.
+| Card | Value | Reference lines |
+|---|---|---|
+| Digital Net Sales | £7.36M | vs target +£266K (+3.7%), vs PY +£586K (+8.6%) |
+| Total Sessions | 4.21M | vs PY −0.1% |
+| Digital Conversion Rate % | 2.0% | vs PY +0.1pp |
+| Average Basket Value | £87.25 | vs PY +£1 (+0.9%) |
+| Basket Abandonment % | 76.0% | vs PY −1.3pp |
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Digital Sales | `Digital Net Sales (GBP)` | `Digital Net Sales Target Combo (Any Grain)` | `shopping-cart` |
-| Sessions | `Total Sessions` | `Total Sessions YoY Combo` | `click` |
-| Conversion | `Digital Conversion Rate %` | `Digital Conversion Rate YoY Combo` | `chart-funnel` |
-| Basket | `Average Basket Value (GBP)` | `Average Basket Value YoY Combo` | `basket` |
-| Basket abandonment | `Basket Abandonment %` | `Basket Abandonment YoY Combo` | `shopping-cart-x` |
+The cards tell one story: sales are sessions times conversion times basket, and in BY25 traffic was flat, conversion and basket rose, and sales grew 8.6%. That's the April 2025 one-page checkout, and Basket Abandonment shows it directly. Its trend colour is reversed: green when it falls.
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Sales and conversion | Line and clustered column | 227, 268, 1107, 400 | X `business_week_number`. Columns `Digital Net Sales (GBP)`. Line `Digital Conversion Rate %` |
-| 2 | Shopping funnel | Funnel | 1346, 268, 555, 400 | Category `dim_funnel_stage[stage_name]`. Values `Funnel Value`. Tooltips `Funnel % of Previous Stage`. Data labels on, showing value and "% of first". |
-| 3 | Browsers | Table | 227, 680, 550, 390 | `dim_browser[icon_url]` (Image URL), `browser`, `Total Sessions`, `Pages per Session`, `Funnel Conversion Rate %`. Data bars on Sessions. |
-| 4 | Basket by device | Deneb gradient bars | 789, 680, 550, 390 | Category `fact_digital_sales[device_type]`, value `Average Basket Value (GBP)` |
-| 5 | Target by market | Bar (horizontal) | 1351, 680, 550, 390 | Y `dim_market[market_name]`. X `Digital Net Sales Target Variance % (Any Grain)`. Rules colour red below 0, green 0 and above. |
+- **Average basket by device.** Desktop £117, Tablet £108, Mobile £69.
+- **Digital sales vs target by market.**
+- **Browsers table** with logos: sessions, pages per session and `Funnel Conversion Rate %`. Edge converts best (2.2%).
+- **Sessions by device.** Two thirds of sessions are on mobile.
+- **Shopping funnel:** 4.21M sessions, 2.32M viewed a product, 351K added to basket, 155K reached checkout, 84K ordered. Category `dim_funnel_stage[stage_name]`, values `Funnel Value`, tooltip `Funnel % of Previous Stage`.
+- **Digital sales and conversion by week.** Conversion steps up in April, when the new checkout lands.
 
-**Notes**
-
-- The funnel replaces the "Sessions by device" donut. The device split is still one click away: a device slicer, or cross-filtering from visual 4, redraws the whole funnel for that device.
-- `Basket Abandonment %` replaces the Engagement card, which had no YoY reference. Lower is better, so its combo colour is reversed: green when it falls. `Checkout Abandonment %` has the same set if you'd rather show that one. It's the measure the April 2025 one-page checkout moves most.
-- Conversion by device works now. `Digital Conversion Rate %` still can't do it (orders on `fact_digital_sales`, sessions on `fact_digital_traffic`, no shared device dimension), but `Funnel Conversion Rate %` comes entirely from the traffic table, so it slices by device and browser. The two agree in total. The parked `dim_device` table isn't needed any more.
-- Use `dim_market` here, not `dim_store`. The digital facts don't go through stores.
+`Digital Conversion Rate %` can't split by device, because orders and sessions sit on different tables. `Funnel Conversion Rate %` comes entirely from the traffic table, so it can, and the two agree in total. Use `dim_market` on this page, not `dim_store`: the digital facts don't go through stores.
 
 ---
 
@@ -251,29 +186,23 @@ Rail slicers on this page: week, month and `dim_market[market_name]`.
 
 *Where does the money go between turnover and net contribution, and which stores earn their keep?*
 
-Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everything on this page is business period grain, so keep axes on `business_period_label`, never week or month.
+| Card | Value | Reference line |
+|---|---|---|
+| Turnover | £31.86M | none |
+| Gross Contribution % | 23.4% | vs PY +1.8pp |
+| Net Contribution | £5.86M | vs target −£475K (−7.5%) |
+| Net Contribution % | 18.4% | vs PY +1.8pp |
+| Store Operating Costs | £14.50M | vs PY +£47K (+0.3%) |
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Turnover | `Turnover (GBP)` | none | `building-bank` |
-| Gross Contribution | `Gross Contribution %` | `Gross Contribution YoY Combo` | `percentage` |
-| Net Contribution | `Net Contribution (GBP)` | `Net Contribution Target Combo` | `moneybag` |
-| Net Contribution % | `Net Contribution %` | `Net Contribution Pct YoY Combo` | `scale` |
-| Operating Costs | `Store Operating Costs (GBP)` | `Store Operating Costs YoY Combo` | `calculator` |
+Turnover is Retail and Concession only, about 82% of company sales, because Online has no rent or staff lines to bridge. It's labelled Turnover rather than Net Sales so nobody puts it next to the Sales page and thinks one of them is wrong.
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | P&L bridge | Waterfall | 227, 268, 1107, 400 | Category `dim_pnl_bridge[step_name]` (sorted by `step_order`). Y `P&L Bridge Value`. Rename the auto-Total to "Net Contribution". |
-| 2 | Cost mix | Donut | 1346, 268, 555, 400 | Values: `Rent (GBP)`, `Staff Costs (GBP)`, `Utilities (GBP)`, `Marketing (GBP)` (no legend field) |
-| 3 | Space vs profit | Scatter | 227, 680, 1107, 390 | Values `store_name`. X `Sales per Sq Ft (Annualised)`. Y `Net Contribution %`. Legend `store_type`. Constant line at Y = 0. |
-| 4 | Contribution trend | Line | 1346, 680, 555, 390 | X `business_period_label`. Y `Gross Contribution %`, `Net Contribution %` |
+- **Net Contribution % vs Sales per Sq Ft by store**, coloured by market. Most stores sit between 0% and 40%; a handful of big footprints trade thinly and lose money.
+- **Turnover, margin and net contribution by market.** The UK is over a third of store turnover.
+- **P&L bridge.** A waterfall from turnover down through marketing, head office, utilities, staff, rent and cost of goods to net contribution, from `dim_pnl_bridge` and `P&L Bridge Value`. It reconciles exactly to the Net Contribution card.
+- **Net Contribution % by business period.** From 5.6% in P02 to 31.0% in P09, because the costs are fixed and sales aren't.
+- **Store cost mix.** Rent £6.18M, staff £5.99M, utilities £1.79M, marketing £0.54M.
 
-**Notes**
-
-- Visual 3 tells the square footage story. The stores bottom-left are big footprints trading thinly. Concessions should cluster healthy by design.
-- This replaces the existing Net Sales vs Net Contribution % scatter at (1000, 93), which overlaps the KPI row.
-- "Turnover" is Retail + Concession only, about 81.5% of company sales. Online has no cost lines to bridge. Put that in the waterfall's subtitle so nobody compares it with Net Sales on the Sales page.
-- The waterfall and the cost donut are also my first Desktop look at the rebuilt bridge. It should reconcile exactly to Net Contribution (GBP).
+Everything here is business period grain, so keep axes on `business_period_label`, never week. The YoY references needed a model fix after the first export, where they all read 0.0 (see open items).
 
 ---
 
@@ -281,28 +210,25 @@ Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everyth
 
 *Have we got the right stock in the right place for how fast it sells?*
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Stock Units | `Stock Units` | `Stock Units YoY Combo` | `box` |
-| Stock at Retail | `Stock Value (Retail, GBP)` | `Stock Value Retail YoY Combo` | `building-warehouse` |
-| Stock at Cost | `Stock Value (Cost, GBP)` | `Stock Value Cost YoY Combo` | `truck-delivery` |
-| Weeks of Cover | `Weeks of Cover` | `Weeks of Cover YoY Combo` | `hourglass-high` |
-| Rate of Sale | `Avg Weekly Sales (Units)` | `Avg Weekly Sales YoY Combo` | `calendar-week` |
+| Card | Value | Reference lines |
+|---|---|---|
+| Stock Units | 289K | vs PY −1.6% |
+| Stock Value (Retail) | £15.27M | vs PY −1.8% |
+| Stock Value (Cost) | £5.03M | vs PY −1.8% |
+| Weeks of Cover (Last 4 Weeks) | 15.4 | 13.1 on the whole-year rate, 13.8 last year |
+| Avg Weekly Sales (Units) | 22.1K | vs PY +4.0% |
 
-| # | Visual | Type | Position | Fields |
-|---|---|---|---|---|
-| 1 | Stock mix vs sales mix | Clustered bar (horizontal) | 227, 268, 1107, 400 | Y `dim_product[major_product_group]`. X `Stock Value Share %` (teal `#1F7486`) and `Net Sales Share %` (gold `#C9A15B`). Sort by `Stock Value Share %`. Tooltip `Stock vs Sales Share Gap (pp)` |
-| 2 | Cover by group | Bar (horizontal) | 1346, 268, 555, 400 | Y `dim_product[product_group]` (not the stock table's own product_group, which is hidden: sales don't follow it, so cover comes out as a fraction of a week). X `Weeks of Cover`. Rules colour: under 4 red, 4 to 20 teal, over 20 amber. |
-| 3 | Stock vs velocity | Scatter | 227, 680, 831, 390 | Values `dim_product[product_group]`. X `Avg Weekly Sales (Units)`. Y `Stock Units`. Size `Stock Value (Retail, GBP)` |
-| 4 | Stock by market | Table | 1070, 680, 831, 390 | `dim_store[market_name]`, `Stock Value (Retail, GBP)`, `Stock Value Retail YoY Combo`, `Weeks of Cover` |
+Stock is a weekly closing balance, so every stock measure takes the last snapshot in the filter. For BY25 that's 28 February 2026, after the winter season.
 
-**Notes**
+- **Weeks of cover by product group.** Softshell is the outlier at 39 weeks; 3 in 1 is next at 29.
+- **Stock vs rate of sale** by product group, bubble size stock value, with average lines. The big bubble high up on the left is stock that isn't moving.
+- **Stock by market:** value, change on last year and weeks of cover. Germany carries the most cover (15.7 weeks), Latvia the least (8.6).
+- **Stock mix vs sales mix** by major group. Outerwear holds 43% of the stock value for 34% of the sales; Tops and Accessories run lean.
+- **Stock value and cover by major group.** Accessories turn fastest; Camping has the most cover for the least value.
 
-- Stock is a weekly closing balance. The measures already take the last snapshot in the filter context, so a period axis shows closing stock, not the sum of every week.
-- Non-GBP stock values convert at the average rate for now. The closing-rate convention is still on the roadmap.
-- Visual 1 was a stock value trend in Deneb, but the generator's stock has no seasonal build, so the line sat flat at about £15M and said nothing. The mix comparison works with the data as it is. Where the teal bar runs past the gold one, the group holds more stock than it sells. For BY25, Outerwear carries 43% of closing stock value for 34% of sales, partly because the year closes in February, after the winter selling season. Tops (6.5% of stock, 9.4% of sales) and Accessories run lean.
-- Weeks of Cover is closing stock ÷ the average weekly rate over the selected window, so its meaning changes with the grain: a week is volatile, a period is the everyday view, and a year blends peak and quiet weeks (BY25 reads 13.0 weeks). `Weeks of Cover (Last 4 Weeks)` uses the rate in the four weeks up to the closing date instead, which is how a merchandiser would quote it (15.3 weeks for BY25, because February sells slowly). Add it to the table in visual 4 next to Weeks of Cover, or use it on the card with a "last 4 weeks" label.
-- If Weeks of Cover for the current year looks far too high, check `Avg Weekly Sales (Units)` counts traded weeks, not every week in `dim_date`. The first version didn't, and 2026 YTD read 21.8 weeks instead of 13.0.
+Weeks of Cover means different things at different grains, because it's closing stock divided by the average weekly rate over whatever window is selected. A week is volatile, a period is the everyday view, and a year blends peak and quiet weeks. `Weeks of Cover (Last 4 Weeks)` uses the rate in the four weeks up to the closing date instead, which is how a merchandiser would quote it, so that's the one on the card.
+
+I started this page with a stock value trend over time, but the generator's stock has no seasonal build, so the line sat flat at about £15M. The mix comparison works with the data as it is.
 
 ---
 
@@ -310,35 +236,40 @@ Rail slicers: `dim_store[store_type]` and `dim_store[market_name]` only. Everyth
 
 *Can I trust the numbers on the other nine pages?*
 
-The page shell exists (it was copied from Sales), so it needs clearing first:
+| Card | Value |
+|---|---|
+| Data Quality Score | 97.4% (74 of 76 checks) |
+| DQ Overall Status | 2 warnings |
+| DQ Scored Rows Tested | 85M |
+| DQ Latest Data Date | the day the pipeline last ran |
+| DQ Rows Fixed in Cleaning | 346K |
 
-- Delete the Net Sales card and its sparkline.
-- Delete the five rail slicers and the `business_year` slicer. None of them touch the DQ tables.
-- Put one vertical tile slicer on `dq_check_results[category]` in the rail at 19, 619, 160, 300.
-- Keep `Report Last Refreshed`.
+- **Checks by status.**
+- **What cleaning fixed:** 140K blank discounts set to 0%, 117K lowercase store IDs, 78K currency codes with stray spaces, 12K duplicate lines.
+- **Where the problems sit.** A matrix of `Data Quality Score` by table and check category, with rules colouring. Its column totals are the score by category.
+- **All check results**, warnings first.
+- **Table profile and freshness.**
+- **Reconciliation:** each pair of sources that should agree, side by side.
 
-The full field-by-field detail, colours and expected numbers are in `docs/data-quality-page.md`, which has the 1920 x 1080 layout below.
+The exported PDF still shows the audit from before the digital funnel (95.9%, 74 checks, a VAL-19 warning), because the DQ tables hadn't been refreshed in Desktop. A full refresh brings it up to the numbers above. The detail is in `docs/data-quality-page.md`.
 
-| KPI card | Value | Reference label | Icon |
-|---|---|---|---|
-| Score | `Data Quality Score` | `DQ Checks Passed Label` | `shield-check` |
-| Status | `DQ Overall Status` | none | `circle-check` |
-| Rows tested | `DQ Scored Rows Tested` | none | `database` |
-| Latest data | `DQ Latest Data Date` | `DQ Freshness Summary` | `clock` |
-| Fixed in cleaning | `DQ Rows Fixed in Cleaning` | `DQ Raw Rows Received` | `filter` |
+---
 
-| # | Visual | Type | Position |
-|---|---|---|---|
-| 1 | Checks by status | Donut | 227, 268, 400, 400 |
-| 2 | What cleaning fixed | Bar | 639, 268, 600, 400 |
-| 3 | Where the problems sit | Matrix heatmap | 1251, 268, 650, 400 |
-| 4 | All check results | Table | 227, 680, 1107, 390 |
-| 5 | Reconciliation | Table | 1346, 680, 555, 190 |
-| 6 | Table profile and freshness | Table | 1346, 880, 555, 190 |
+## Open items on the report
 
-**Notes**
+Things I noticed going through the export, roughly in order of importance:
 
-- The heatmap in visual 3 replaces the "score by category" bar from the first draft. Its column totals are the score by category, so the bar was redundant.
+1. **Refresh all before the next export.** The Data Quality page is a refresh behind (see above).
+2. **Finance YoY.** Gross Contribution %, Net Contribution % and Store Operating Costs all read 0.0 against last year. The finance LY measures filtered `dim_period[business_year]`, but the year buttons filter `dim_date`, so that filter survived and LY came back equal to this year. Fixed in the model in the same commit as this doc. After a refresh they should read +1.8pp, +1.8pp and +£47K.
+3. **Visual titles.** Most are still Power BI's automatic ones ("Net Sales (GBP) by major_product_group"). They need plain English titles like the KPI cards have.
+4. **Two reference lines show last year's value instead of the change**: Average Selling Price on Products (£34.67) and Average Transaction Value on Retail (£79.50). Swap them to the YoY combos.
+5. **Rounded card values.** Net Units Sold reads "1M" and Style-Colours Sold "2K". Turn display units off or allow two decimals so they read 1.12M and 2,244.
+6. **Repeated cards.** Categories repeats four of Overview's five cards, and Return Rate is on both Products and Promo. Categories would be stronger with category-specific cards.
+7. **Shared icons.** Top Style and Top Product Group both use the trophy, and Average Basket Value and Multi-buy Sales both use the basket.
+8. **Cost mix donut.** The centre label shows staff costs (£5.99M), not total operating costs (£14.50M).
+9. **Sales, bottom right.** The Net Sales and Gross Profit by channel chart repeats Overview's channel bar and the Online Share card. Net Sales by weekday against LY would be new.
+10. **VAT and currency toggles** aren't on the pages yet. The model supports both through the `VAT View` and `Currency Conversion` calculation groups.
+11. **Rail slicers.** See the note at the top: Category, Mjr Prod and Channel don't reach Digital, Finance's P&L or Data Quality.
 
 ---
 
@@ -346,7 +277,7 @@ The full field-by-field detail, colours and expected numbers are in `docs/data-q
 
 ### The calendar heatmap
 
-This goes on Sales, visual 3. The spec is `powerbi/deneb/deneb-calendar-heatmap.json`. It shows every trading day of the latest business year in the filter as a 52-week by 7-day grid, darker for bigger days. Christmas Day, Boxing Day and Black Friday get a gold outline.
+This is on the Sales page. The spec is `powerbi/deneb/deneb-calendar-heatmap.json`. It shows every trading day of the latest business year in the filter as a 52-week by 7-day grid, darker for bigger days. Christmas Day, Boxing Day and Black Friday get a gold outline.
 
 Values well, all from `dim_date` plus the measure:
 
@@ -373,29 +304,28 @@ The first render showed something I didn't expect: all three key days looked lik
 
 ### Native matrix heatmaps
 
-Retail visual 3, Categories visual 3 and Data Quality visual 3 are ordinary matrix visuals with background colour turned on. They're built the same way:
+The growth matrix on Sales, the category x market heatmap on Categories and the problem matrix on Data Quality are ordinary matrix visuals with background colour turned on. They're built the same way:
 
 1. Add a Matrix with the rows, columns and value from the page table.
-2. Under Format, then Row subtotals and Column subtotals, turn both off. The DQ one is the exception: keep column subtotals on there, since they're the score by category.
+2. Decide on subtotals. Sales keeps both, so the totals give each channel and each market overall. Categories turns them off. Data Quality keeps column subtotals, since they're the score by category.
 3. Under Cell elements, pick the value series and turn Background colour on.
-   - **Sequential (Retail):** Format style Gradient, lowest value `#EAF2F3`, highest value `#1F7486`.
-   - **Diverging (Categories YoY):** Gradient, tick "Add a middle colour". Set Minimum to Number -0.2 with `#D32F2F`, Center to Number 0 with `#F5F1EA`, and Maximum to Number 0.2 with `#2E7D32`. Fixed numbers stop a single outlier from flattening everything else.
+   - **Diverging (Sales and Categories YoY):** Gradient, tick "Add a middle colour". Set Minimum to Number -0.2 with `#D32F2F`, Center to Number 0 with `#F5F1EA`, and Maximum to Number 0.2 with `#2E7D32`. Fixed numbers stop a single outlier from flattening everything else.
    - **Rules (Data Quality):** Format style Rules on `Data Quality Score`. If value is 1 then `#2E7D32`. If value is 0.9 or more and below 1 then `#F9A825`. If value is below 0.9 then `#D32F2F`. Blank cells stay blank, which matters because most tables don't have a check in every category.
 4. Under Grid, set white horizontal and vertical gridlines at 2px so the cells separate.
 5. Turn off auto-size column width and set every column to the same width, so the cells come out square-ish.
-6. To make it a pure heatmap with no numbers, set Font colour to the same rule as the background. I'd keep the numbers on Retail and DQ and hide them on Categories.
+6. To make it a pure heatmap with no numbers, set Font colour to the same rule as the background. I've kept the numbers on all three.
 
 `day_name` already sorts by `day_of_week_num`, and `business_period_label` by `period_key`, so the rows and columns come out in the right order without any extra work.
 
 ---
 
-## Build order
+## Building a Deneb visual
 
-I'd build in this order so the new model work gets tested as it goes:
+The two specs in `powerbi/deneb/` follow the same steps:
 
-1. **Sales.** The KPI combos are the VAT and currency test. Net Sales and the targets should move with both toggles. Gross Profit should move with currency only.
-2. **Retail.** This tests the square footage and contribution redesign.
-3. **Finance.** First look at the waterfall in Desktop.
-4. **Data Quality.** Clear-down plus six visuals.
-5. **Products, Categories, Promo, Digital, Stock.**
-6. Bump the measure count in the README and diagrams from 385 to 395 once 1 to 3 check out.
+1. Add Deneb from Get more visuals and drop it on the page.
+2. Fill the Values well. If a date goes in as a Date Hierarchy, change it to the plain column from the field's dropdown, or the spec won't find it. Number columns that default to Sum (`business_year`, `business_week_number`) need Don't summarize, or they arrive renamed as "Sum of …".
+3. Click "…", then Edit, choose Vega-Lite and an empty template, and paste the spec over it.
+4. Apply with Ctrl+Enter, then go back to the report.
+
+Field names in the well have to match the spec exactly, case included. A blank visual is nearly always a field name that doesn't match.

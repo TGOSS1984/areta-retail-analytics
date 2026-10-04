@@ -116,11 +116,22 @@ table fact_store_finance
 		displayFolder: Contribution
 		lineageTag: 1346e55f-183f-423f-af22-a98fc27169bd
 
+	/// The finance LY measures shift dim_date back a year, the same way the sales LY
+	/// measures do, and the base measures carry the periods across to dim_period with
+	/// TREATAS. They used to filter dim_period[business_year] instead, but the report's
+	/// year buttons filter dim_date, and that filter survived into the LY calculation,
+	/// so LY came back equal to this year and every finance YoY card read 0.0. Finance
+	/// is period grain, so there's no week or weekday to carry across.
 	measure 'Net Contribution LY' =
-			CALCULATE (
-			    [Net Contribution (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			RETURN
+			    CALCULATE (
+			        [Net Contribution (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] )
+			    )
 		formatString: "£"#,0.00
 		displayFolder: Contribution
 		lineageTag: b0a4dab3-2f93-4047-922f-18b5fcf768de
@@ -152,10 +163,15 @@ table fact_store_finance
 		lineageTag: 2708d09f-bb2c-4c0a-abb5-d745a8073def
 
 	measure 'Gross Contribution LY' =
-			CALCULATE (
-			    [Gross Contribution %],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			RETURN
+			    CALCULATE (
+			        [Gross Contribution %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] )
+			    )
 		formatString: 0.0%
 		displayFolder: Contribution
 		lineageTag: ac19d75b-97c6-44dc-9ad1-bbb2ac3dfcd0
@@ -178,10 +194,15 @@ table fact_store_finance
 		lineageTag: 187620f6-ded9-4e02-9b69-4913608756d6
 
 	measure 'Net Contribution Pct LY' =
-			CALCULATE (
-			    [Net Contribution %],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			RETURN
+			    CALCULATE (
+			        [Net Contribution %],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] )
+			    )
 		formatString: 0.0%
 		displayFolder: Contribution
 		lineageTag: 50b1f682-b87f-48b3-9e23-103c5828f963
@@ -204,10 +225,15 @@ table fact_store_finance
 		lineageTag: 41cc80dd-c967-4124-ae2a-3c05e726e291
 
 	measure 'Store Operating Costs LY' =
-			CALCULATE (
-			    [Store Operating Costs (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			RETURN
+			    CALCULATE (
+			        [Store Operating Costs (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] )
+			    )
 		formatString: "£"#,0.00
 		displayFolder: Contribution
 		lineageTag: 3a6772c5-2b8e-4971-92b9-a566bc3a88cd
@@ -239,10 +265,15 @@ table fact_store_finance
 		lineageTag: 46d42ef3-27f1-459e-9834-4c7ab38602b7
 
 	measure 'Head Office Allocation LY' =
-			CALCULATE (
-			    [Head Office Allocation (GBP)],
-			    FILTER ( ALL ( dim_period[business_year] ), dim_period[business_year] = MAX ( dim_period[business_year] ) - 1 )
-			)
+			VAR CurrentYear = MAX ( dim_date[business_year] )
+			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
+			RETURN
+			    CALCULATE (
+			        [Head Office Allocation (GBP)],
+			        REMOVEFILTERS ( dim_date ),
+			        dim_date[business_year] = CurrentYear - 1,
+			        TREATAS ( RelevantPeriodNumbers, dim_date[business_period_number] )
+			    )
 		formatString: "£"#,0.00
 		displayFolder: Contribution
 		lineageTag: 7d911a8a-2492-4728-b811-0d86f1162ff8

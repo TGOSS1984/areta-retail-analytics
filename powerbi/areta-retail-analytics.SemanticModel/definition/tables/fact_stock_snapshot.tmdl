@@ -40,28 +40,6 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: e57fe0f5-aaf9-469b-a126-b4179b595b28
 
-	/// This row's share of closing stock value at retail, across every product in the
-	/// visual. Same ALLSELECTED denominator as Net Sales Share %, so the two sit side by
-	/// side by any product attribute: where stock share runs ahead of sales share, the
-	/// group holds more stock than it sells. Retail rather than cost, so it's on the
-	/// same price basis as sales.
-	measure 'Stock Value Share %' =
-			DIVIDE (
-			    [Stock Value (Retail, GBP)],
-			    CALCULATE ( [Stock Value (Retail, GBP)], ALLSELECTED ( dim_product ) )
-			)
-		formatString: 0.0%
-		displayFolder: Stock
-		lineageTag: f595c84e-c46b-40c4-8d7c-69461ae737d7
-
-	/// Stock share minus sales share. Positive means overstocked compared with what
-	/// the group sells, negative means at risk of selling out. For a sorted bar that
-	/// shows the gap on its own.
-	measure 'Stock vs Sales Share Gap (pp)' = [Stock Value Share %] - [Net Sales Share %]
-		formatString: 0.0%
-		displayFolder: Stock
-		lineageTag: e2e3f8da-3af1-477b-afbb-076ea73e140b
-
 	/// Gross units per week actually traded. It used to divide by DISTINCTCOUNT of
 	/// business_week_number, which broke twice: dim_date runs to the end of the
 	/// current business year, so a part-year counted future weeks (2026 YTD divided by
@@ -82,35 +60,6 @@ table fact_stock_snapshot
 		formatString: #,0.00
 		displayFolder: Stock
 		lineageTag: 1b643a25-70bc-45a4-ac9f-722565900628
-
-	/// Weekly rate of sale over the four weeks up to the closing stock date, ignoring
-	/// whatever window the date filter selects. Product, store and market filters still
-	/// apply.
-	measure 'Avg Weekly Sales (Last 4 Weeks)' =
-			VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
-			RETURN
-			    DIVIDE (
-			        CALCULATE (
-			            [Gross Units Sold],
-			            REMOVEFILTERS ( dim_date ),
-			            dim_date[full_date] > LastSnapshot - 28,
-			            dim_date[full_date] <= LastSnapshot
-			        ),
-			        4
-			    )
-		formatString: #,0.00
-		displayFolder: Stock
-		lineageTag: 1b1f233e-1ebf-4fab-ab35-5c848b47e301
-
-	/// Closing stock against the last four weeks' rate of sale, which is how a
-	/// merchandiser quotes cover. Weeks of Cover divides by the average over the whole
-	/// selected window instead, so at year level it blends peak and quiet weeks
-	/// together. For BY25 the two give 13.0 weeks (whole-year rate) and 15.3 weeks
-	/// (February's slower rate against the same closing stock).
-	measure 'Weeks of Cover (Last 4 Weeks)' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Last 4 Weeks)] )
-		formatString: #,0.00
-		displayFolder: Stock
-		lineageTag: 65d14e3c-4f85-4e5f-8897-b13a4ba4737f
 
 	measure 'Stock Units LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
@@ -319,6 +268,57 @@ table fact_stock_snapshot
 	measure 'Weeks of Cover YoY Combo' = [Weeks of Cover Trend Arrow] & " " & FORMAT ( ABS ( [Weeks of Cover YoY (Weeks)] ), "#,0.00" ) & " (" & FORMAT ( [Weeks of Cover YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 		displayFolder: Stock
 		lineageTag: 3d30deba-a777-43aa-ae48-a0e33e64e59c
+
+	/// This row's share of closing stock value at retail, across every product in the
+	/// visual. Same ALLSELECTED denominator as Net Sales Share %, so the two sit side by
+	/// side by any product attribute: where stock share runs ahead of sales share, the
+	/// group holds more stock than it sells. Retail rather than cost, so it's on the
+	/// same price basis as sales.
+	measure 'Stock Value Share %' =
+			DIVIDE (
+			    [Stock Value (Retail, GBP)],
+			    CALCULATE ( [Stock Value (Retail, GBP)], ALLSELECTED ( dim_product ) )
+			)
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: f595c84e-c46b-40c4-8d7c-69461ae737d7
+
+	/// Stock share minus sales share. Positive means overstocked compared with what
+	/// the group sells, negative means at risk of selling out. For a sorted bar that
+	/// shows the gap on its own.
+	measure 'Stock vs Sales Share Gap (pp)' = [Stock Value Share %] - [Net Sales Share %]
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: e2e3f8da-3af1-477b-afbb-076ea73e140b
+
+	/// Weekly rate of sale over the four weeks up to the closing stock date, ignoring
+	/// whatever window the date filter selects. Product, store and market filters still
+	/// apply.
+	measure 'Avg Weekly Sales (Last 4 Weeks)' =
+			VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
+			RETURN
+			    DIVIDE (
+			        CALCULATE (
+			            [Gross Units Sold],
+			            REMOVEFILTERS ( dim_date ),
+			            dim_date[full_date] > LastSnapshot - 28,
+			            dim_date[full_date] <= LastSnapshot
+			        ),
+			        4
+			    )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 1b1f233e-1ebf-4fab-ab35-5c848b47e301
+
+	/// Closing stock against the last four weeks' rate of sale, which is how a
+	/// merchandiser quotes cover. Weeks of Cover divides by the average over the whole
+	/// selected window instead, so at year level it blends peak and quiet weeks
+	/// together. For BY25 the two give 13.0 weeks (whole-year rate) and 15.3 weeks
+	/// (February's slower rate against the same closing stock).
+	measure 'Weeks of Cover (Last 4 Weeks)' = DIVIDE ( [Stock Units], [Avg Weekly Sales (Last 4 Weeks)] )
+		formatString: #,0.00
+		displayFolder: Stock
+		lineageTag: 65d14e3c-4f85-4e5f-8897-b13a4ba4737f
 
 	column week_ending_date
 		dataType: dateTime

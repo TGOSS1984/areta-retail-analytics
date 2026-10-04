@@ -4,10 +4,10 @@
   "position": {
     "x": 767.25146198830419,
     "y": 157.19298245614036,
-    "z": 33006,
+    "z": 39000,
     "height": 109.78557504873295,
     "width": 128.49902534113062,
-    "tabOrder": 33006
+    "tabOrder": 39000
   },
   "visual": {
     "visualType": "lineChart",
@@ -226,37 +226,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b6eca9a48ab45500d289",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c64d22bdbe03e70363de",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_targets"
-              }
-            },
-            "Property": "Net Sales Target Achievement %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

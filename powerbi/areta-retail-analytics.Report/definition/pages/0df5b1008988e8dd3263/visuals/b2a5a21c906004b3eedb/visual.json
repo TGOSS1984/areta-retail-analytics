@@ -4,10 +4,10 @@
   "position": {
     "x": 1577.0283806343907,
     "y": 94.557595993322209,
-    "z": 33005,
+    "z": 38000,
     "height": 160.26711185308849,
     "width": 323.73956594323874,
-    "tabOrder": 33005
+    "tabOrder": 38000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -295,23 +295,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "941a3b58e563e680149b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Online Share %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

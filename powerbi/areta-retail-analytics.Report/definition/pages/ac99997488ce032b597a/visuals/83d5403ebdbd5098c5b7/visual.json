@@ -300,23 +300,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "1126ef2e142bb9100021",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Styles for 80% of Sales %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

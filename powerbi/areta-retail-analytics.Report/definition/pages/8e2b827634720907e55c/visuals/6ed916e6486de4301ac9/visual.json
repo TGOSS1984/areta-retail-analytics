@@ -338,23 +338,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "bd02415974764fd87663",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_stock_snapshot"
-              }
-            },
-            "Property": "Weeks of Cover (Last 4 Weeks)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -4,10 +4,10 @@
   "position": {
     "x": 570.13645224171546,
     "y": 94.814814814814824,
-    "z": 33002,
+    "z": 35000,
     "height": 160.26711185308849,
     "width": 323.73956594323874,
-    "tabOrder": 33002
+    "tabOrder": 35000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -295,23 +295,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "1abda4f6504a0963a722",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_targets"
-              }
-            },
-            "Property": "Net Sales Target Achievement %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -271,23 +271,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b66a3b7896d1f17c0a56",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style-Colours Sold"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

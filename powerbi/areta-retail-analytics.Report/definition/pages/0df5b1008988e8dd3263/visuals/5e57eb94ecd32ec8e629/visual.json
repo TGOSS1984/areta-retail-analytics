@@ -109,37 +109,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "69de4d68176543e710d8",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "market_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "e5985543321401b8f94f",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_targets"
-              }
-            },
-            "Property": "Net Sales Target Variance (GBP)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

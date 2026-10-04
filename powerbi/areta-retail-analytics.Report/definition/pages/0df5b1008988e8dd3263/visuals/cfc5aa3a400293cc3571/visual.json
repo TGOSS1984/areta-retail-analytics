@@ -4,10 +4,10 @@
   "position": {
     "x": 1770.7206068268015,
     "y": 155.34766118836916,
-    "z": 33013,
+    "z": 46000,
     "height": 110.4424778761062,
     "width": 129.86093552465235,
-    "tabOrder": 33013
+    "tabOrder": 46000
   },
   "visual": {
     "visualType": "lineChart",
@@ -226,37 +226,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "04870551a4640ba5d064",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "fe9a44c5341858d47ccb",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Online Share %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "506f1254d049350040fe",
+  "position": {
+    "x": 826.06829268292688,
+    "y": 689.32682926829273,
+    "z": 46000,
+    "height": 382.12682926829268,
+    "width": 337.17073170731709,
+    "tabOrder": 46000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "major_product_group"
+                }
+              },
+              "queryRef": "dim_product.major_product_group",
+              "nativeQueryRef": "major_product_group",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "product_group"
+                }
+              },
+              "queryRef": "dim_product.product_group",
+              "nativeQueryRef": "product_group",
+              "active": false
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock vs Sales Share Gap (pp)"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock vs Sales Share Gap (pp)",
+              "nativeQueryRef": "Stock vs Sales Share Gap (pp)"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_stock_snapshot"
+                    }
+                  },
+                  "Property": "Stock Value Share %"
+                }
+              },
+              "queryRef": "fact_stock_snapshot.Stock Value Share %",
+              "nativeQueryRef": "Stock Value Share %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_sales"
+                    }
+                  },
+                  "Property": "Net Sales Share %"
+                }
+              },
+              "queryRef": "fact_sales.Net Sales Share %",
+              "nativeQueryRef": "Net Sales Share %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fact_stock_snapshot"
+                  }
+                },
+                "Property": "Stock Value Share %"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

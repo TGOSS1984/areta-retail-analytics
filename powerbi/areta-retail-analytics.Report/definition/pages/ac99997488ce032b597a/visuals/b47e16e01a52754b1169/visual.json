@@ -407,20 +407,6 @@
         },
         "type": "TopN",
         "howCreated": "User"
-      },
-      {
-        "name": "39a644300f2a59f40c5b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Top Style"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

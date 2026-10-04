@@ -375,23 +375,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "3c0eda96bb00aa9cbf38",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_stock_snapshot"
-              }
-            },
-            "Property": "Stock Value (Retail, GBP)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

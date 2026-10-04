@@ -295,23 +295,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "f283134bec0be070d06b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Return Rate %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

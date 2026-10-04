@@ -238,62 +238,6 @@
             }
           ]
         }
-      },
-      {
-        "name": "5349b4ace74050a00c44",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Rank"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "db797e06d10bcda0923b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Cumulative Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1f4e5d9ebe83ac9cb076",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Style Pareto Cumulative %"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f4a8e5b18206024c3581",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

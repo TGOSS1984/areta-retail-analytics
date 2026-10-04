@@ -4,10 +4,10 @@
   "position": {
     "x": 1097.8557504873295,
     "y": 155.94541910331384,
-    "z": 33009,
+    "z": 42000,
     "height": 109.78557504873295,
     "width": 129.74658869395714,
-    "tabOrder": 33009
+    "tabOrder": 42000
   },
   "visual": {
     "visualType": "lineChart",
@@ -226,37 +226,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "678d5303c94c50e0860e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_date"
-              }
-            },
-            "Property": "business_week_number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "4bcbb3ac9da0ed042604",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Distinct Invoices (from Sales)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -177,51 +177,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "8f748b94b7c596d26c83",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_store"
-              }
-            },
-            "Property": "market_name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "6659d346cbccf115795f",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
-              }
-            },
-            "Property": "major_product_group"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "36db01b4d1ca588e7cb8",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales YoY %"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

@@ -1,17 +1,21 @@
-# 0001 — Fictional brand, fully synthetic data
+# 0001: Fictional brand, fully synthetic data
 
 ## Status
 Accepted
 
 ## Context
-I work in retail merchandising and wanted a portfolio project that looks and feels like a real retail analytics suite — real-shaped store networks, real-shaped product hierarchies, real-shaped seasonal sales curves. The obvious shortcut was to lean on data and structures I already know well from work.
+I work in retail merchandising and wanted a portfolio project that looks and feels like a real retail analytics suite: a realistic store network, a realistic product hierarchy, realistic seasonal sales curves. The obvious shortcut was to lean on data and structures I know well from work.
 
 ## Decision
-Everything in this repo — brand, stores, products, sales — is invented. Areta Mountain Systems doesn't exist. No real company names, logos, product images, or store lists appear anywhere in this project.
+Everything in this repo (the brand, stores, products and sales) is invented. Areta Mountain Systems doesn't exist. No real company names, logos, store lists or product data appear anywhere in the project.
 
-Real-world structure (multi-brand product hierarchy, a dominant home market plus several secondary European markets, a mix of owned retail and concession stores) informed the *shape* of the synthetic data — row counts, hierarchy depth, market spread — but none of the literal content.
+Real-world structure informed the *shape* of the data: a multi-brand product hierarchy, a dominant home market with several smaller European ones, a mix of owned stores and concessions. None of the actual content came from anywhere real.
+
+The product photos in `web/public/images/products/` show invented Areta products, not real branded goods. Styles without a photo fall back to a placeholder for their product group.
+
+<!-- TODO: add where the product photos came from and the licence they're used under. -->
 
 ## Consequences
-- No trademark, copyright, or confidentiality risk from anything in this repo.
-- The dataset needs its own sales curves, seasonality, and market weighting built from scratch rather than copied from a real source — more work up front, covered in `generator/config/`.
-- Anyone reviewing this repo (recruiter, hiring manager, fellow analyst) can see exactly how the data was built, which is a feature for a portfolio piece, not a limitation.
+- No trademark, copyright or confidentiality risk from anything in the repo.
+- The sales curves, seasonality and market weighting all had to be built from scratch rather than copied. That's more work, and it's all in `generator/`.
+- Anyone reviewing the repo can see exactly how the data was made, which suits a portfolio piece better than data with a story they have to take on trust.

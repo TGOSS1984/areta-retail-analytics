@@ -1,52 +1,70 @@
 # Power BI model reference
 
-Rebuilt from scratch against the current schema — the version this
-replaces was written before the invoice grain, business_year rename,
-dim_period, and fact_store_finance existed. Written for pasting into
-Power BI Desktop, not run there myself — I don't have access to it.
-Standard, well-established DAX patterns throughout, but flag anything
-that errors and I'll fix it.
+How the model fits together and the patterns behind the measures. It isn't a list of all 472. Most measures are one of a handful of patterns repeated across metrics, so this covers the patterns, the measures that do something unusual, and the reasons behind both. Every measure is in the TMDL under `powerbi/areta-retail-analytics.SemanticModel/definition/tables/`, and the trickier ones carry a description you can hover over in Desktop.
 
 ## Relationships
 
-All single-direction, many-to-one from fact/many-grain to dimension/one-grain
-unless noted.
+Everything is single direction, many to one, from the fact to the dimension.
 
 | From | To | Notes |
 |---|---|---|
-| `fact_sales[date]` | `dim_date[full_date]` | |
-| `fact_sales[store_id]` | `dim_store[store_id]` | |
+| `fact_sales[date]`, `fact_footfall[date]`, `fact_digital_sales[date]`, `fact_digital_traffic[date]` | `dim_date[full_date]` | |
+| `fact_stock_snapshot[week_ending_date]` | `dim_date[full_date]` | Stock only exists on week-ending Saturdays |
+| `fact_sales`, `fact_footfall`, `fact_stock_snapshot`, `fact_targets`, `fact_store_finance` `[store_id]` | `dim_store[store_id]` | |
 | `fact_sales[sku]` | `dim_product[sku]` | |
-| `fact_sales[promo_id]` | `dim_promo[promo_id]` | Includes the two MULTIBUY- rows, not just the %-off calendar. |
-| `fact_sales[currency]` | `dim_currency[currency_code]` | |
-| `fact_footfall[date]` | `dim_date[full_date]` | |
-| `fact_footfall[store_id]` | `dim_store[store_id]` | |
-| `fact_stock_snapshot[week_ending_date]` | `dim_date[full_date]` | |
-| `fact_stock_snapshot[store_id]` | `dim_store[store_id]` | |
-| `fact_targets[store_id]` | `dim_store[store_id]` | |
-| `fact_targets[period_key]` | `dim_period[period_key]` | Not `dim_date` — see below. |
-| `fact_store_finance[store_id]` | `dim_store[store_id]` | |
-| `fact_store_finance[period_key]` | `dim_period[period_key]` | Not `dim_date` — see below. |
-| `dim_date[period_key]` | `dim_period[period_key]` | Many-to-one (many days, one period). This is what makes a period filter cascade down to the daily-grain facts too, not just the period-grain ones. |
+| `fact_sales[promo_id]` | `dim_promo[promo_id]` | Includes the four multi-buy rows as well as the %-off promotions |
+| `fact_sales[currency]`, `fx_rate_monthly[currency_code]` | `dim_currency[currency_code]` | |
+| `fact_targets[period_key]`, `fact_store_finance[period_key]`, `fact_digital_targets[period_key]` | `dim_period[period_key]` | |
+| `fact_digital_sales[market_code]` | `dim_market[market_code]` | |
+| `fact_digital_traffic[browser]` | `dim_browser[browser]` | |
+| `dim_date[business_period_label]` | `dim_period[business_period_label]` | **Inactive** |
+| `fact_digital_traffic[market_code]`, `fact_digital_targets[market_code]` | `dim_market[market_code]` | **Inactive** |
 
-**Why `dim_period` and not straight to `dim_date`:** `period_key` isn't unique in `dim_date` — it repeats once per day within a period (28–35 times). It isn't unique in `fact_targets`/`fact_store_finance` either — once per store within a period. Relating either fact directly to `dim_date` on `period_key` would be a many-to-many relationship on both sides, which Power BI allows but handles with real caveats (ambiguous cross-filter direction, easy to get wrong without realising it). `dim_period` is a 48-row bridge table (4 years × 12 periods) with `period_key` as a genuine unique key, so both facts get an ordinary one-to-many relationship instead.
+`dim_pnl_bridge`, `dim_funnel_stage`, `dim_report_metadata`, the two DQ tables and the two calculation groups have no relationships at all.
 
-**`fact_stock_snapshot` does NOT relate to `dim_product`.** Style+colour grain, one level up from `dim_product`'s SKU grain — `brand_code`/`division`/`major_product_group`/`product_group` are already denormalised directly onto the fact table for this reason. Don't try to build this relationship.
+### Why the period-grain facts use TREATAS
 
-**`fx_rate_monthly` is left unrelated.** `fact_sales` already carries both `net_sales_gbp` and `net_sales_local` precomputed, so nothing needs a rate lookup at query time. Only relate it if you specifically want an FX-rate trend visual.
+Targets and store finance are stored per store per business period, so they hang off `dim_period`. The obvious move is to relate `dim_date` to `dim_period` too, so a date filter flows down to them. I tried it, and it caused the two worst bugs in the project: a cyclic reference that blocked the refresh, and figures three to four times too high once a slicer was involved (both are in the README's lessons). So that relationship is inactive, and every period-grain measure carries the date filter across itself:
 
-Mark `dim_date` as the date table (`full_date` as the key). Needed for time intelligence to work correctly even though the YoY measures below use explicit `business_year` filtering — our business year is a fixed 364-day block starting in March, not a Gregorian year, so `SAMEPERIODLASTYEAR` would give the wrong answer.
+```dax
+Target Net Sales (GBP) =
+VAR RelevantPeriods = VALUES ( dim_date[business_period_label] )
+RETURN
+    CALCULATE (
+        SUM ( fact_targets[target_net_sales_gbp] ),
+        TREATAS ( RelevantPeriods, dim_period[business_period_label] )
+    )
+```
 
-## DAX measures
+The finance measures (`Turnover (GBP)`, `Net Contribution (GBP)` and the rest) follow the same pattern. The digital traffic and digital targets measures do the same with `dim_market`, which is why their relationships to it are inactive.
 
-### Sales & margin
+### Why stock uses TREATAS onto the product
+
+`fact_stock_snapshot` is at store, style and colour grain, one level above `dim_product`'s SKU, so there's no relationship between them. The stock measures map the product filter across instead:
+
+```dax
+Stock Units =
+VAR LastSnapshot = MAX ( fact_stock_snapshot[week_ending_date] )
+RETURN
+    CALCULATE (
+        SUM ( fact_stock_snapshot[stock_units] ),
+        fact_stock_snapshot[week_ending_date] = LastSnapshot,
+        KEEPFILTERS ( TREATAS ( VALUES ( dim_product[style_code] ), fact_stock_snapshot[style_code] ) ),
+        KEEPFILTERS ( TREATAS ( VALUES ( dim_product[colour] ), fact_stock_snapshot[colour] ) )
+    )
+```
+
+Two things are going on there. Stock is a closing balance, so it takes the last snapshot in the filter rather than adding every week together (period 5 once showed 1,041,686 units because of that). And the stock table's own product columns are hidden: put `fact_stock_snapshot[product_group]` on an axis and the stock follows it but sales don't, so Weeks of Cover divides each group's stock by company-wide sales and reads a fraction of a week. Product fields on stock visuals always come from `dim_product`.
+
+Mark `dim_date` as the date table, with `full_date` as the key. None of the measures use the built-in time intelligence functions anyway. The business year is a fixed 364-day block starting in March, so `SAMEPERIODLASTYEAR` would compare the wrong days.
+
+## Sales and margin
+
+The base measures are plain sums. Returns are stored as negative quantities and values, so they net off without any special handling.
 
 ```dax
 Net Sales (GBP) =
 SUM ( fact_sales[net_sales_gbp] )
-
-Gross Cost (GBP) =
-SUM ( fact_sales[cost_gbp] )
 
 Gross Profit (GBP) =
 [Net Sales (GBP)] - [Gross Cost (GBP)]
@@ -57,30 +75,25 @@ DIVIDE ( [Gross Profit (GBP)], [Net Sales (GBP)] )
 Gross Units Sold =
 CALCULATE ( SUM ( fact_sales[quantity] ), fact_sales[is_return] = FALSE )
 
-Units Returned =
-CALCULATE ( -SUM ( fact_sales[quantity] ), fact_sales[is_return] = TRUE )
-
 Return Rate % =
 DIVIDE ( [Units Returned], [Gross Units Sold] )
-
-Net Units Sold =
-SUM ( fact_sales[quantity] )
--- gross sold minus returns — returns are already stored as negative quantity
 
 Full Price Sales (GBP) =
 CALCULATE ( [Net Sales (GBP)], fact_sales[promo_id] = "PROMO0000" )
 
-Full Price Mix % =
-DIVIDE ( [Full Price Sales (GBP)], [Net Sales (GBP)] )
-
 Multi-buy Sales (GBP) =
 CALCULATE ( [Net Sales (GBP)], LEFT ( fact_sales[promo_id], 9 ) = "MULTIBUY-" )
 
-Multi-buy Mix % =
-DIVIDE ( [Multi-buy Sales (GBP)], [Net Sales (GBP)] )
+Distinct Invoices (from Sales) =
+CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
+
+Average Order Value (GBP) =
+DIVIDE ( [Net Sales (GBP)], [Distinct Invoices (from Sales)] )
 ```
 
-Calculated column on `fact_sales` (buckets a row-level field, not an aggregate — doesn't belong as a measure). Multi-buy gets its own band now rather than falling into the %-off tiers, since it's a genuinely different mechanic:
+Every return is coded `PROMO0000`, whatever the original sale was on, so Full Price carries all the refunds in the business and the full price mix reads slightly low.
+
+`Discount Band` is a calculated column on `fact_sales`, because it buckets each row rather than aggregating:
 
 ```dax
 Discount Band =
@@ -95,22 +108,11 @@ SWITCH (
 )
 ```
 
-### VAT
+## Last year and the KPI set
+
+Every "compared with last year" measure uses the same shape. It moves the business year back by one and carries the period, week and weekday across, so it works at year, period, week or day level and a day compares with the same weekday 364 days earlier:
 
 ```dax
-VAT (GBP) =
-SUM ( fact_sales[vat_gbp] )
-
-Gross Sales inc. VAT (GBP) =
-SUM ( fact_sales[gross_sales_gbp] )
-```
-
-### Time intelligence (business-calendar aware)
-
-```dax
--- Same business year minus one, same period, week and weekday. Works at year,
--- period, week and day level, and under a day-of-week slicer. A day compares
--- with the same weekday 364 days earlier.
 Net Sales LY =
 VAR CurrentYear = MAX ( dim_date[business_year] )
 VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )
@@ -125,118 +127,87 @@ RETURN
         TREATAS ( RelevantWeekNumbers, dim_date[business_week_number] ),
         TREATAS ( RelevantWeekdays, dim_date[day_of_week_num] )
     )
-
-Net Sales YoY % =
-DIVIDE ( [Net Sales (GBP)] - [Net Sales LY], [Net Sales LY] )
 ```
 
-### Targets
+Finance is period grain, so its LY measures only carry the period number across. They used to filter `dim_period[business_year]` instead, which the report's year buttons (on `dim_date`) don't touch, so LY came back equal to this year and every finance YoY card read 0.0.
+
+Around each LY sits a set of measures that drives a KPI card: YoY (GBP or pp), YoY %, a Trend Arrow, a Trend Colour and a Combo, the line of text under the card value:
 
 ```dax
-Target Net Sales (GBP) =
-SUM ( fact_targets[target_net_sales_gbp] )
+Net Sales Trend Colour =
+IF ( [Net Sales YoY %] > 0, "#2E7D32", IF ( [Net Sales YoY %] < 0, "#D32F2F", "#8D9AA1" ) )
 
-Target Variance (GBP) =
-[Net Sales (GBP)] - [Target Net Sales (GBP)]
-
-Target Variance % =
-DIVIDE ( [Target Variance (GBP)], [Target Net Sales (GBP)] )
-
-Target Achievement % =
-DIVIDE ( [Net Sales (GBP)], [Target Net Sales (GBP)] )
+Net Sales YoY Combo =
+VAR VatFactor =
+    IF (
+        SELECTEDVALUE ( 'VAT View'[VAT View], "Excluding VAT" ) = "Including VAT",
+        DIVIDE ( SUM ( fact_sales[gross_sales_gbp] ), SUM ( fact_sales[net_sales_gbp] ), 1 ),
+        1
+    )
+VAR CcyFactor = [FX Rate (Selected)]
+VAR Factor = VatFactor * CcyFactor
+RETURN
+    [Net Sales Trend Arrow] & " £" & FORMAT ( ABS ( [Net Sales YoY (GBP)] * Factor ), "#,0" )
+        & " (" & FORMAT ( [Net Sales YoY %], "+0.0%;-0.0%;0.0%" ) & ")"
 ```
 
-Some periods have a target with no actual yet (the ones beyond the present-date cutoff) — `[Net Sales (GBP)]` correctly returns blank for those rather than zero, so `Target Achievement %` will show blank too, which is the right behaviour for a period that hasn't happened.
+A few metrics turn the colour round. Basket and checkout abandonment are good news when they fall, so down is green, and Online Share is always grey, because a rising online share can mean stores are struggling as easily as online is thriving.
 
-### Gross & net contribution (from fact_store_finance)
+## Targets
 
-This is the table for the turnover → profit waterfall. One note on structure: `fact_store_finance[net_sales_gbp]` is its own period-level rollup column, separate from `fact_sales[net_sales_gbp]` — they reconcile to the same figure when filtered to the same store/period, but they're physically different columns in different tables. Use `fact_store_finance`'s own columns for anything contribution-related, not `[Net Sales (GBP)]`.
+Targets are per store per period, so a weekly chart against the plain target shows the whole period's target on every week (a staircase, and a variance of about −80%). The `Any Grain` versions spread each period's target across its days in proportion to last year's trading on the same weekday, so they add back up to the period target and work on a weekly or daily axis. Use them on anything below period level.
 
-```dax
-Cost of Goods (GBP) =
-SUM ( fact_store_finance[cogs_gbp] )
+## VAT and currency
 
-Rent (GBP) =
-SUM ( fact_store_finance[rent_gbp] )
+Two calculation groups, `VAT View` and `Currency Conversion`, change the outermost measure in a visual.
 
-Staff Costs (GBP) =
-SUM ( fact_store_finance[staff_gbp] )
+- **VAT View** has a whitelist of the sales-value measures it applies to (net sales, LY, YoY, targets, average order value, average selling price and a few others), and multiplies them by gross over net. Anything ex-VAT by definition, like gross profit, margin and cost, is left alone.
+- **Currency Conversion** converts any measure with a £ format string at the selected rate, and leaves percentages and counts alone.
 
-Utilities (GBP) =
-SUM ( fact_store_finance[utilities_gbp] )
+Calculation groups only touch the outermost measure, which matters for the combos: a combo is text built from other measures, so it builds the VAT and currency factors into its own DAX, as above. Ratios, mix measures and shares are ex-VAT by design, so they don't move because one market has a higher VAT rate.
 
-Marketing (GBP) =
-SUM ( fact_store_finance[marketing_gbp] )
+## Contribution and the P&L bridge
 
-Store Operating Costs (GBP) =
-[Rent (GBP)] + [Staff Costs (GBP)] + [Utilities (GBP)] + [Marketing (GBP)]
+`fact_store_finance` is its own period-level table, with its own `net_sales_gbp`. It reconciles to `fact_sales` for the same stores and periods (check REC-01), but contribution measures always use the finance table's columns, never `[Net Sales (GBP)]`. On the report it's labelled Turnover, because it covers Retail and Concession only: Online has no rent or staff lines.
 
-Gross Contribution (GBP) =
-SUM ( fact_store_finance[gross_contribution_gbp] )
+The waterfall uses a disconnected table, `dim_pnl_bridge`, with one row per step in order (turnover, marketing, head office, utilities, staff, rent, cost of goods), and a single `P&L Bridge Value` measure that returns turnover as a positive and each cost as a negative. There's deliberately no net contribution row: the waterfall works out the running total itself as its last bar, and a row for it as well would count it twice. That total is the net contribution, and it reconciles exactly to the Net Contribution card.
 
-Gross Contribution % =
-DIVIDE ( [Gross Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) )
-
-Head Office Allocation (GBP) =
-SUM ( fact_store_finance[head_office_gbp] )
-
-Net Contribution (GBP) =
-SUM ( fact_store_finance[net_contribution_gbp] )
-
-Net Contribution % =
-DIVIDE ( [Net Contribution (GBP)], SUM ( fact_store_finance[net_sales_gbp] ) )
-```
-
-Waterfall category order (turnover → profit): Net Sales → Cost of Goods → Gross Profit → Rent → Staff Costs → Utilities → Marketing → Gross Contribution → Head Office Allocation → Net Contribution. Each is its own measure above; a waterfall visual (native, or Deneb if you want more control over the connector styling) takes them as separate category/value pairs.
-
-### Stock
+## Stock and weeks of cover
 
 ```dax
-Stock Units =
-SUM ( fact_stock_snapshot[stock_units] )
-
-Stock Value (Cost, GBP) =
-SUM ( fact_stock_snapshot[stock_value_cost_gbp] )
-
-Stock Value (Retail, GBP) =
-SUM ( fact_stock_snapshot[stock_value_retail_gbp] )
-
 Avg Weekly Sales (Units) =
-DIVIDE ( [Gross Units Sold], DISTINCTCOUNT ( dim_date[business_week_number] ) )
+VAR WeeksTraded =
+    COUNTROWS ( SUMMARIZE ( fact_sales, dim_date[business_year], dim_date[business_week_number] ) )
+RETURN
+    DIVIDE ( [Gross Units Sold], WeeksTraded )
 
 Weeks of Cover =
 DIVIDE ( [Stock Units], [Avg Weekly Sales (Units)] )
 ```
 
-`Weeks of Cover` only makes sense filtered to the latest stock snapshot week, not summed across every week in the table — pair it with a "latest week" filter or slicer.
+`Avg Weekly Sales` counts year-and-week pairs that actually traded. The first version counted every week number in the filter, which divided a part year by future weeks (2026 to date read 21.8 weeks of cover instead of 13.0) and halved the rate when two years were selected.
 
-### Footfall & conversion
+Weeks of Cover is closing stock over the average weekly rate across whatever window is selected, so a year blends peak and quiet weeks. `Weeks of Cover (Last 4 Weeks)` uses the rate in the four weeks up to the closing date instead, which is how a merchandiser would quote it.
+
+## Footfall and conversion
 
 ```dax
-Footfall =
-SUM ( fact_footfall[footfall] )
-
-Transactions =
-SUM ( fact_footfall[transactions] )
-
 Conversion Rate % =
-DIVIDE ( [Transactions], [Footfall] )
-
-Items per Transaction =
-DIVIDE ( [Gross Units Sold], [Transactions] )
+DIVIDE ( [Total Transactions], [Total Footfall] )
 
 Average Transaction Value (GBP) =
-DIVIDE ( [Net Sales (GBP)], [Transactions] )
+DIVIDE ( [Net Sales (GBP)], [Total Transactions] )
 ```
 
-Optional sanity-check measure, not meant for a report page — `fact_footfall[transactions]` is now a genuine count sourced from `fact_sales`' real `invoice_id`, not an estimate, so this should match `[Transactions]` exactly when filtered to the same store/date range. Worth pasting in once just to confirm the two tables agree before trusting either:
+`Total Transactions` comes from `fact_footfall`, which only exists for Retail and Concession stores. That's fine on the Retail page, which is filtered to stores, but anywhere Online is in scope ATV counts online sales without counting online orders (about £98 for BY25 instead of £81). Use `Average Order Value (GBP)` there. `fact_footfall[transactions]` is built from the real invoices in `fact_sales`, and REC-04 checks the two agree.
 
-```dax
-Distinct Invoices (from Sales) =
-CALCULATE ( DISTINCTCOUNT ( fact_sales[invoice_id] ), fact_sales[is_return] = FALSE )
-```
-```
-### Range analysis
+## Pareto and the top performers
+
+The Pareto measures rank styles, style-colours or product groups by Net Sales and return the cumulative share. Style Pareto runs on `dim_product[style_label]` (name, brand and code) rather than `style_name`, because 907 styles share 498 names and an axis on the name merges them.
+
+`Top Style`, `Top Style-Colour` and `Top Product Group` find the winner themselves with `TOPN`, and each has a matching `Net Sales` and `Share %` measure for the card's reference lines. The cards need no visual filter. A filter on the winner would shrink the share to the filtered slice, which is how a Top Style card once said 89.2% instead of 1.8%.
+
+## Range analysis
 
 These answer "have we got the right number of styles and colours for the sales we get?". Put any product attribute (gender, product group, major product group, brand, sub-brand, season) on rows, then the sales share next to the style and style-colour shares. A row where the range share is well above the sales share carries more range than it earns.
 
@@ -327,7 +298,7 @@ As a sanity check, over the last year on the current data, Accessories makes abo
 
 On the same year, Tops need about 39% of their styles to reach 80% of their sales, against 26–32% for most groups, so Tops sales are spread thinly across the range rather than carried by a few heroes. Margin now varies by category, so the GP view has something to say too: Footwear makes about 21% of sales but under 20% of gross profit, and Outerwear's margin share runs slightly ahead of its sales share.
 
-### Digital funnel
+## Digital funnel
 
 The funnel stages are columns on `fact_digital_traffic`, so every measure here comes from one table and slices by device and browser as well as market and date. Each stage counts sessions that got at least that far, so they only narrow (data quality check VAL-24), and `Order Sessions` adds up to `Digital Orders` (REC-07).
 

@@ -17,7 +17,7 @@ To run just the audit: `python generator/quality/build_data_quality.py` (about 3
 
 | Field | What it holds |
 |---|---|
-| `check_id`, `check_name`, `check_description` | e.g. `REC-02`, and what the check actually tests |
+| `check_id`, `check_name`, `check_description` | `REC-02` and so on, and what the check actually tests |
 | `category` | Integrity, Uniqueness, Validity, Completeness, Reconciliation, Freshness, Cleaning |
 | `table_name` | the table being checked |
 | `severity` | `Critical` (any failing row = Fail) or `Advisory` (Warn) |

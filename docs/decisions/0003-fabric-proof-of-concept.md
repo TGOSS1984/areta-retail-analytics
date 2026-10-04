@@ -1,4 +1,4 @@
-# 0003 — Fabric as a proof of concept, not a rebuild
+# 0003: Fabric as a proof of concept, not a rebuild
 
 ## Status
 Proposed

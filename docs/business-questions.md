@@ -1,33 +1,39 @@
 # Business questions
 
-First pass — the questions each page of the dashboard needs to answer. This will grow as the schema and the visuals get built out; treat it as a working list, not a spec.
+The questions I wanted the report to answer, written before I built it, with where each one ended up. They're the questions I'd ask of a real retail business on a Monday morning.
 
-## Sales & margin
+## Sales and margin
 
-- How are sales value, volume, and margin % trending year on year, and against target?
-- Where's the split between full-price and markdown sales, and how does that shift across a season?
-- Which brands and product groups are driving cash vs driving volume?
-- What does the product Pareto curve actually look like — how concentrated is revenue in the top styles?
+- How are sales, units and margin trending against last year and target? *Overview and Sales.*
+- How much of the business sells at full price, and how does that move through a season? *Promo.*
+- Which brands and product groups drive the money, and which drive the volume? *Categories and Products.*
+- How concentrated are sales in the top styles? *The Pareto on Products, and Styles for 80% of Sales.*
+- Do we carry more styles and colours than a category's sales justify? *Range analysis on Products.*
 
-## Store performance
+## Stores
 
-- Which stores are over/under target, and by how much?
-- How does gross and net contribution vary store to store — who's genuinely profitable once store costs are in, and who isn't?
-- What's the relationship between footfall and conversion — are underperforming stores a traffic problem or a conversion problem?
-- How do owned retail stores compare to concession stores on the same metrics?
+- Which stores are over or under target, and by how much? *The league table on Retail.*
+- Who's actually profitable once store costs are in? *Finance.*
+- Are struggling stores short of visitors or failing to convert them? *The footfall against sales growth scatter on Retail.*
+- How do owned stores compare with concessions? *Retail and Finance, by store type.*
+
+## Online
+
+- Is the website growing through more traffic or better conversion? *The Digital KPI cards.*
+- Where do shoppers drop out between landing and ordering? *The funnel on Digital.*
 
 ## Stock
 
-- Which stores/products are overstocked vs understocked relative to their sell-through rate?
-- How many weeks of cover does current stock represent, by product group?
+- Which product groups are overstocked against how fast they sell? *Stock.*
+- How many weeks of cover is the stock, by product group and market? *Stock.*
 
-## Finance & targets
+## Finance and targets
 
-- Turnover → profit: where does the value actually go? (waterfall: turnover, cost of goods, staff costs, rent, marketing, head office, net profit)
-- Are we tracking to target through the year, and where's the biggest gap opening up?
-- How does margin % vary by discount depth (30/40/50/60/70% off)?
+- From turnover to profit, where does the money go? *The P&L bridge on Finance.*
+- Are we on track for the year, and where is the biggest gap? *Sales, by market.*
+- How much margin does each depth of discount cost? *Promo.*
 
-## Cross-cutting
+## Across the business
 
-- Bank holidays / Black Friday / Boxing Day — how much uplift do they actually drive, and where?
-- How does performance vary by market/country once currency is normalised back to GBP?
+- How much do Black Friday, Boxing Day and the other key days actually add? *The trading calendar on Sales.*
+- How does each market perform once its currency is converted back to pounds? *Every page, by market.*

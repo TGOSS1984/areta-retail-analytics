@@ -248,9 +248,7 @@ A few things in the model are there for reasons that aren't obvious from the dia
 - **Targets and finance sit at period grain, not day.** Store finance only exists per period, and targets were built per period. Getting a week or day view of a target needed real work (see [Any-Grain targets](#things-that-went-wrong-and-what-i-learnt)).
 - **The Data Quality tables have no relationships at all.** Deliberately. They describe the other tables, they don't filter them, and I didn't want to add anything to a relationship graph that had already caused me trouble.
 
-The full field list is meant to live in [`docs/data-dictionary.md`](docs/data-dictionary.md).
-
-<!-- TODO: docs/data-dictionary.md is still a template. Fill it in table by table. -->
+Every table and column is described in [`docs/data-dictionary.md`](docs/data-dictionary.md).
 
 ## Building the synthetic data
 
@@ -579,7 +577,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [ ] A model view screenshot
 - [ ] Trigger the GitHub Actions workflow for real and fix whatever falls over
 - [x] Deploy the web app to Vercel and add the link at the top
-- [ ] Fill in `docs/data-dictionary.md`
+- [x] Fill in `docs/data-dictionary.md`
 
 **Improvements I want to make**
 - [x] Model demand on the key trading days (Black Friday, Boxing Day, Christmas closures) and give styles a popularity curve
@@ -597,9 +595,8 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [ ] Customer type (new, returning, trade, staff), which the model doesn't have at all yet
 
 **Tidying**
-- [ ] Update `docs/project-plan.md`, which is now stale
-- [ ] ADR 0002 says the web app uses Tremor and Zustand. It doesn't (see `web/package.json`), so the record needs correcting
-- [ ] ADR 0001 says there are no product images in the repo. The product photos need a sorted source and licence, and the record should say where they came from
+- [x] Bring `docs/project-plan.md`, `docs/dax-measures.md` and the decision records up to date
+- [ ] Add the source and licence of the product photos to ADR 0001 and the credits
 
 <!-- TODO: decide where the product photos come from and how they're credited, then update ADR 0001 and the credits at the bottom. -->
 
@@ -610,7 +607,8 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 | [`docs/report-pages.md`](docs/report-pages.md) | All ten pages as built: cards, visuals, what the numbers say, and open items |
 | [`docs/data-quality-page.md`](docs/data-quality-page.md) | The audit design and the Data Quality page build sheet |
 | [`docs/business-questions.md`](docs/business-questions.md) | The questions the report is meant to answer |
-| [`docs/dax-measures.md`](docs/dax-measures.md) | The original measure notes (predates the `TREATAS` rewrite, so needs bringing up to date) |
+| [`docs/dax-measures.md`](docs/dax-measures.md) | How the model fits together and the patterns behind the measures |
+| [`docs/data-dictionary.md`](docs/data-dictionary.md) | Every warehouse table and column |
 | [`docs/decisions/`](docs/decisions/) | Why the data is fictional, why the web stack is small, and why Fabric is a side piece |
 | [`sql/README.md`](sql/README.md) | The SQL suite and how to practise with it |
 | [`powerbi/deneb/README.md`](powerbi/deneb/README.md) | The gradient chart specs |

@@ -1,13 +1,9 @@
 # branding
 
-Single source of truth for everything visual. Both `powerbi/theme/` and `web/styles/` end up pulling from here — nothing gets hand-duplicated between the two.
+Everything visual starts here, so the report and the web app look like the same product.
 
-- `logo/` — working logo files. Just the transparent lockup for now; favicon and icon-only crops get added once we know the web app's actual size requirements.
-- `reference/` — mood-board material: the full branding board and the colour palette board. Reference for humans, not something code reads directly.
-- `theme/` — empty until we wire branding into the build. Will hold:
-  - `areta-theme.json` — Power BI report theme, generated from the five core hex values
-  - `tokens.css` (or `tailwind.config` extension) — the same five values as CSS custom properties / Tailwind theme colours for the web app
-
-## Wiring plan (not done yet)
-
-When we get to the web app: `theme/tokens.css` becomes the single place the five brand colours are declared, `web/` imports it, and the logo in `logo/` gets used for the header mark + favicon. Same principle on the Power BI side — `theme/areta-theme.json` is applied once at the report level rather than colours being picked per-visual. Neither exists yet; this folder is just the source everything else will point at.
+- `logo/`: the Areta logo, the logo mark on its own, the Retail Analytics wordmark, and an alternative logo for the clothing.
+- `theme/areta-theme.json`: the Power BI report theme. It uses the same five core colours as `web/tailwind.config.ts`, so a chart in the report and the same chart on the web match.
+- `icons/`: about a hundred Tabler icons in four variants (gold on a dark tile, teal on a white tile, and gold or teal on a transparent background), made by `generate_icons.py` from one list, so any variant swaps in without anything moving. The KPI cards and page navigation use them. `icons/favicon/` holds the browser favicon, drawn from a simplified version of the mark because the full one turns to mush at 16 pixels.
+- `reference/`: the brand board, colour palette, mock-ups and contact sheets I worked from. Reference for people; nothing reads them.
+- `areta-banner.png`: the banner at the top of the README.

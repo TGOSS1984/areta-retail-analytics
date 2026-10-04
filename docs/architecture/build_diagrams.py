@@ -186,7 +186,7 @@ def pipeline_overview() -> None:
     c.node(490, row2, "file-spreadsheet", "Raw", "deliberately messy\nsales file")
     c.node(690, row2, "settings-automation", "Clean", "duplicates, casing,\nblank discounts")
     c.node(890, row2, "database", "Warehouse", "star schema,\nParquet files", highlight=True)
-    c.node(890, row1, "shield-check", "Audit", "78 checks, results\nwritten as 2 tables")
+    c.node(890, row1, "shield-check", "Audit", "80 checks, results\nwritten as 2 tables")
     c.node(890, row3, "package-export", "Web exports", "pre-aggregated\nParquet for the app")
     c.arrow([(350, row2), (438, row2)], "writes")
     c.arrow([(546, row2), (634, row2)], "3.9M lines")
@@ -198,9 +198,9 @@ def pipeline_overview() -> None:
 
     # consumers, one row each so the arrows run straight across
     c.boundary(1060, 162, 310, 242, "Power BI", "chart-bar")
-    c.node(1215, row1, "cube", "Semantic model", "385 measures", tile=76, title_size=17, sub_size=13)
+    c.node(1215, row1, "cube", "Semantic model", "472 measures", tile=76, title_size=17, sub_size=13)
     c.boundary(1060, 425, 310, 242, "SQL suite", "terminal-2")
-    c.node(1215, row2, "database-search", "DuckDB", "147 queries + exercises", tile=76, title_size=17, sub_size=13)
+    c.node(1215, row2, "database-search", "DuckDB", "118 queries + 30 exercises", tile=76, title_size=17, sub_size=13)
     c.boundary(1060, 688, 310, 242, "Web app", "brand-nextjs")
     c.node(1215, row3, "layout-dashboard", "Next.js dashboard", "DuckDB-wasm, ECharts", tile=76, title_size=17, sub_size=13)
 
@@ -236,9 +236,9 @@ def warehouse_detail() -> None:
     steps = [
         ("calendar", "Dimensions", "date, period, store, product,\npromo, currency", False),
         ("chart-bar", "Facts, first pass", "sales, footfall, stock, targets,\nfinance, digital", False),
-        ("settings-automation", "Clean", "11,810 duplicate lines dropped,\n118,458 store IDs fixed", True),
+        ("settings-automation", "Clean", "about 12K duplicate lines dropped,\n117K store IDs fixed", True),
         ("database", "Warehouse tables", "Parquet, star schema", True),
-        ("shield-check", "Audit", "78 checks, results as 2 tables", False),
+        ("shield-check", "Audit", "80 checks, results as 2 tables", False),
         ("package-export", "Web exports", "pre-aggregated for the app", False),
     ]
     ys = [232, 352, 472, 592, 712, 832]
@@ -277,9 +277,9 @@ def warehouse_detail() -> None:
 
     # right: consumers
     c.boundary(1090, 162, 280, 250, "Power BI", "chart-bar")
-    c.node(1230, 262, "cube", "Semantic model", "24 tables, 385 measures", tile=72, title_size=17, sub_size=13)
+    c.node(1230, 262, "cube", "Semantic model", "26 tables, 472 measures", tile=72, title_size=17, sub_size=13)
     c.boundary(1090, 432, 280, 250, "SQL suite", "terminal-2")
-    c.node(1230, 532, "database-search", "DuckDB", "147 queries", tile=72, title_size=17, sub_size=13)
+    c.node(1230, 532, "database-search", "DuckDB", "118 queries", tile=72, title_size=17, sub_size=13)
     c.boundary(1090, 702, 280, 270, "Web app", "brand-nextjs")
     c.node(1230, 802, "layout-dashboard", "DuckDB-wasm", "reads the exports", tile=72, title_size=17, sub_size=13)
     c.arrow([(1040, 262), (1170, 262)], "Parquet\nimport", label_side="above")

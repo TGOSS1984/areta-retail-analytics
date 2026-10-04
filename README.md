@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" />
   <img alt="Power BI" src="https://img.shields.io/badge/Power%20BI-PBIP%20%2B%20TMDL-F2C811?logo=powerbi&logoColor=black" />
-  <img alt="DAX" src="https://img.shields.io/badge/DAX-385%20measures-1F7486" />
+  <img alt="DAX" src="https://img.shields.io/badge/DAX-472%20measures-1F7486" />
   <img alt="SQL" src="https://img.shields.io/badge/SQL-DuckDB-FFF000?logo=duckdb&logoColor=black" />
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
@@ -74,10 +74,10 @@ One Python pipeline feeds all three, so the numbers agree wherever you look.
 |---|---|
 | **The data** | About 3.9 million invoice lines, 361 stores (202 retail, 148 concession, 11 online), 12,151 SKUs across 907 styles, 4 brands, 11 markets. History starts 5 March 2023 and runs up to the day the pipeline last ran |
 | **The pipeline** | 17 steps in Python, about two minutes end to end, scheduled weekly with GitHub Actions |
-| **Power BI** | 24 tables, 385 measures, a Business Calendar hierarchy, a currency calculation group, 11 report pages designed |
+| **Power BI** | 26 tables, 472 measures, a Business Calendar hierarchy, VAT and currency calculation groups, 10 report pages |
 | **The web app** | Next.js 16, DuckDB-wasm, ECharts, a responsive multi-page dashboard with shared filters |
-| **SQL** | 147 queries in 11 files plus 30 practice exercises |
-| **Data quality** | 78 automated checks that run at the end of every refresh |
+| **SQL** | 118 queries in 11 files plus 30 practice exercises |
+| **Data quality** | 80 automated checks that run at the end of every refresh |
 
 <!-- TODO: refresh these numbers after the next full pipeline run. They move slightly because the data is regenerated up to the current date. -->
 
@@ -103,24 +103,32 @@ I'm looking for data analyst, BI analyst, retail insight and commercial analytic
 
 ## Screenshots
 
-<!-- TODO: take these once each page is built, save them in docs/screenshots/ under the names below, then swap each placeholder line for the image tag underneath it. -->
-
 **Power BI report** ([full report as a PDF](docs/screenshots/areta-retail-analytics.pdf))
 
-> Screenshot placeholder: Overview page
-> <!-- ![Overview](docs/screenshots/pbi-overview.png) -->
+All ten pages, on business year 2025.
 
-> Screenshot placeholder: Sales page, vs last year and vs target
-> <!-- ![Sales](docs/screenshots/pbi-sales.png) -->
-
-> Screenshot placeholder: Products page, top styles with photos and the Pareto curve
-> <!-- ![Products](docs/screenshots/pbi-products.png) -->
-
-> Screenshot placeholder: Retail page, store map and league table
-> <!-- ![Retail](docs/screenshots/pbi-retail.png) -->
-
-> Screenshot placeholder: Data Quality page
-> <!-- ![Data quality](docs/screenshots/pbi-data-quality.png) -->
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/pbi-overview.png" alt="Power BI: Overview" /><br /><sub><b>Overview.</b> KPIs against target and last year, and a waterfall of what drove the growth</sub></td>
+    <td width="50%"><img src="docs/screenshots/pbi-sales.png" alt="Power BI: Sales" /><br /><sub><b>Sales.</b> Weekly trend against LY and target, the trading calendar, and growth by market and channel</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pbi-products.png" alt="Power BI: Products" /><br /><sub><b>Products.</b> Best sellers with photos, the style Pareto, and range productivity by product group</sub></td>
+    <td><img src="docs/screenshots/pbi-categories.png" alt="Power BI: Categories" /><br /><sub><b>Categories.</b> Category mix, brand split, and a category by market growth heatmap</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pbi-retail.png" alt="Power BI: Retail" /><br /><sub><b>Retail.</b> Footfall, conversion and basket by market, the store league table, footfall vs sales growth</sub></td>
+    <td><img src="docs/screenshots/pbi-promo.png" alt="Power BI: Promo" /><br /><sub><b>Promo.</b> What each discount depth costs in margin, and every promotion side by side</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pbi-digital.png" alt="Power BI: Digital" /><br /><sub><b>Digital.</b> Sessions, conversion and basket by device, browser conversion, and the shopping funnel</sub></td>
+    <td><img src="docs/screenshots/pbi-finance.png" alt="Power BI: Finance" /><br /><sub><b>Finance.</b> The P&L bridge from turnover to net contribution, and contribution by store and period</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pbi-stock.png" alt="Power BI: Stock" /><br /><sub><b>Stock.</b> Weeks of cover by product group, stock vs rate of sale, and stock mix against sales mix</sub></td>
+    <td><img src="docs/screenshots/pbi-data-quality.png" alt="Power BI: Data Quality" /><br /><sub><b>Data Quality.</b> The 80-check audit: what passed, what cleaning fixed, and where the warnings sit</sub></td>
+  </tr>
+</table>
 
 > Screenshot placeholder: the model view in Power BI Desktop
 > <!-- ![Model view](docs/screenshots/pbi-model-view.png) -->
@@ -295,10 +303,10 @@ The report is saved as a Power BI Project (`.pbip`), so the model is text (TMDL)
 
 **The model**
 
-- 24 tables and 385 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
+- 26 tables and 472 measures, organised into display folders (Sales and Margin, Time Intelligence, Targets, Footfall and Conversion, Channel Split, Digital, Data Quality and so on).
 - **The KPI suite.** For about 30 metrics there's a full set: the value, last year, YoY change, YoY %, an arrow, a colour and a combined text line (`▼ £1,790,345 (-4.4%)`). On the report those drive the cards.
 - **Targets**, in their own suite for the five targetable metrics, gross profit (value and rate) and digital sales, plus **Any-Grain** versions that work at day and week level.
-- **Pareto** (at three grains), a **P&L waterfall**, a **VAT toggle** and a **Currency calculation group** that converts every monetary measure through one mechanism instead of duplicating measures.
+- **Pareto** (at three grains), **range analysis** (each group's share of sales against its share of styles and stock), a **shopping funnel**, a **P&L waterfall**, and **VAT and currency calculation groups** that convert every monetary measure through one mechanism instead of duplicating measures.
 - Two hierarchies on the date table: a Calendar Date one and a **Business Calendar** one (Year, Period, Week, Day). Year-on-year always uses the Business Calendar, because the LY measures swap the business year.
 
 The pattern I now use for anything "compared with last year" looks like this. It's the fix for the third problem in [the section below](#things-that-went-wrong-and-what-i-learnt):
@@ -322,23 +330,20 @@ Net Units Sold LY =
 
 **The pages**
 
-Eleven pages, each with five KPI cards and a set of visuals. The full design, with the exact measure and column behind every visual, is in [`docs/report-pages.md`](docs/report-pages.md), including which filters work on which page and why (a product filter reaches sales but not footfall or targets, so it stays off the pages where it would mislead).
+Ten pages, each with five KPI cards across the top and five or six visuals below. [`docs/report-pages.md`](docs/report-pages.md) goes through every page as built: what's on it, what the BY25 numbers say, the gotchas behind particular visuals, and a list of things I still want to tidy.
 
-| Page | What it answers | Built? |
-|---|---|---|
-| Home | Where do I go? Navigation and headline numbers | |
-| Overview | How are we doing against last year and target? | |
-| Sales | Trading by day and week, channel split, returns, the P&L bridge | |
-| Products | Top styles with photos, the Pareto curve, brand and size | |
-| Categories | Category mix, margin against sales, growth heatmap | |
-| Retail | Store map, league table, footfall and conversion | |
-| Promotional | Full price against promo, promo types, Black Friday | |
-| Digital | Website sales, conversion funnel, device and browser mix | |
-| Finance | Contribution, cost lines, store profitability | |
-| Stock | Cover, stock by category, slow movers | |
-| Data Quality | What passed, what didn't, how fresh it is | |
-
-<!-- TODO: fill in the "Built?" column as each page is finished. It's blank on purpose. -->
+| Page | What it answers |
+|---|---|
+| Overview | How is the business doing, and what drove it? |
+| Sales | How are we trading against last year and target, and where is the growth? |
+| Products | Which lines carry the business, and which ones come back? |
+| Categories | How does the range mix perform, and where? |
+| Retail | How are the stores trading, converting and earning their space? |
+| Promo | What does discounting buy us, and what does it cost in margin? |
+| Digital | How is the website trading and converting, and where do shoppers drop out? |
+| Finance | Where does the money go between turnover and net contribution? |
+| Stock | Have we got the right stock in the right place for how fast it sells? |
+| Data Quality | Can I trust the numbers on the other nine pages? |
 
 **Look and feel**
 
@@ -568,8 +573,10 @@ areta-retail-analytics/
 Where things stand, and what's next. I'd rather this list be honest than short.
 
 **To finish**
-- [ ] Build the remaining report pages in Power BI Desktop, then take the screenshots and export the PDF
-- [ ] Confirm the latest round of DAX changes in Desktop: the Any-Grain targets, the gross profit targets, the closing-balance stock measures, and the digital traffic and target fixes. They're tested against the real data, but I haven't seen them run in Desktop yet
+- [x] Build all ten report pages in Power BI Desktop, export the PDF and take the screenshots
+- [ ] Work through the open items at the end of [`docs/report-pages.md`](docs/report-pages.md) (visual titles, a few reference lines, repeated cards), then re-export
+- [ ] Put the VAT and currency toggles on the report pages. The calculation groups are in the model, but the slicers aren't on the pages yet, so they haven't been tested in the report
+- [ ] A model view screenshot
 - [ ] Trigger the GitHub Actions workflow for real and fix whatever falls over
 - [x] Deploy the web app to Vercel and add the link at the top
 - [ ] Fill in `docs/data-dictionary.md`
@@ -590,7 +597,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 - [ ] Customer type (new, returning, trade, staff), which the model doesn't have at all yet
 
 **Tidying**
-- [ ] Update the docs that are now stale: `powerbi/README.md` and `docs/project-plan.md`
+- [ ] Update `docs/project-plan.md`, which is now stale
 - [ ] ADR 0002 says the web app uses Tremor and Zustand. It doesn't (see `web/package.json`), so the record needs correcting
 - [ ] ADR 0001 says there are no product images in the repo. The product photos need a sorted source and licence, and the record should say where they came from
 
@@ -600,11 +607,11 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 
 | | |
 |---|---|
-| [`docs/report-pages.md`](docs/report-pages.md) | All 11 pages: KPIs, visuals, fields, and which filters reach which page |
+| [`docs/report-pages.md`](docs/report-pages.md) | All ten pages as built: cards, visuals, what the numbers say, and open items |
 | [`docs/data-quality-page.md`](docs/data-quality-page.md) | The audit design and the Data Quality page build sheet |
 | [`docs/business-questions.md`](docs/business-questions.md) | The questions the report is meant to answer |
 | [`docs/dax-measures.md`](docs/dax-measures.md) | The original measure notes (predates the `TREATAS` rewrite, so needs bringing up to date) |
-| [`docs/decisions/`](docs/decisions/) | Why the data is fictional, and why the web stack is small |
+| [`docs/decisions/`](docs/decisions/) | Why the data is fictional, why the web stack is small, and why Fabric is a side piece |
 | [`sql/README.md`](sql/README.md) | The SQL suite and how to practise with it |
 | [`powerbi/deneb/README.md`](powerbi/deneb/README.md) | The gradient chart specs |
 | [`branding/`](branding/) | Logo, theme, icons |

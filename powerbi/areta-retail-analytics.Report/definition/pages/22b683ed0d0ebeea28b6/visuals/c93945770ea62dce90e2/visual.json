@@ -261,54 +261,21 @@
             }
           }
         }
+      ],
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Product groups vs last year'"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "0475d7f39df210505200",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_product"
-              }
-            },
-            "Property": "product_group"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "75cda9e26a5d92f76a11",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales (GBP)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5da62ceb7e56cd5b878e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "fact_sales"
-              }
-            },
-            "Property": "Net Sales YoY Combo"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

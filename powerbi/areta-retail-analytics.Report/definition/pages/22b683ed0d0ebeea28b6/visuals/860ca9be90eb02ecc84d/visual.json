@@ -816,5 +816,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "025807882c425d00eb02",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_sales"
+              }
+            },
+            "Property": "Net Sales (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

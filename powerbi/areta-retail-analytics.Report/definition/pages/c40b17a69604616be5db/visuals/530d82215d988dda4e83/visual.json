@@ -4,7 +4,7 @@
   "position": {
     "x": 1177.8429680759275,
     "y": 548.334771354616,
-    "z": 31000,
+    "z": 32000,
     "height": 503.60655737704917,
     "width": 723.93442622950818,
     "tabOrder": 31000
@@ -141,6 +141,21 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Product group Pareto'"
                 }
               }
             }

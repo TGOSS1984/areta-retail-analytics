@@ -4,7 +4,7 @@
   "position": {
     "x": 231.77347242921013,
     "y": 585.15648286140083,
-    "z": 30000,
+    "z": 31000,
     "height": 464.97764530551416,
     "width": 549.38897168405367,
     "tabOrder": 30000
@@ -78,6 +78,21 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Range mix'"
                 }
               }
             }

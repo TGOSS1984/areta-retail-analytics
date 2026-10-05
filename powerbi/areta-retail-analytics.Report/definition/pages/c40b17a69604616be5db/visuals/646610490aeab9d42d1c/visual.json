@@ -265,6 +265,87 @@
             "metadata": "fact_stock_snapshot.Stock Value (Retail, GBP)",
             "id": "field-a8c58bdd-9bfe-0021-326a-a049342d08b0"
           }
+        },
+        {
+          "properties": {
+            "valueFontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_stock_snapshot"
+                                    }
+                                  },
+                                  "Property": "Stock Value Retail YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_stock_snapshot"
+                                    }
+                                  },
+                                  "Property": "Stock Value Retail YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_stock_snapshot.Stock Value (Retail, GBP)",
+            "id": "field-a8c58bdd-9bfe-0021-326a-a049342d08b0"
+          }
         }
       ]
     },
@@ -303,5 +384,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "6aea2f2866d2e17c3db6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_stock_snapshot"
+              }
+            },
+            "Property": "Stock Value (Retail, GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

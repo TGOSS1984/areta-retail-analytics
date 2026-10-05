@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "9f026e47c50298205100",
   "position": {
-    "x": 1374.1176470588234,
-    "y": 267.71241830065361,
+    "x": 1324.2906574394465,
+    "y": 267.95847750865056,
     "z": 38000,
-    "height": 432.94117647058823,
-    "width": 527.05882352941171,
+    "height": 431.83391003460207,
+    "width": 575.77854671280284,
     "tabOrder": 38000
   },
   "visual": {
@@ -56,6 +56,20 @@
               },
               "queryRef": "fact_digital_traffic.Total Sessions",
               "nativeQueryRef": "Total Sessions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_digital_traffic"
+                    }
+                  },
+                  "Property": "Total Sessions YoY"
+                }
+              },
+              "queryRef": "fact_digital_traffic.Total Sessions YoY",
+              "nativeQueryRef": "Total Sessions YoY"
             },
             {
               "field": {
@@ -191,7 +205,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "125.82353390320868D"
+                  "Value": "91.7728632623741D"
                 }
               }
             }
@@ -199,11 +213,54 @@
           "selector": {
             "metadata": "fact_digital_traffic.Funnel Conversion Rate %"
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "88.211046057587D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_traffic.Total Sessions YoY"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "82.78199143803295D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_digital_traffic.Pages per Session"
+          }
         }
       ],
       "columnHeaders": [
         {
           "properties": {}
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Browsers'"
+                }
+              }
+            }
+          }
         }
       ]
     },

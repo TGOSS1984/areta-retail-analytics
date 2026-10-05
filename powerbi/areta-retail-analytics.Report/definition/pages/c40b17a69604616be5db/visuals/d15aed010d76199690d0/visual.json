@@ -4,7 +4,7 @@
   "position": {
     "x": 1177.8429680759275,
     "y": 265.0560828300259,
-    "z": 33000,
+    "z": 34000,
     "height": 274.99568593615186,
     "width": 723.93442622950818,
     "tabOrder": 33000
@@ -172,6 +172,34 @@
               }
             ],
             "metadata": "fact_sales.Net Sales YoY %"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Category growth by market'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Net sales vs last year'"
+                }
+              }
+            }
           }
         }
       ]

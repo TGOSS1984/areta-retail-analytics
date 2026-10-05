@@ -4,7 +4,7 @@
   "position": {
     "x": 231.92407247627264,
     "y": 265.0560828300259,
-    "z": 32000,
+    "z": 33000,
     "height": 301.50129421915443,
     "width": 549.99137187230372,
     "tabOrder": 32000
@@ -374,6 +374,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'None'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Category performance'"
                 }
               }
             }

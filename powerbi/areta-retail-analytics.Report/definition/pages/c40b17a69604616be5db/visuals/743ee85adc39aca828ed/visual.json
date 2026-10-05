@@ -4,7 +4,7 @@
   "position": {
     "x": 796.82484900776535,
     "y": 586.43658326143225,
-    "z": 34000,
+    "z": 35000,
     "height": 465.504745470233,
     "width": 366.10871440897324,
     "tabOrder": 34000
@@ -131,6 +131,21 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Sales and margin by gender vs last year'"
                 }
               }
             }

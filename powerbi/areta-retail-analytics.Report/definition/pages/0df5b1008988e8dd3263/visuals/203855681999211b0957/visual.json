@@ -256,7 +256,7 @@
             "viewportHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "337D"
+                  "Value": "271D"
                 }
               }
             },
@@ -277,6 +277,34 @@
               "expr": {
                 "Literal": {
                   "Value": "'2.0.0.0'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Trading calendar\t'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Net sales by day. Darker means a bigger day'"
                 }
               }
             }

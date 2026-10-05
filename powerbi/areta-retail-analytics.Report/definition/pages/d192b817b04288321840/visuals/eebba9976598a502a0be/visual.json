@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "eebba9976598a502a0be",
   "position": {
-    "x": 700.65359477124184,
-    "y": 265.6209150326797,
+    "x": 699.79238754325263,
+    "y": 265.74394463667824,
     "z": 41000,
-    "height": 435.03267973856208,
-    "width": 658.82352941176464,
+    "height": 434.04844290657439,
+    "width": 608.99653979238758,
     "tabOrder": 41000
   },
   "visual": {
@@ -92,6 +92,21 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Online sales vs target by market\t'"
                 }
               }
             }

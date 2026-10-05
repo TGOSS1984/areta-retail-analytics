@@ -276,41 +276,44 @@
       ],
       "values": [
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "fact_sales.Net Sales YoY Combo"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "fact_targets.Net Sales Target Combo (Any Grain)"
+          }
+        },
+        {
           "properties": {
             "fontColor": {
               "solid": {
                 "color": {
                   "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "fact_sales"
-                                    }
-                                  },
-                                  "Property": "Net Sales YoY (GBP)"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D32F2F'"
-                            }
-                          }
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_targets"
                         }
-                      ]
+                      },
+                      "Property": "Net Sales Target Trend Colour (Any Grain)"
                     }
                   }
                 }
@@ -321,7 +324,37 @@
             "data": [
               {
                 "dataViewWildcard": {
-                  "matchingOption": 1
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_targets.Net Sales Target Combo (Any Grain)"
+          }
+        },
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "fact_sales"
+                        }
+                      },
+                      "Property": "Net Sales Trend Colour"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
                 }
               }
             ],
@@ -454,6 +487,21 @@
           },
           "selector": {
             "metadata": "fact_footfall.Total Footfall YoY Combo"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Store league table'"
+                }
+              }
+            }
           }
         }
       ]

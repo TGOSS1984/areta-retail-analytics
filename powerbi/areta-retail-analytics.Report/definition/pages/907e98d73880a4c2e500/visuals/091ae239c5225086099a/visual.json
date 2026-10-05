@@ -183,6 +183,21 @@
       ],
       "referenceLabel": [
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_footfall.Average Transaction Value (GBP)",
+            "id": "field-d1790d5f-f69a-8be1-46b7-61bcd9eefc88",
+            "order": 0
+          }
+        },
+        {
           "properties": {
             "value": {
               "expr": {
@@ -192,7 +207,7 @@
                       "Entity": "fact_footfall"
                     }
                   },
-                  "Property": "Average Transaction Value LY"
+                  "Property": "Average Transaction Value YoY Combo"
                 }
               }
             }
@@ -206,7 +221,7 @@
               }
             ],
             "metadata": "fact_footfall.Average Transaction Value (GBP)",
-            "id": "field-d1790d5f-f69a-8be1-46b7-61bcd9eefc88",
+            "id": "field-bccb515f-65b9-3e28-da96-49c95913608e",
             "order": 0
           }
         }
@@ -233,6 +248,28 @@
             "metadata": "fact_footfall.Average Transaction Value (GBP)",
             "id": "field-d1790d5f-f69a-8be1-46b7-61bcd9eefc88"
           }
+        },
+        {
+          "properties": {
+            "titleContentType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'custom'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Vs PY'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_footfall.Average Transaction Value (GBP)",
+            "id": "field-bccb515f-65b9-3e28-da96-49c95913608e"
+          }
         }
       ],
       "referenceLabelValue": [
@@ -256,6 +293,189 @@
           "selector": {
             "metadata": "fact_footfall.Average Transaction Value (GBP)",
             "id": "field-d1790d5f-f69a-8be1-46b7-61bcd9eefc88"
+          }
+        },
+        {
+          "properties": {
+            "valueFontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_footfall"
+                                    }
+                                  },
+                                  "Property": "Average Transaction Value YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_footfall"
+                                    }
+                                  },
+                                  "Property": "Average Transaction Value YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_footfall.Average Transaction Value (GBP)"
+          }
+        },
+        {
+          "properties": {
+            "valueBold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "valueItalic": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fact_footfall.Average Transaction Value (GBP)",
+            "id": "field-bccb515f-65b9-3e28-da96-49c95913608e"
+          }
+        },
+        {
+          "properties": {
+            "valueFontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Conditional": {
+                      "Cases": [
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_footfall"
+                                    }
+                                  },
+                                  "Property": "Average Transaction Value YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#2E7D32'"
+                            }
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "Comparison": {
+                              "ComparisonKind": 3,
+                              "Left": {
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "fact_footfall"
+                                    }
+                                  },
+                                  "Property": "Average Transaction Value YoY (GBP)"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "0D"
+                                }
+                              }
+                            }
+                          },
+                          "Value": {
+                            "Literal": {
+                              "Value": "'#D32F2F'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "fact_footfall.Average Transaction Value (GBP)",
+            "id": "field-bccb515f-65b9-3e28-da96-49c95913608e"
           }
         }
       ]
@@ -295,5 +515,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "459b599d7f698df261a8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fact_footfall"
+              }
+            },
+            "Property": "Average Transaction Value (GBP)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

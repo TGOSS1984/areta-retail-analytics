@@ -189,6 +189,8 @@ table fact_stock_snapshot
 		displayFolder: Stock
 		lineageTag: 3347b857-7b18-4f35-9f9e-1478b720e783
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	measure 'Avg Weekly Sales LY' =
 			VAR CurrentYear = MAX ( dim_date[business_year] )
 			VAR RelevantPeriodNumbers = VALUES ( dim_date[business_period_number] )

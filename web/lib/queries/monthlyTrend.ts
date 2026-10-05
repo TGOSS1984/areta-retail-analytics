@@ -14,7 +14,7 @@ export type MonthlyTrend = {
   priorYear: number;
   points: MonthlyTrendPoint[];
   /** Set when the trailing month of the current year got excluded for
-   * being incomplete — surfaced so the UI can footnote it rather than
+   * being incomplete: surfaced so the UI can footnote it rather than
    * silently drop data with no explanation. */
   excludedPartialMonth?: string;
 };
@@ -24,7 +24,7 @@ function daysInMonth(year: number, monthNum: number): number {
 }
 
 /**
- * Calendar-year month-by-month trend, not business-year — this is the
+ * Calendar-year month-by-month trend, not business-year. This is the
  * one visual on the page using the calendar calendar rather than the
  * business one. Financial reporting (targets, contribution) needs the
  * business year; a general "sales through the year" trend line reads
@@ -32,12 +32,12 @@ function daysInMonth(year: number, monthNum: number): number {
  * nothing here depends on business-period boundaries.
  *
  * The trailing month of the current year is checked for completeness
- * and excluded if partial — plotting a mid-month total next to twelve
+ * and excluded if partial: plotting a mid-month total next to twelve
  * full months creates a fake-looking crash at the end of the line,
  * exactly the same class of mistake as the like-for-like fix already
  * made in salesSummary.ts. Verified this against the real exported data
  * before writing it: the last date present was 2026-09-16, day 16 of a
- * 30-day month — genuinely incomplete, not an edge case that won't occur.
+ * 30-day month: genuinely incomplete, not an edge case that won't occur.
  */
 export async function fetchMonthlyTrend(f: ResolvedFilters): Promise<MonthlyTrend> {
   const yearRows = await queryDuckDB<{ cal_year: number }>(`

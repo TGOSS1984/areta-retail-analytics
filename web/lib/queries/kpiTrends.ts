@@ -17,14 +17,14 @@ function daysInMonth(year: number, monthNum: number): number {
 
 /**
  * Trailing 12 FULL calendar months (chronological), one number per
- * month per KPI card on Hero.tsx — the small shape behind each card's
+ * month per KPI card on Hero.tsx: the small shape behind each card's
  * headline figure, not a precisely-read chart. Same trailing-partial-
  * month exclusion as monthlyTrend.ts/salesMarginByMonth.ts: pulls 13
  * months with LIMIT so dropping a partial trailing one still leaves a
  * full 12, rather than a shorter, inconsistent-length sparkline.
  *
  * Deliberately calendar-month grain even though Hero's own headline
- * figures are business-year YTD — a sparkline's job is "what's the
+ * figures are business-year YTD: a sparkline's job is "what's the
  * recent shape", not a like-for-like figure, so the mismatch in time
  * basis between the number and the shape behind it is fine here in a
  * way it would NOT be fine for the number itself.

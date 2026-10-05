@@ -88,7 +88,7 @@ export function SalesTrendChart() {
       </div>
       {excludedPartialMonth && (
         <p className="mt-2 flex-shrink-0 text-[11px] text-mist">
-          {excludedPartialMonth} {currentYear} isn&apos;t shown yet — the month&apos;s still in progress.
+          {excludedPartialMonth} {currentYear} isn&apos;t shown yet: the month&apos;s still in progress.
         </p>
       )}
     </div>

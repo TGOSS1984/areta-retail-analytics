@@ -12,15 +12,15 @@ const UK_MAP_NAME = "uk-only";
 const MIN_BUBBLE = 8;
 const MAX_BUBBLE = 55;
 
-// Registered once at module load, synchronously — not inside a
+// Registered once at module load, synchronously, not inside a
 // useEffect with an async dynamic import. The first version did that
 // and produced a real bug: the map rendered as a tiny, misshapen,
 // disconnected fragment while the scatter bubbles rendered as one giant
-// blob nowhere near it — the two series ended up resolving against
+// blob nowhere near it: the two series ended up resolving against
 // different coordinate scales, most likely because of the timing gap
 // between \"component first renders with mapReady=false\" and \"map
 // actually registers a tick later\". A static import + registering
-// before the component ever renders removes that gap entirely — the
+// before the component ever renders removes that gap entirely: the
 // geojson is a known local file, there was never a real reason for it
 // to be async.
 if (!echarts.getMap(MAP_NAME)) {
@@ -28,7 +28,7 @@ if (!echarts.getMap(MAP_NAME)) {
 }
 
 // The UK drilldown reuses the UK feature already sitting inside
-// europe-markets.json rather than shipping a second GeoJSON file — same
+// europe-markets.json rather than shipping a second GeoJSON file, same
 // "one real dataset, not a hand-maintained duplicate" reasoning as
 // deriving bubble positions from dim_store instead of hand-picked
 // centroids. Registered once, synchronously, same reasoning as above.
@@ -53,7 +53,7 @@ export function RegionalMapChart() {
     () => ({
       click: (params: { name?: string }) => {
         // Fires on either the country shape (geo component) or the
-        // bubble (scatter series) — both carry the same name string
+        // bubble (scatter series), both carry the same name string
         // ("United Kingdom", matching dim_store's market_name), so one
         // check covers both click targets.
         if (drilldown === "europe" && params.name === "United Kingdom") {
@@ -65,7 +65,7 @@ export function RegionalMapChart() {
   );
 
   // Branched on the SAME variable used to build `points` below, not a
-  // merged union — a merged `sales = drilldown === "uk" ? ukSales :
+  // merged union: a merged `sales = drilldown === "uk" ? ukSales :
   // europeSales` compiles fine but loses TypeScript's ability to
   // correlate `drilldown` with which hook's data it actually holds
   // (caught by a real tsc run, not assumed).
@@ -112,8 +112,8 @@ export function RegionalMapChart() {
       // captures drags traps the finger and the page can't be scrolled
       // past it.
       roam: canRoam,
-      // Explicit layout rather than relying on ECharts' auto-fit margins
-      // — the auto-fit was very likely the actual source of the "tiny
+      // Explicit layout rather than relying on ECharts' auto-fit margins.
+      // The auto-fit was very likely the actual source of the "tiny
       // map crammed in a corner" symptom. layoutCenter/layoutSize is the
       // standard, well-documented fix for exactly that: it forces the
       // map to a known size and position regardless of the container's
@@ -153,7 +153,7 @@ export function RegionalMapChart() {
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-white/10 bg-deep-terrain p-5">
       <div className="mb-2 flex flex-shrink-0 items-center justify-between">
         <h2 className="text-sm font-medium text-cloud">
-          {drilldown === "uk" ? "Sales by region — United Kingdom" : "Sales by market"}
+          {drilldown === "uk" ? "Sales by region: United Kingdom" : "Sales by market"}
         </h2>
         {drilldown === "uk" && (
           <button
@@ -171,7 +171,7 @@ export function RegionalMapChart() {
       {/* select-none: this is the one chart with roam (pan/zoom)
           enabled, and without it a click-drag that starts a few pixels
           off the canvas can trigger the BROWSER's own native
-          drag-selection instead of ECharts' pan handling — showing up
+          drag-selection instead of ECharts' pan handling: showing up
           as a ghost rectangle over part of the map rather than an
           actual rendering bug. */}
       <div className="min-h-0 flex-1 select-none">

@@ -7,7 +7,7 @@ import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
   title: "Areta Retail Analytics",
-  description: "Higher ground awaits — retail analytics for Areta Mountain Systems.",
+  description: "Higher ground awaits: retail analytics for Areta Mountain Systems.",
 };
 
 export const viewport: Viewport = {

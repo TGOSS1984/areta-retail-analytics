@@ -11,7 +11,7 @@ export type MarketPoint = {
 };
 
 /**
- * Market-level, not sub-country region-level — a deliberate scope choice
+ * Market-level, not sub-country region-level: a deliberate scope choice
  * for this first version. The GeoJSON this feeds (lib/geo/europe-markets.geojson)
  * has country-level boundaries for the 11 markets, which is the natural
  * match for market-grain bubbles. A UK-specific regional breakdown
@@ -19,7 +19,7 @@ export type MarketPoint = {
  * plausible next step, but a second thing to get right, not this one.
  *
  * Position is the average of that market's own stores' coordinates, not
- * a hand-picked country centroid — consistent with the "derived from
+ * a hand-picked country centroid: consistent with the "derived from
  * dim_store, not a second independently-maintained position" decision
  * made when lat/long was added there.
  */

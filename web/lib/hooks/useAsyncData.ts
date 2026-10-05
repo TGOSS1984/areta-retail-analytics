@@ -10,7 +10,7 @@ export type AsyncState<T> =
 /**
  * Shared loading/error/ready pattern for anything that fetches via
  * DuckDB-wasm. useSalesSummary and useMonthlyTrend each hand-rolled this
- * exact same state machine before this existed — consolidating rather
+ * exact same state machine before this existed, so I consolidated rather
  * than writing a third and fourth near-identical copy for the category
  * and channel mix charts.
  */
@@ -38,7 +38,7 @@ export function useAsyncData<T>(fetcher: () => Promise<T>, deps: unknown[] = [])
       cancelled = true;
     };
     // fetcher is expected to be stable (module-level function references,
-    // not recreated per render) — deps controls re-fetching explicitly
+    // not recreated per render): deps controls re-fetching explicitly
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 

@@ -6,7 +6,7 @@ type ImagePanelProps = {
   subheading: string;
 };
 
-/** Decorative brand panel — no data, just imagery + a short line, same
+/** Decorative brand panel: no data, just imagery + a short line, same
  * spirit as the "MORE THAN GEAR" / quote panels on the reference board.
  * Same card shape (rounded-xl, border-white/10) as every data chart so
  * it reads as part of the grid, not a foreign element dropped into it. */

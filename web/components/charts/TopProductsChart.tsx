@@ -4,7 +4,7 @@ import { useTopProducts } from "@/lib/hooks/useTopProducts";
 import { useResolvedFilters } from "@/lib/hooks/useFilteredData";
 import { ProductThumb } from "@/components/ui/ProductThumb";
 
-// Enough rows to fill the card without crowding it — six keeps this
+// Enough rows to fill the card without crowding it: six keeps this
 // roughly level with RegionalMapChart's height in the grid it sits
 // next to on the overview page.
 const ROW_LIMIT = 6;

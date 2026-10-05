@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 // Same five core colours as branding/theme/areta-theme.json (the Power BI
-// report theme) — one palette, both front ends. If this ever needs to
+// report theme): one palette, both front ends. If this ever needs to
 // change, change it there too, don't let the two drift apart.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
@@ -21,7 +21,7 @@ const config: Config = {
         "summit-gold": "#D0AA62",
         "rock-slate": "#4A5B63",
         "alpine-stone": "#E8E1D6",
-        // Canvas background for the dark theme — a much darker version
+        // Canvas background for the dark theme: a much darker version
         // of deep-terrain (same hue, lower lightness), not a separate
         // colour family. Chart cards sit on this at deep-terrain itself,
         // so the two need to read as "darker shade of the same teal"

@@ -6,7 +6,7 @@ type SparklineProps = {
 };
 
 /**
- * Plain SVG polyline, not an ECharts instance — pulling in a full chart
+ * Plain SVG polyline, not an ECharts instance: pulling in a full chart
  * library per KPI card (six of them on Hero.tsx) for a shape this small
  * would be a lot of weight for very little: no axes, no tooltip, no
  * interactivity, just a trend shape.

@@ -16,7 +16,7 @@ export type TopProduct = {
 };
 
 /**
- * Ranked at (style, colour) grain, not style alone — a jacket in three
+ * Ranked at (style, colour) grain, not style alone: a jacket in three
  * colours is three rows here, each with its own image_path, because
  * that's the grain product photography actually exists at. See
  * export_web_data.py's export_dim_style_colour() for why image_path is

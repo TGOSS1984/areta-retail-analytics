@@ -65,7 +65,7 @@ For freewheeling, use `practice/scratch.sql` or the UI notebook, and start on `v
 - **Returns are negative lines.** `SUM(net_sales_gbp)` already nets them off. Some measures (units sold, footfall transactions, digital sales) are *before* returns, which is why `NOT is_return` shows up so often.
 - **Watch the grain.** `fact_sales` is one row per invoice line, `fact_footfall` one per store per day, `fact_targets` one per store per period. Joining two facts directly multiplies rows, so sum each to the same grain first. `04_joins.sql` query 5 shows what goes wrong.
 - **Never add up stock snapshots.** `fact_stock_snapshot` is a weekly balance. "Stock now" is the latest snapshot only.
-- **Numbers differ slightly between builds.** The data is regenerated each time the pipeline runs, so figures move by a fraction of a percent. Row counts on the dimensions don't change.
+- **Numbers move between builds.** Each run generates the data up to the day it runs, so the current year grows week by week and earlier years can shift by a fraction of a percent. The dimensions don't change.
 - **Some answers are boring.** Return rates barely differ by category, because the generator draws returns at a flat rate. Knowing what the data does and doesn't contain is part of using it honestly. (Black Friday used to be in this list at an uplift of about 1.00. The generator now models the surge, so query 6b in `09_business_questions_products_promo_stock.sql` has a real answer.)
 
 ## DuckDB and the SQL you'll meet at work

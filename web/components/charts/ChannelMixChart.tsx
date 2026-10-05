@@ -18,7 +18,7 @@ export function ChannelMixChart() {
     );
   }
 
-  // Compact — this sits in a half-height slot split with the image
+  // Compact. This sits in a half-height slot split with the image
   // panel, not a full row-height slot like CategoryMixChart. DonutChart
   // itself doesn't need to know that: it just fills whatever box this
   // component's layout gives it.

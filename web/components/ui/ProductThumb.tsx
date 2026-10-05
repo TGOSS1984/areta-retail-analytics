@@ -20,7 +20,7 @@ const CATEGORY_ICON: Record<string, string> = {
 };
 
 /**
- * Plain <img>, not next/image, on purpose — most style/colourways won't
+ * Plain <img>, not next/image, on purpose: most style/colourways won't
  * have a real photo sourced yet (see web/public/images/products/README.md),
  * so a 404-and-swap-to-fallback is the normal case here, not an edge
  * case. next/image's optimizer treats a missing local file as a hard

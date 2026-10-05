@@ -12,13 +12,13 @@ export type RegionPoint = {
 /**
  * Same YTD-bounds pattern as regionalSales.ts, scoped down to one
  * market and grouped by dim_store.region instead of market_code.
- * Position is the average of that region's own stores' coordinates —
+ * Position is the average of that region's own stores' coordinates,
  * same "derived from dim_store, not a second independently-maintained
  * position dataset" reasoning as the market-level map.
  *
  * marketCode is interpolated directly into the SQL like every other
  * value in this codebase's query files (queryDuckDB takes a raw
- * string, no parameter binding) — safe here because the only call site
+ * string, no parameter binding): safe here because the only call site
  * (RegionalMapChart.tsx) passes a hardcoded literal ("UK"), never
  * anything from a user-facing input.
  */

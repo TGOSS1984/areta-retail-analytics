@@ -26,6 +26,7 @@
 <p align="center">
   <a href="#what-this-is">What this is</a> ·
   <a href="docs/screenshots/areta-retail-analytics.pdf">Report as a PDF</a> ·
+  <a href="docs/presentation/areta-retail-analytics-journey.pdf">The project story (slides)</a> ·
   <a href="#run-it-yourself">Run it yourself</a> ·
   <a href="sql/README.md">SQL suite</a> ·
   <a href="#things-that-went-wrong-and-what-i-learnt">What went wrong</a> ·
@@ -601,6 +602,7 @@ Where things stand, and what's next. I'd rather this list be honest than short.
 
 | | |
 |---|---|
+| [`docs/presentation/`](docs/presentation/) | A 14-slide deck telling the story of the build, as [PDF](docs/presentation/areta-retail-analytics-journey.pdf) and [PowerPoint](docs/presentation/areta-retail-analytics-journey.pptx) |
 | [`docs/report-pages.md`](docs/report-pages.md) | All ten pages as built: cards, visuals, what the numbers say, and open items |
 | [`docs/data-quality-page.md`](docs/data-quality-page.md) | The audit design and the Data Quality page build sheet |
 | [`docs/business-questions.md`](docs/business-questions.md) | The questions the report is meant to answer |

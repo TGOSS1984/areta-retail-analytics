@@ -1,8 +1,8 @@
 # Market definitions for the Areta store network.
-# store_weight drives how many stores build_dim_store.py generates per market — must sum to 1.0.
+# store_weight drives how many stores build_dim_store.py generates per market: must sum to 1.0.
 # channel_mix is the split between owned retail and third-party concession stores.
 # price_index is a multiplier applied to base GBP prices before FX, to reflect local pricing.
-# vat_rate is the standard VAT/sales-tax rate for that market — applied on top of net_sales_gbp in fact_sales.
+# vat_rate is the standard VAT/sales-tax rate for that market: applied on top of net_sales_gbp in fact_sales.
 
 home_market: UK
 

@@ -13,7 +13,7 @@ table dim_store
 
 	measure 'Sales per Sq Ft (Annualised)' =
 			// period_key (business_year * 100 + period number) is unique per elapsed period, so this
-			// still annualises correctly if more than one business year is in the filter — a plain
+			// still annualises correctly if more than one business year is in the filter, where a plain
 			// DISTINCTCOUNT of business_period_number alone would undercount there (12 distinct
 			// numbers however many years are selected) and overstate the annualised figure.
 			VAR PeriodsInFilter = COALESCE ( DISTINCTCOUNT ( dim_date[period_key] ), 1 )

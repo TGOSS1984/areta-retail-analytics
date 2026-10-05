@@ -24,7 +24,7 @@ I kept every field name in one place, the `transform` block at the top of each s
 {"calculate": "datum['Net Sales (GBP)']",      "as": "value"},
 ```
 
-Change the text inside `datum['...']` to the name of the field as it shows in the Deneb Values well. The names are case sensitive and a measure's name is its own name, e.g. `Net Sales (GBP)`.
+Change the text inside `datum['...']` to the name of the field as it shows in the Deneb Values well. The names are case sensitive and a measure's name is its own name, for example `Net Sales (GBP)`.
 
 - **Line charts** also need `sort_key`, which is what puts the categories in order. For periods I use `period_key`. If the x axis is a date, point both `category` and `sort_key` at the date field.
 - **Not money?** The `label` line sets the data label and tooltip format. For units use `format(datum.value, ',.0f')`, for a percentage `format(datum.value, '.1%')`. For a percentage also change the axis `format` from `~s` to `.0%`.
@@ -32,7 +32,7 @@ Change the text inside `datum['...']` to the name of the field as it shows in th
 
 ## The calendar heatmap
 
-This one works differently from the four gradient specs because it needs the date columns as well as the measure. Put these in the Values well: `full_date`, `day_name`, `day_of_week_num`, `business_year`, `business_week_number`, `business_period_label` and your measure. `is_black_friday`, `is_christmas_day` and `is_boxing_day` are optional and outline those days in gold.
+This one works differently from the four gradient specs because it needs the date columns as well as the measure. Put these in the Values well: `full_date`, `day_name`, `day_of_week_num`, `business_year`, `business_week_number`, `business_period_label` and your measure. `day_of_week_num` is hidden in the model (it only exists to sort `day_name`), so tick View hidden in the Data pane to find it. Set the three number columns to Don't summarize, or they arrive in Deneb renamed as "Sum of …" and the grid comes out blank. `is_black_friday`, `is_christmas_day` and `is_boxing_day` are optional and outline those days in gold.
 
 - The measure goes in the `value` line at the top of `transform`, same as the others. For a percentage, change the `label` format too.
 - It always shows the latest business year in the filter. Two years at once would draw cells on top of each other.

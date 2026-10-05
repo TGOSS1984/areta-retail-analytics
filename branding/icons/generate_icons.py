@@ -17,7 +17,7 @@ other in Power BI (change the image source and nothing shifts or resizes):
     png-gold-transparent/    summit gold glyph, no tile, transparent background
     png-teal-transparent/    deep terrain teal glyph, no tile, transparent background
 
-One-time asset generation script, not part of the generator pipeline —
+One-time asset generation script, not part of the generator pipeline:
 lives in branding/, not generator/.
 
 Usage:
@@ -42,7 +42,7 @@ DEEP_TERRAIN = "#003744"  # the darker teal
 SUMMIT_GOLD = "#D0AA62"
 WHITE = "#FFFFFF"
 
-# One entry per variation. bg=None means no tile at all — the glyph sits on
+# One entry per variation. bg=None means no tile at all: the glyph sits on
 # a transparent canvas. Everything else (canvas size, glyph scale, stroke)
 # is shared below, on purpose, so the sets line up exactly.
 STYLES = [
@@ -56,9 +56,9 @@ TILE_SIZE = 256
 CORNER_RADIUS = 48  # applies to the white tile too; set to 0 for a square white background
 ICON_SCALE = 5  # 24x24 source -> 120x120 effective within the 256 canvas
 
-# name -> what it represents in the data model. One curated, comprehensive
-# pass across the whole schema (dimensions, facts, KPIs, nav) rather than
-# just the original 9 — this was the actual ask.
+# name -> what it represents in the data model. One pass across the whole
+# schema (dimensions, facts, KPIs, page navigation) rather than the nine
+# icons I started with.
 ICONS = {
     "layout-dashboard": "Overview",
     "chart-bar": "Sales",
@@ -85,10 +85,10 @@ ICONS = {
     "shoe": "Footwear",
     "category": "Product group",
     # Top-products chart fallback set (web/public/images/products/
-    # categories/) — one per major_product_group, used when a specific
+    # categories/): one per major_product_group, used when a specific
     # style/colourway doesn't have a sourced photo yet. Legwear and
     # Footwear deliberately reuse "hanger" and "shoe" above rather than
-    # getting their own entry — same tile, same file, used both places.
+    # getting their own entry, same tile, same file, used both places.
     "jacket": "Outerwear",
     "hanger-2": "Midlayer",
     "shirt": "Tops",
@@ -113,11 +113,11 @@ ICONS = {
     "database": "Data",
     "file-text": "Reports",
     # Added for the digital/stock/targets/refresh-stamp work built after
-    # this set was first curated — real gaps checked against the actual
+    # this set was first curated: real gaps checked against the actual
     # measure list, not guessed: device-desktop already covered Digital
     # generally, but the device SPLIT (Desktop/Mobile/Tablet) needed its
     # other two. chart-funnel deliberately shared between Conversion
-    # Rate % (retail) and Digital Conversion Rate % — same underlying
+    # Rate % (retail) and Digital Conversion Rate %, same underlying
     # concept (visits -> outcome), one icon not two.
     "device-mobile": "Mobile",
     "device-tablet": "Tablet",
@@ -221,7 +221,7 @@ def extract_inner_svg(svg_path: Path) -> str:
         raise ValueError(f"couldn't parse {svg_path}")
     inner = match.group(1)
     # drop the invisible 24x24 bounding-box path every tabler outline icon
-    # starts with (stroke="none" fill="none") — pure layout scaffolding,
+    # starts with (stroke="none" fill="none"): pure layout scaffolding,
     # not part of the visible glyph
     inner = re.sub(r'<path stroke="none"[^/]*/>', "", inner)
     return inner.strip()
@@ -262,7 +262,7 @@ def main() -> None:
         for icon_name, label in ICONS.items():
             src = TABLER_SVG_DIR / f"{icon_name}.svg"
             if not src.exists():
-                print(f"SKIP {icon_name} — not found in the installed Tabler set")
+                print(f"SKIP {icon_name}, not found in the installed Tabler set")
                 continue
 
             inner = extract_inner_svg(src)

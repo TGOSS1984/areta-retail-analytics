@@ -2,13 +2,13 @@ name: Weekly data refresh
 
 # Runs weekly_refresh.py on a schedule so the actuals frontier genuinely
 # advances week to week (fact_sales/fact_footfall/fact_stock_snapshot all
-# stop at date.today() — see PRESENT_DATE_OVERRIDE in each of those
+# stop at date.today(): see PRESENT_DATE_OVERRIDE in each of those
 # scripts), then commits whatever changed in data/warehouse straight back
 # to the repo. data/raw and data/staging are gitignored, so those never
 # show up here regardless of how the run went.
 #
 # workflow_dispatch is there so this can be triggered manually from the
-# Actions tab too, rather than only ever running on the schedule — useful
+# Actions tab too, rather than only ever running on the schedule: useful
 # for testing this workflow itself, or forcing a refresh outside the
 # normal cadence.
 

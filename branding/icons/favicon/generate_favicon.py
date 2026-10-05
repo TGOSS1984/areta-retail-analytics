@@ -2,7 +2,7 @@
 generate_favicon.py
 
 Builds the browser favicon set (favicon.ico, icon.png, apple-icon.png)
-from mark.svg — a deliberately simplified version of the full logo
+from mark.svg: a deliberately simplified version of the full logo
 mark, not the detailed one used in branding/logo/. The real mark has
 gold foil gradients and topo contour lines that just turn to mush at
 16x16; this is the same two-peak silhouette and the same brand colours
@@ -10,7 +10,7 @@ gold foil gradients and topo contour lines that just turn to mush at
 still reads as a mountain at favicon size.
 
 One-time asset generation script, same pattern as
-branding/icons/generate_icons.py — lives in branding/, not the
+branding/icons/generate_icons.py. It lives in branding/, not the
 generator pipeline.
 
 Usage:
@@ -32,7 +32,7 @@ WEB_APP_DIR = HERE.parents[1] / "web" / "app"
 def main() -> None:
     WEB_APP_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Next.js App Router picks these up automatically by filename —
+    # Next.js App Router picks these up automatically by filename:
     # no metadata.icons wiring needed in layout.tsx.
     sizes_needed = {
         16: HERE / "favicon-16x16.png",

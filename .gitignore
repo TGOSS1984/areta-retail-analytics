@@ -34,3 +34,8 @@ data/staging/
 # scripts/sync-data.mjs (predev/prebuild) — regenerated on every run,
 # no reason to commit a duplicate copy of the same files
 web/public/data/*.parquet
+
+# SQL suite: the DuckDB file duck.py build writes is a full copy of the
+# warehouse, and Jupyter's autosave folder is noise
+sql/warehouse.duckdb
+.ipynb_checkpoints/

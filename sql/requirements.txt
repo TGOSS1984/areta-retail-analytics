@@ -1,1 +1,5 @@
 duckdb>=1.2.1
+
+# for the notebooks in sql/notebooks/
+pandas>=2.0
+ipykernel>=6.0

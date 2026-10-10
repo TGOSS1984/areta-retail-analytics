@@ -16,14 +16,15 @@ python sql/duck.py ui             # opens a notebook in your browser
 
 The tables are views over the parquet files, so when the weekly refresh rewrites the warehouse you're querying the new data straight away.
 
-## Four ways to work
+## Five ways to work
 
 | Command | What it gives you |
 |---|---|
 | `python sql/duck.py ui` | A notebook in the browser (the DuckDB UI), best for exploring. It downloads a small extension on first use, so it needs internet once. Queries and data stay on your machine. Leave the terminal window open while you use it. |
 | `python sql/duck.py shell` | A SQL prompt in the terminal. End a query with `;`. Type `.tables`, `.schema <table>` or `.help`. |
 | `python sql/duck.py run <file.sql>` | Runs a query file and prints every result. Add `--only 3` to run just query 3, and `--rows 100` to see more rows. |
-| `python sql/duck.py build` | Writes `sql/warehouse.duckdb` so DBeaver or another SQL client can connect to the warehouse. |
+| `python sql/duck.py build` | Writes `sql/warehouse.duckdb` so DBeaver or another SQL client can connect to the warehouse. It's a full copy of the data, so it stays out of git. |
+| Notebooks in `notebooks/` | Jupyter notebooks you open in VS Code: a question, the SQL and the answer together, with notes in between. The one option that saves your results into the project. See [Practising in notebooks](#practising-in-notebooks). |
 
 `python sql/duck.py schema` lists every table with its columns, and `schema dim_store` describes one.
 
@@ -45,9 +46,41 @@ The tables are views over the parquet files, so when the weekly refresh rewrites
 | `practice/exercises.md` | 30 exercises in five levels, with hints and things to check |
 | `practice/solutions.sql` | Answers to every exercise |
 | `practice/scratch.sql` | A blank pad, do anything |
+| `notebooks/01_getting_started.ipynb` | Looking around, filtering, sorting, GROUP BY and HAVING, with four challenges |
+| `notebooks/02_joins.ipynb` | Inner and left joins, finding what's missing, and the fan-out trap |
+| `notebooks/03_business_questions.ipynb` | This year vs last, ranking within a group, running totals and the Pareto, checked against the report |
+| `notebooks/99_scratch.ipynb` | A blank notebook for trying things |
+| `notebooks/_setup.py` | Connects a notebook to the warehouse. Every notebook starts with `from _setup import q` |
 | `duck.py` | The runner behind all the commands above |
 
 Every query is one block under a `-- ## title` line, and has a short comment explaining the idea. Files 01 to 06 teach a concept each. Files 07 to 11 answer business questions, and a lot of them are the SQL equivalent of a Power BI page.
+
+## Practising in notebooks
+
+The notebooks are where I practise. Each one works through a topic with worked examples, then sets challenges with empty cells to fill in and answers at the bottom.
+
+To set up, once:
+
+1. Install the **Jupyter** extension in VS Code (the one published by Microsoft).
+2. Run `pip install -r sql/requirements.txt`, which includes the notebook kernel and pandas.
+3. Open a notebook in `sql/notebooks/`, choose your Python when VS Code asks for a kernel, and run the first cell.
+
+Then every query is one cell:
+
+```python
+q("""
+SELECT market_name, SUM(net_sales_gbp) AS net_sales
+FROM v_sales_flat
+WHERE business_year = 2025
+GROUP BY market_name
+ORDER BY net_sales DESC
+""")
+```
+
+`q()` returns the result as a table, so you can chart it or keep going in pandas if you want to. Two things to know:
+
+- **Keep results small.** A notebook saves its results inside the file, so add `LIMIT` or aggregate while you explore. The display stops at 20 rows anyway.
+- **Copy a notebook to start a new topic.** Keep the first cell, delete the rest, and add a Markdown cell above each query saying what you're trying to find out. GitHub shows notebooks with their results, so they double as a record of what you've learnt.
 
 ## How I'd use it
 
